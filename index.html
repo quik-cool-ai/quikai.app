@@ -241,17 +241,7 @@
       background-color: #c0c0c0;
     }
 
-    /* Mobilde Butonlar için Dokunmatik Hedef */
-    @media (max-width: 768px) {
-      #toggle-sidebar-btn,
-      .new-chat-btn,
-      .dark-mode-toggle,
-      .send-btn,
-      .settings-btn {
-        width: 48px;
-        height: 48px;
-      }
-    }
+
 
     .new-chat-btn[data-tooltip] {
       position: absolute;
@@ -665,10 +655,7 @@ body.dark .history-icon {
       width: 100%;
       max-width: 800px;
       margin: 0 auto;
-      padding-right: 0.5rem;
-      padding-bottom: 3.5rem;
-      padding-left: 0.5rem;
-      padding-top: 1rem;
+      padding: 1rem 0.5rem; /* padding-bottom daha düşük */
       box-sizing: border-box;
       z-index: 302;
     }
@@ -695,20 +682,19 @@ body.dark .history-icon {
       font-family: 'Inter', sans-serif;
       font-size: 1rem;
       font-weight: 500;
+      line-height: 1.5;
       flex: 1;
       border: none;
       outline: none;
       background: transparent;
       resize: none;
-      max-height: 150px;
+      max-height: 100px;
+      min-height: 100px;
       overflow-y: auto;
       margin: 0 0.5rem;
-      min-height: 5rem;
-      line-height: 1.5;
-      font-size: 0.9rem;
-      font-weight: 500;
       width: 100%;
       box-sizing: border-box;
+margin-bottom: 2.5rem;
     }
 
     body.dark #chat-input-textarea {
@@ -720,21 +706,20 @@ body.dark .history-icon {
       color: #bbb;
     }
 
-    .send-btn {
-      position: fixed;
-      background-color: var(--input-bg);
-      border: none;
-      border-radius: 12px;
-      width: 40px;
-      height: 35px;
-      cursor: pointer;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      bottom: -41px;
-      right: 10px;
-      box-shadow: 0 4px 6px -2px rgba(0, 0, 0, 0.15), 4px 0 6px -2px rgba(0, 0, 0, 0.15), -4px 0 6px -2px rgba(0, 0, 0, 0.15), 0 -4px 6px -2px rgba(0, 0, 0, 0.15);
-    }
+.send-btn {
+  position: relative; /* Chat-input'a göre konumlanacak */
+  background-color: var(--input-bg);
+  border: none;
+  border-radius: 12px;
+  width: 40px;
+  height: 35px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  right: 10px; /* Chat-input'un sağından 10px içeride */
+  box-shadow: 0 4px 6px -2px rgba(0, 0, 0, 0.15), 4px 0 6px -2px rgba(0, 0, 0, 0.15), -4px 0 6px -2px rgba(0, 0, 0, 0.15), 0 -4px 6px -2px rgba(0, 0, 0, 0.15);
+}
 
 .send-btn:hover {
   background-color: #c0c0c0;
@@ -2333,6 +2318,13 @@ body.dark .feedback-controls button[data-tooltip]::after {
   transform: var(--tooltip-transform, translateX(-50%) translateY(5px));
 }
 
+#web-search-btn[data-tooltip]::after,
+#send-btn[data-tooltip]::after {
+  left: 50%;
+  top: -9px; /* Butonun üstüne yerleştir */
+  transform: translateX(-50%) translateY(-100%); /* Yatayda ortala, dikeyde yukarı kaydır */
+}
+
 /* Dark Mode */
 body.dark [data-tooltip]::after {
   background-color: #e0e0e0;
@@ -2355,6 +2347,11 @@ body.dark [data-tooltip]::after {
 
 .settings-btn[data-tooltip] {
   position: fixed;
+}
+
+#settings-btn[data-tooltip]::after {
+  top: 43px; /* Butonun üstüne yerleştir */
+
 }
 
 /* ==============================
@@ -2653,16 +2650,14 @@ body.dark .data-control-card {
 </div>
 
 <div class="chat-input">
-  <!-- Yeni Web Arama Butonu -->
-<button id="web-search-btn" data-tooltip="Web Araması">
-  <img src="icons/web_search_btn.png" alt="Web Search Icon" style="width:19px; height:19px; vertical-align: middle; margin-right: 5px;">
-  <span>Ara</span>
-</button>
-  
+  <button id="web-search-btn" data-tooltip="Web Araması">
+    <img src="icons/web_search_btn.png" alt="Web Search Icon" style="width:19px; height:19px; vertical-align: middle; margin-right: 5px;">
+    <span>Ara</span>
+  </button>
   <textarea id="chat-input-textarea" placeholder="Quik uygulamasına ileti gönder..."></textarea>
-<button id="send-btn" class="send-btn" data-tooltip="Gönder">
-  <img src="icons/send_btn.png" alt="Send Icon" style="width:17px; height:17px;">
-</button>
+  <button id="send-btn" class="send-btn" data-tooltip="Gönder">
+    <img src="icons/send_btn.png" alt="Send Icon" style="width:17px; height:17px;">
+  </button>
 </div>
 
 <!-- Ayarlar Butonu -->
