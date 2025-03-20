@@ -1309,11 +1309,11 @@ body.dark .dark-mode-toggle-modal:hover {
   background-color: var(--sidebar-bg);
   width: 90%;
   max-width: 700px;
-  max-height: 90vh; /* Ekranın %90’ı kadar maksimum yükseklik */
+  max-height: 90vh;
   margin: 3vh auto;
   border-radius: 3vh;
   box-shadow: 0 8px 30px rgba(0, 0, 0, 0.5);
-  overflow: hidden;
+  overflow: hidden; /* İç taşmayı engelle */
   display: flex;
   flex-direction: column;
   box-sizing: border-box;
@@ -1522,9 +1522,11 @@ body.dark .settings-nav li.active {
 /* Sağ içerik */
 .settings-content {
   flex: 1;
-  background-color: var(--modal-bg);
-  overflow-y: auto;
-  padding-top: 0; /* Üst boşluğu sıfırlayabilirsiniz */
+  overflow-y: auto; /* Dikey kaydırma, zoomda taşmayı önler */
+  overflow-x: hidden; /* Yatay taşmayı engelle */
+  max-height: 100%; /* Modalın yüksekliğini aşmasın */
+  padding: 15px;
+  box-sizing: border-box;
 }
 
 /* Sekme içeriğini gizle/göster */
@@ -1890,12 +1892,17 @@ body.dark .setting-row select {
 }
 .theme-selection {
   display: flex;
-  gap: 1rem;
+  gap: 1rem; /* Butonlar arası boşluk */
+  flex-wrap: wrap; /* Küçük ekranlarda veya zoomda taşmayı önler */
+  justify-content: center; /* Butonları ortalar */
+
 }
 
 .theme-selection .theme-btn {
   cursor: pointer;
-  flex: 1;
+  flex: 1; /* Eşit genişlikte büyür */
+  min-width: 100px; /* Minimum genişlik, sıkışmayı önler */
+  max-width: 200px; /* Maksimum genişlik sınırı */
   padding: 0.5rem;
   display: flex;
   align-items: center;
@@ -1906,18 +1913,49 @@ body.dark .setting-row select {
   color: var(--text-color);
   font-weight: 600;
   box-sizing: border-box;
+  transition: background-color 0.3s ease; /* Pürüzsüz renk değişimi */
 }
-
 .theme-selection .theme-btn:hover,
 .theme-selection .theme-btn.active {
   background-color: #c0c0c0;
 }
 
 .theme-selection .theme-btn .theme-icon {
-  width: 11px;  /* veya ihtiyaç varsa 14px; kararınıza bağlı */
+  width: 11px;
   height: 11px;
   margin-right: 0.5rem;
   object-fit: contain;
+}
+
+/* Mobil ve Küçük Ekranlar */
+@media (max-width: 768px) {
+  .theme-selection {
+    gap: 0.75rem; /* Daha az boşluk */
+    flex-direction: column; /* Dikey düzen, mobil için daha temiz */
+    align-items: stretch; /* Butonlar tam genişlikte */
+  }
+
+  .theme-selection .theme-btn {
+    min-width: unset; /* Mobil için minimum genişlik sınırı kaldır */
+    max-width: unset; /* Tam genişlikte esneklik */
+    padding: 0.75rem; /* Daha fazla dokunma alanı */
+  }
+}
+
+@media (max-width: 480px) {
+  .theme-selection {
+    gap: 0.5rem;
+  }
+
+  .theme-selection .theme-btn {
+    font-size: clamp(0.75rem, 2vw, 0.875rem); /* Esnek font boyutu */
+    padding: 0.5rem;
+  }
+
+  .theme-selection .theme-btn .theme-icon {
+    width: 10px;
+    height: 10px;
+  }
 }
 
 /* Dark mod için: */
