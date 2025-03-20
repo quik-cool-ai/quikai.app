@@ -37,6 +37,35 @@
   --warning-color: #ffc107; /* Uyarılar için */
   --accent-color: #6c757d; /* İkincil vurgular için */
 }
+
+@media (max-width: 768px) {
+  .sidebar {
+    width: 100%; /* Tam ekran */
+    transform: translateX(-100%);
+    padding: 0.5rem;
+  }
+  .sidebar.open {
+    transform: translateX(0);
+  }
+  .main-content {
+    margin-left: 0; /* Sidebar kapalıyken tam genişlik */
+  }
+  .main-content.sidebar-open {
+    display: none; /* Sidebar açıkken ana içerik gizlensin */
+  }
+  #toggle-sidebar-btn, .new-chat-btn {
+    width: 36px; /* Daha küçük butonlar */
+    height: 36px;
+    top: 5px;
+  }
+  #toggle-sidebar-btn {
+    left: 5px;
+  }
+  .new-chat-btn {
+    right: 5px;
+  }
+}
+    
     body.dark {
       transition: none;
       --bg-color: #202020;
