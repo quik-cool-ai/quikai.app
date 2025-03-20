@@ -15,28 +15,28 @@
   <!-- Highlight.js CSS -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/styles/atom-one-dark.min.css">
 
-  <style>
+<style>
     /* Renk Değişkenleri */
-:root {
-  --bg-color: #f7f7f8;
-  --text-color: #333;
-  --primary-color: #007bff;
-  --sidebar-bg: #ffffff;
-  --input-bg: #ffffff;
-  --bubble-user-bg: #dcf8c6;
-  --bubble-assistant-bg: #ececec;
-  --topbar-bg: #ffffff;
-  --code-bg: #f7f7f8;
-  --code-text: #333;
-  --code-border: #ddd;
-  --hover-bg: #3e3f4b;
-  --modal-shadow: rgba(0, 0, 0, 0.5);
-  --sidebar-width: 258px; /* Yeni eklenen değişken */
-  --success-color: #28a745; /* Başarılı işlemler için */
-  --danger-color: #dc3545; /* Hatalar veya silme için */
-  --warning-color: #ffc107; /* Uyarılar için */
-  --accent-color: #6c757d; /* İkincil vurgular için */
-}
+    :root {
+      --bg-color: #f7f7f8;
+      --text-color: #333;
+      --primary-color: #007bff;
+      --sidebar-bg: #ffffff;
+      --input-bg: #ffffff;
+      --bubble-user-bg: #dcf8c6;
+      --bubble-assistant-bg: #ececec;
+      --topbar-bg: #ffffff;
+      --code-bg: #f7f7f8;
+      --code-text: #333;
+      --code-border: #ddd;
+      --hover-bg: #3e3f4b;
+      --modal-shadow: rgba(0, 0, 0, 0.5);
+      --sidebar-width: 258px;
+      --success-color: #28a745;
+      --danger-color: #dc3545;
+      --warning-color: #ffc107;
+      --accent-color: #6c757d;
+    }
     body.dark {
       transition: none;
       --bg-color: #202020;
@@ -47,15 +47,14 @@
       --bubble-user-bg: #055160;
       --bubble-assistant-bg: #333333;
       --topbar-bg: #000000;
-      --code-bg: #171717;  /* Daha koyu kod arka planı */
-      --code-text: #f0f0f0; /* Açık kod rengi */
-      --code-border: #333;  /* Koyu kenarlık */
+      --code-bg: #171717;
+      --code-text: #f0f0f0;
+      --code-border: #333;
       --success-color: #34c759;
       --danger-color: #ff4d4f;
       --warning-color: #ffca2c;
       --accent-color: #adb5bd;
     }
-
     body.dark .top-bar {
       background-color: var(--bg-color);
       box-shadow: none;
@@ -88,7 +87,6 @@
       width: 40px;
       cursor: pointer;
       color: var(--text-color);
-
       transition: transform 0.3s;
       border-radius: 12px;
     }
@@ -103,19 +101,19 @@
       background-color: #c0c0c0;
     }
 
-/* Dark modda ikonlar normalde ters çevrilmiş olsun */
-body.dark #toggle-sidebar-btn img,
-body.dark .new-chat-btn img,
-body.dark #web-search-btn img {
-  filter: invert(1);
-}
+    /* Dark modda ikonlar normalde ters çevrilmiş olsun */
+    body.dark #toggle-sidebar-btn img,
+    body.dark .new-chat-btn img,
+    body.dark #web-search-btn img {
+      filter: invert(1);
+    }
 
-/* Hover durumunda filtreyi kaldırarak ikonların doğal rengine dönmesini sağla */
-body.dark #toggle-sidebar-btn:hover img,
-body.dark .new-chat-btn:hover img,
-body.dark #web-search-btn:hover img {
-  filter: none;
-}
+    /* Hover durumunda filtreyi kaldırarak ikonların doğal rengine dönmesini sağla */
+    body.dark #toggle-sidebar-btn:hover img,
+    body.dark .new-chat-btn:hover img,
+    body.dark #web-search-btn:hover img {
+      filter: none;
+    }
 
     /* Uygulama konteyneri */
     #app {
@@ -124,95 +122,103 @@ body.dark #web-search-btn:hover img {
       overflow: visible;
     }
 
-/* Sidebar */
-.sidebar {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: var(--sidebar-width); /* Sabit 258px yerine değişken */
-  height: 100%;
-  background-color: var(--sidebar-bg);
-  transform: translateX(-100%);
-  transition:
-    transform 0.5s cubic-bezier(0.2, 1, 0.4, 1),
-    opacity 0.5s ease,
-    box-shadow 0.5s ease-out,
-    backdrop-filter 0.5s ease-in-out;
-  z-index: 303;
-  display: flex;
-  flex-direction: column;
-  padding: 1rem;
-}
+    /* Sidebar */
+    .sidebar {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: var(--sidebar-width);
+      height: 100%;
+      background-color: var(--sidebar-bg);
+      transform: translateX(-100%);
+      transition: transform 0.5s cubic-bezier(0.2, 1, 0.4, 1), opacity 0.5s ease, box-shadow 0.5s ease-out, backdrop-filter 0.5s ease-in-out;
+      z-index: 303;
+      display: flex;
+      flex-direction: column;
+      padding: 1rem;
+    }
+    
+    .sidebar.open {
+      transform: translateX(0);
+      box-shadow: 1px 0 10px rgba(192, 192, 192, 0.5);
+    }
 
-.sidebar.open {
-  transform: translateX(0);
-  box-shadow: 1px 0 10px rgba(192, 192, 192, 0.5);
-}
+    body.dark .sidebar.open {
+      box-shadow: none;
+    }
 
-body.dark .sidebar.open {
-  box-shadow: none;
-}
+    /* Mobilde Sidebar Tam Ekran */
+    @media (max-width: 768px) {
+      .sidebar {
+        width: 100%;
+        max-width: 100%;
+      }
+      .main-content.sidebar-open {
+        margin-left: 0;
+      }
+    }
 
-.sidebar-header {
-  position: sticky;
-  top: 0;
-  left: 0;
-  width: 100%;
-  text-align: center;
-  margin: 0;
-  padding: 9px 0; /* Üst ve alt padding'i eşitliyoruz, hizalamayı bozmamak için */
-  border-bottom: 1px solid rgba(128, 128, 128, 0.2);
-  display: flex; /* İçeriği dikey ve yatayda hizalamak için */
-  align-items: center;
-  justify-content: center;
-}
+    .sidebar-header {
+      position: sticky;
+      top: 0;
+      left: 0;
+      width: 100%;
+      text-align: center;
+      margin: 0;
+      padding: 9px 0;
+      border-bottom: 1px solid rgba(128, 128, 128, 0.2);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
 
-#sidebar-brand {
-  display: inline-flex; /* Flex ile içeriği ortalayalım */
-  align-items: center;
-  justify-content: center;
-  width: 40px; /* Aynı kutucuk boyutu */
-  height: 40px; /* Aynı kutucuk boyutu */
-  margin-top: -16px; /* Yatayda merkezleme */
-  padding: 0; /* İç boşluğu sıfırladık, ikon kendi boyutunu korusun */
-  border-radius: 12px; /* Diğer butonlarla uyumlu */
-  border: 1px solid transparent;
-  cursor: pointer; /* Tıklanabilir imleç */
-}
+    #sidebar-brand {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 40px;
+      height: 40px;
+      margin-top: -16px;
+      padding: 0;
+      border-radius: 12px;
+      border: 1px solid transparent;
+      cursor: pointer;
+    }
 
-#sidebar-brand:hover {
-  background-color: #c0c0c0;
-}
+    #sidebar-brand:hover {
+      background-color: #c0c0c0;
+    }
 
-body.dark #sidebar-brand:hover {
-  color: var(--sidebar-bg);
-}
+    body.dark #sidebar-brand:hover {
+      color: var(--sidebar-bg);
+    }
 
-#sidebar-brand-icon {
-  width: 24px; /* İkon boyutu diğer buton ikonlarıyla uyumlu (toggle ve new-chat 21-24px) */
-  height: 24px; /* Sabit yükseklik */
-  vertical-align: middle;
-}
+    #sidebar-brand-icon {
+      width: 24px;
+      height: 24px;
+      vertical-align: middle;
+    }
 
-body.dark #sidebar-brand-icon {
-  filter: brightness(0) invert(1); /* Dark modda ikon ters çevrilsin */
-}
+    body.dark #sidebar-brand-icon {
+      filter: brightness(0) invert(1);
+    }
 
-body.dark #sidebar-brand:hover #sidebar-brand-icon {
-  filter: none; /* Filtreyi kaldırarak orijinal renge dön */
-}
+    body.dark #sidebar-brand:hover #sidebar-brand-icon {
+      filter: none;
+    }
 
-#sidebar-brand:hover {
-  background-color: #c0c0c0;
-}
+    #sidebar-brand:hover {
+      background-color: #c0c0c0;
+    }
 
-body.dark #sidebar-brand:hover {
-  color: var(--sidebar-bg);
-}
+    body.dark #sidebar-brand:hover {
+      color: var(--sidebar-bg);
+    }
 
     .close-sidebar-btn {
       display: none;
     }
+
     .new-chat-btn {
       position: absolute;
       top: 9px;
@@ -235,62 +241,73 @@ body.dark #sidebar-brand:hover {
       background-color: #c0c0c0;
     }
 
-.new-chat-btn[data-tooltip] {
-  position: absolute;
-}
+    /* Mobilde Butonlar için Dokunmatik Hedef */
+    @media (max-width: 768px) {
+      #toggle-sidebar-btn,
+      .new-chat-btn,
+      .dark-mode-toggle,
+      .send-btn,
+      .settings-btn {
+        width: 48px;
+        height: 48px;
+      }
+    }
 
-.new-chat-btn[data-tooltip]::after {
-  left: auto !important;
-  right: 232% !important;
-  top: 50% !important;
-  transform: translate(50%, -50%) !important;
-}
+    .new-chat-btn[data-tooltip] {
+      position: absolute;
+    }
 
-/* Tıklama sonrası tooltip’i gizle */
-[data-tooltip].no-tooltip::after {
-  opacity: 0 !important;
-  visibility: hidden !important;
-}
+    .new-chat-btn[data-tooltip]::after {
+      left: auto !important;
+      right: 232% !important;
+      top: 50% !important;
+      transform: translate(50%, -50%) !important;
+    }
 
-body.dark .new-chat-btn img {
-  filter: brightness(0) invert(1);
-}
+    /* Tıklama sonrası tooltip’i gizle */
+    [data-tooltip].no-tooltip::after {
+      opacity: 0 !important;
+      visibility: hidden !important;
+    }
 
-body.dark .new-chat-btn:hover {
-  color: var(--sidebar-bg);
+    body.dark .new-chat-btn img {
+      filter: brightness(0) invert(1);
+    }
 
-}
+    body.dark .new-chat-btn:hover {
+      color: var(--sidebar-bg);
+    }
 
-body.dark .new-chat-btn:hover img {
-  filter: none; /* ikon doğal renginde (muhtemelen siyah) görünsün */
-}
+    body.dark .new-chat-btn:hover img {
+      filter: none; /* ikon doğal renginde (muhtemelen siyah) görünsün */
+    }
 
-.chat-history-list {
-  list-style: none;
-  padding: 0.5rem 0;
-  margin: 0;
-  overflow-y: auto;
-  flex: 1;
-  scrollbar-width: thin;
-  scrollbar-color: rgba(85, 85, 85, 0.2) transparent;
-}
+    .chat-history-list {
+      list-style: none;
+      padding: 0.5rem 0;
+      margin: 0;
+      overflow-y: auto;
+      flex: 1;
+      scrollbar-width: thin;
+      scrollbar-color: rgba(85, 85, 85, 0.2) transparent;
+    }
 
-/* Tarih Grubu (Başlık ve Sohbetler) */
-.chat-history-group {
-  margin-bottom: 0.5rem;
-}
+    /* Tarih Grubu (Başlık ve Sohbetler) */
+    .chat-history-group {
+      margin-bottom: 0.5rem;
+    }
 
-/* Tarih Başlığı */
-.chat-history-header {
-  font-size: 0.8rem;
-  font-weight: 600;
-  color: var(--text-color);
-  padding: 0.5rem 0.25rem;
-  border-top: 1.5px solid #c0c0c0; /* Hafif arka plan */
-  border-bottom: 1.5px solid #c0c0c0; /* Hafif arka plan */
-  border-radius: 12px;
-  margin-top: 15px;
-}
+    /* Tarih Başlığı */
+    .chat-history-header {
+      font-size: 0.8rem;
+      font-weight: 600;
+      color: var(--text-color);
+      padding: 0.5rem 0.25rem;
+      border-top: 1.5px solid #c0c0c0;
+      border-bottom: 1.5px solid #c0c0c0;
+      border-radius: 12px;
+      margin-top: 15px;
+    }
 
 .chat-history-list::-webkit-scrollbar {
   width: 6px;
@@ -339,17 +356,17 @@ body.dark .chat-history-item:hover .chat-history-date {
 }
 
 
-/* Chat History Item (Her Bir Sohbet Öğesi) */
-.chat-history-item {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  cursor: pointer;
-  padding: 0.25rem 0.25rem; /* Daha geniş tıklama alanı */
-  border-radius: 8px; /* Daha modern yuvarlak köşeler */
-  background-color: transparent; /* Varsayılan arka plan şeffaf */
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05); /* Hafif gölge */
-}
+    /* Chat History Item (Her Bir Sohbet Öğesi) */
+    .chat-history-item {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      cursor: pointer;
+      padding: 0.25rem 0.25rem;
+      border-radius: 8px;
+      background-color: transparent;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+    }
 
 .chat-history-item:hover {
   background-color: #c0c0c0;
@@ -462,6 +479,7 @@ body.dark .history-icon {
     .main-content.sidebar-open {
       margin-left: 258px;
     }
+
     .top-bar {
       display: flex;
       align-items: center;
@@ -477,73 +495,82 @@ body.dark .history-icon {
       border-bottom: 1px solid rgba(128, 128, 128, 0.5);
     }
 
-.dark-mode-toggle {
-  position: fixed;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  top: 7px;
-  right: 7px;
-  z-index: 304;
-  background: none;
-  border: none;
-  font-size: 1.8rem;
-  cursor: pointer;
-  color: var(--text-color);
-  display: flex;               /* Flex düzeni ekledik */
-  align-items: center;         /* İçeriği dikey ortala */
-  justify-content: center;     /* İçeriği yatay ortala */
-  width: 40px;                 /* Sabit buton boyutu */
-  height: 40px;
-  border-radius: 12px;
-}
+    @media (max-width: 768px) {
+      .top-bar {
+        padding: 0.5rem 1rem;
+      }
+    }
 
-.dark-mode-toggle:hover {
-  background-color: #c0c0c0;
-}
+    .dark-mode-toggle {
+      position: fixed;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      top: 7px;
+      right: 7px;
+      z-index: 304;
+      background: none;
+      border: none;
+      font-size: 1.8rem;
+      cursor: pointer;
+      color: var(--text-color);
+      width: 40px;
+      height: 40px;
+      border-radius: 12px;
+    }
 
-.dark-mode-toggle img {
-  transition: filter 0s;
-}
+    .dark-mode-toggle:hover {
+      background-color: #c0c0c0;
+    }
 
-body.dark .dark-mode-toggle img {
-  filter: invert(1);
-}
+    .dark-mode-toggle img {
+      transition: filter 0s;
+    }
 
-body.dark .dark-mode-toggle:hover img {
-  filter: none;
-}
+    body.dark .dark-mode-toggle img {
+      filter: invert(1);
+    }
 
-body.dark .dark-mode-toggle:hover {
-  /* Dark modda da aynı hover efekti: */
-  background-color: #c0c0c0;
-  color: var(--sidebar-bg);
-}
+    body.dark .dark-mode-toggle:hover img {
+      filter: none;
+    }
 
-.scroll-wrapper {
-  width: 100%;
-  height: calc(100vh - 150px); /* Örneğin top-bar vs. dikkate alınarak */
-  overflow-y: auto;
-  scroll-behavior: smooth;
-}
+    body.dark .dark-mode-toggle:hover {
+      background-color: #c0c0c0;
+      color: var(--sidebar-bg);
+    }
 
-.chat-container {
-  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;
-  display: flex;
-  flex-direction: column;
-  padding-top: 1rem;
-  background-color: var(--bg-color);
-  max-width: 800px;
-  margin: 0 auto;
-  width: 100%;
-  scroll-behavior: smooth;
-}
+    .scroll-wrapper {
+      width: 100%;
+      height: calc(100vh - 150px);
+      overflow-y: auto;
+      scroll-behavior: smooth;
+    }
 
-.chat-container::after {
-  content: "";
-  display: block;
-  height: 100px; /* Chat input yüksekliğine göre ayarlayın */
-}
+    .chat-container {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;
+      display: flex;
+      flex-direction: column;
+      padding-top: 1rem;
+      background-color: var(--bg-color);
+      max-width: 800px;
+      margin: 0 auto;
+      width: 100%;
+      scroll-behavior: smooth;
+    }
+
+    @media (max-width: 768px) {
+      .chat-container {
+        padding: 0.5rem;
+        max-width: 100%;
+      }
+    }
+
+    .chat-container::after {
+      content: "";
+      display: block;
+      height: 100px; /* Chat input yüksekliğine göre ayarlayın */
+    }
 
 .welcome-message {
   position: absolute;
@@ -622,96 +649,92 @@ body.dark .dark-mode-toggle:hover {
   padding-top: 0;
 }
 
-/* Chat Input */
-.chat-input {
-  position: absolute;
-  bottom: 20px;
-  left: 50%;
-  transform: translateX(-50%);
-  transition: left 0.3s ease;
-  display: flex;
-  flex-direction: row;
-  align-items: flex-end;
-  background-color: var(--input-bg);
-  border-radius: 30px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
-  width: 100%;
-  max-width: 800px;
-  margin: 0 auto;
-  padding-right: 0.5rem;
-  padding-bottom: 3.5rem;
-  padding-left: 0.5rem;
-  padding-top: 1rem;
-  box-sizing: border-box;
-  z-index: 302; /* Chat input üstte, feedback’lerden önce */
-}
+    /* Chat Input */
+    .chat-input {
+      position: absolute;
+      bottom: 20px;
+      left: 50%;
+      transform: translateX(-50%);
+      transition: left 0.3s ease;
+      display: flex;
+      flex-direction: row;
+      align-items: flex-end;
+      background-color: var(--input-bg);
+      border-radius: 30px;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+      width: 100%;
+      max-width: 800px;
+      margin: 0 auto;
+      padding-right: 0.5rem;
+      padding-bottom: 3.5rem;
+      padding-left: 0.5rem;
+      padding-top: 1rem;
+      box-sizing: border-box;
+      z-index: 302;
+    }
 
-body.sidebar-open .chat-input {
-  left: calc(50% + (var(--sidebar-width) / 2)); /* Mevcut kaydırma korunuyor */
-  width: calc(100% - var(--sidebar-width) - 1rem); /* Sidebar genişliği kadar daralır */
+    body.sidebar-open .chat-input {
+      left: calc(50% + (var(--sidebar-width) / 2));
+      width: calc(100% - var(--sidebar-width) - 1rem);
+    }
 
-}
+    /* Responsive ayar: Küçük ekranlar için minimum genişlik */
+    @media (max-width: 768px) {
+      .chat-input {
+        width: calc(100% - 1rem);
+        bottom: 10px;
+        padding-bottom: 1rem;
+      }
+      body.sidebar-open .chat-input {
+        left: 50%;
+        width: calc(100% - 1rem);
+      }
+    }
 
-/* Responsive ayar: Küçük ekranlar için minimum genişlik */
-@media (max-width: 768px) {
-  .chat-input {
-    width: calc(100% - 1rem); /* Daha dar ekranlarda padding azalır */
-  }
-  body.sidebar-open .chat-input {
-    width: calc(100% - var(--sidebar-width) - 1rem);
-  }
-}
+    #chat-input-textarea {
+      font-family: 'Inter', sans-serif;
+      font-size: 1rem;
+      font-weight: 500;
+      flex: 1;
+      border: none;
+      outline: none;
+      background: transparent;
+      resize: none;
+      max-height: 150px;
+      overflow-y: auto;
+      margin: 0 0.5rem;
+      min-height: 5rem;
+      line-height: 1.5;
+      font-size: 0.9rem;
+      font-weight: 500;
+      width: 100%;
+      box-sizing: border-box;
+    }
 
-#chat-input-textarea {
-  font-family: 'Inter', sans-serif;
-  font-size: 1rem;
-  font-weight: 500;
-  flex: 1;                    /* Butonlar solda-sağda, geri kalan alan textarea */
-  border: none;
-  outline: none;
-  background: transparent;
-  resize: none;
-  max-height: 150px;
-  overflow-y: auto;
-  margin: 0 0.5rem;
-  min-height: 5rem;
-  line-height: 1.5;
-  font-size: 0.9rem;
-  font-weight: 500;
-  width: 100%; /* Textarea'nın kapsayıcısına tam oturmasını sağlar */
-  box-sizing: border-box; /* Padding ve border'ı genişliğe dahil et */
-}
     body.dark #chat-input-textarea {
       color: #fff;
       caret-color: #fff;
     }
 
-body.dark #chat-input-textarea::placeholder {
-  color: #bbb;
-}
-.send-btn {
-  position: fixed;
-  background-color: var(--input-bg);
-  border: none;
-  border-radius: 12px;
-  width: 40px;
-  height: 35px;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  bottom: -41px;
-  right: 10px;
-  box-shadow: 
-    /* Aşağıya doğru gölge */
-    0 4px 6px -2px rgba(0, 0, 0, 0.15),
-    /* Sağa doğru gölge */
-    4px 0 6px -2px rgba(0, 0, 0, 0.15),
-    /* Sola doğru gölge */
-    -4px 0 6px -2px rgba(0, 0, 0, 0.15),
-    /* Yukarıya doğru gölge */
-    0 -4px 6px -2px rgba(0, 0, 0, 0.15);
-}
+    body.dark #chat-input-textarea::placeholder {
+      color: #bbb;
+    }
+
+    .send-btn {
+      position: fixed;
+      background-color: var(--input-bg);
+      border: none;
+      border-radius: 12px;
+      width: 40px;
+      height: 35px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      bottom: -41px;
+      right: 10px;
+      box-shadow: 0 4px 6px -2px rgba(0, 0, 0, 0.15), 4px 0 6px -2px rgba(0, 0, 0, 0.15), -4px 0 6px -2px rgba(0, 0, 0, 0.15), 0 -4px 6px -2px rgba(0, 0, 0, 0.15);
+    }
 
 .send-btn:hover {
   background-color: #c0c0c0;
@@ -1073,22 +1096,22 @@ body.dark #quik-icon {
   filter: brightness(0) invert(1);
 }
 
-/* Ayarlar Butonu (Sağ Üst Köşe) */
-.settings-btn {
-  position: fixed;
-  top: 9px;
-  right: 13px;
-  width: 40px;
-  height: 40px;
-  background-color: #fff; /* Görünür olsun diye sabit renk */
-  border: none;
-  border-radius: 12px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  cursor: pointer;
-  z-index: 1000; /* Her şeyin üstünde olsun */
-}
+    /* Ayarlar Butonu (Sağ Üst Köşe) */
+    .settings-btn {
+      position: fixed;
+      top: 9px;
+      right: 13px;
+      width: 40px;
+      height: 40px;
+      background-color: #fff;
+      border: none;
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      z-index: 1000;
+    }
 
 .settings-btn img {
   width: 24px;
@@ -1124,44 +1147,56 @@ body.dark .settings-btn:hover {
   background-color: #c0c0c0;
 }
 
-/* Modal Genel Ayarları */
-.modal {
-  display: none;
-  position: fixed;
-  z-index: 306;
-  left: 0;
-  top: 0;
-  width: 100%;
-  height: 100%;
-  overflow: auto;
-  background-color: transparent; /* Renk tonunu tamamen kaldırdık */
-  backdrop-filter: blur(4px); /* Blur efekti ekledik */
-  -webkit-backdrop-filter: blur(4px); /* Safari desteği */
-  animation: fadeIn 0.3s ease; /* Açılma animasyonu korundu */
-}
+    /* Modal Genel Ayarları */
+    .modal {
+      display: none;
+      position: fixed;
+      z-index: 306;
+      left: 0;
+      top: 0;
+      width: 100%;
+      height: 100%;
+      overflow: auto;
+      background-color: transparent;
+      backdrop-filter: blur(4px);
+      -webkit-backdrop-filter: blur(4px);
+      animation: fadeIn 0.3s ease;
+    }
 
-/* Ayarlar Modal'ı İçin Genel Stil */
-.modal-content {
-  background-color: var(--sidebar-bg);
-  margin: 10% auto;
-  padding: 20px;
-  border-radius: 12px;
-  width: 100%;
-  max-width: 500px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
-  position: relative;
-}
+    /* Ayarlar Modal'ı İçin Genel Stil */
+    .modal-content {
+      background-color: var(--sidebar-bg);
+      margin: 10% auto;
+      padding: 20px;
+      border-radius: 12px;
+      width: 100%;
+      max-width: 500px;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+      position: relative;
+    }
 
+    @media (max-width: 768px) {
+      .modal-content {
+        margin: 0;
+        position: fixed;
+        bottom: 0;
+        left: 0;
+        width: 100%;
+        max-height: 80vh;
+        border-radius: 12px 12px 0 0;
+        overflow-y: auto;
+      }
+    }
 
-/* Kapatma Butonu */
-.modal-close {
-  position: absolute;
-  top: 12px;
-  right: 12px;
-  font-size: 24px;
-  cursor: pointer;
-  color: var(--text-color);
-}
+    /* Kapatma Butonu */
+    .modal-close {
+      position: absolute;
+      top: 12px;
+      right: 12px;
+      font-size: 24px;
+      cursor: pointer;
+      color: var(--text-color);
+    }
 
 body.dark .modal-close:hover {
   color: var(--sidebar-bg);
@@ -1973,13 +2008,23 @@ body.dark td {
   }
 }
 
-    /* Model Seçici Stilleri */
+    /* Model Seçici */
     .model-selector {
       position: fixed;
       top: 7px;
       left: 60px;
       z-index: 101;
     }
+
+    @media (max-width: 768px) {
+      .model-selector {
+        left: 70px;
+      }
+      .model-dropdown {
+        width: 150px;
+      }
+    }
+
     .model-toggle-btn {
       display: flex;
       align-items: center;
