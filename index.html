@@ -564,13 +564,12 @@ body.dark .history-icon {
 
 .welcome-message {
   position: fixed; /* absolute yerine fixed, ekranın ortasında sabit kalır */
-  top: 35%;
+  top: 40%;
   left: 50%;
   transform: translate(-50%, -50%);
   text-align: center;
   width: 90%; /* Mobil cihazlarda daha esnek */
   max-width: 600px; /* Masaüstünde maksimum genişlik sınırı */
-  padding: 1rem;
   box-sizing: border-box;
 }
 
@@ -706,36 +705,15 @@ body.dark .history-icon {
     /* Responsive ayar: Küçük ekranlar için minimum genişlik */
     @media (max-width: 768px) {
       .chat-input {
-        width: calc(100% - 1rem);
+        width: 100%;
         bottom: 10px;
         padding-bottom: 1rem;
       }
       body.sidebar-open .chat-input {
         left: 50%;
-        width: calc(100% - 1rem);
+        width: 100%;
       }
-#chat-input-textarea {
-    font-size: clamp(0.75rem, 2.5vw, 0.875rem); /* Daha küçük font */
-    min-height: clamp(35px, 8vh, 50px); /* Mobil için daha kompakt */
-    max-height: clamp(60px, 15vh, 100px);
-    margin: 0 0.25rem; /* Daha az yan boşluk */
-  }
     }
-
-/* Çok küçük ekranlar için (örneğin 480px altı) */
-@media (max-width: 480px) {
-  .chat-input {
-    width: calc(100% - 0.5rem);
-    padding: 0.25rem;
-  }
-
-  #chat-input-textarea {
-    font-size: clamp(0.6875rem, 2vw, 0.75rem);
-    min-height: clamp(30px, 6vh, 40px);
-    max-height: clamp(50px, 12vh, 80px);
-    padding: 0.25rem 0;
-  }
-}
 
     #chat-input-textarea {
       font-family: 'Inter', sans-serif;
@@ -747,13 +725,13 @@ body.dark .history-icon {
       outline: none;
       background: transparent;
       resize: none;
-min-height: clamp(40px, 10vh, 60px); /* Mobil için daha küçük, masaüstü için uygun */
-  max-height: clamp(80px, 20vh, 120px); /* Maksimum yükseklik esnek */
+      max-height: 100px;
+      min-height: 100px;
       overflow-y: auto;
       margin: 0 0.5rem;
       width: 100%;
       box-sizing: border-box;
-margin-bottom: 2.5rem;
+      margin-bottom: 2.5rem;
     }
 
     body.dark #chat-input-textarea {
@@ -1304,9 +1282,11 @@ body.dark .dark-mode-toggle-modal:hover {
 /* Modal Arka Planı ve Animasyon */
 .settings-modal {
   position: fixed;
-  top: 0; left: 0;
-  width: 100%; height: 100%;
-  background-color: rgba(0, 0, 0, 0.7); /* Daha koyu yarı saydam */
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.7);
   opacity: 0;
   visibility: hidden;
   transition: opacity 0.3s ease, visibility 0.3s ease;
@@ -1319,20 +1299,95 @@ body.dark .dark-mode-toggle-modal:hover {
 
 /* Modal İçeriği */
 .settings-modal-content {
-  background-color: #fff;  /* Light modda beyaz */
-  width: 90%; /* Mobilde daha geniş bir görünüm */
-  max-width: 700px; /* Masaüstü için ideal maksimum genişlik */
-  max-height: 90%; /* Ekran kenarlarından biraz boşluk bırak */
+  background-color: var(--sidebar-bg);
+  width: 90%;
+  max-width: 700px;
+  max-height: 90vh; /* Ekranın %90’ı kadar maksimum yükseklik */
   margin: 3vh auto;
   border-radius: 3vh;
   box-shadow: 0 8px 30px rgba(0, 0, 0, 0.5);
   overflow: hidden;
   display: flex;
   flex-direction: column;
+  box-sizing: border-box;
 }
-
 body.dark .settings-modal-content {
   background-color: var(--sidebar-bg); /* ya da sidebar rengi olarak kullandığın değişken */
+}
+
+/* Responsive Ayarlar */
+@media (max-width: 768px) {
+  .settings-modal-content {
+    width: 100%;
+    max-height: 80vh; /* Mobil için daha fazla alan */
+    margin: 0;
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    border-radius: 12px 12px 0 0; /* Üstte yuvarlak, altta düz */
+  }
+
+  .settings-body {
+    flex-direction: column; /* Sekmeler üstte, içerik altta */
+  }
+
+  .settings-nav {
+    border-bottom: 1px solid var(--code-border);
+  }
+
+  .settings-nav ul {
+    flex-direction: row; /* Mobil için yatay liste */
+    padding: 5px 10px;
+  }
+
+  .settings-nav li {
+    margin-right: 10px;
+    margin-bottom: 0;
+    padding: 8px 10px;
+    min-width: auto; /* Mobil için sabit genişlik kaldır */
+  }
+
+  .settings-content {
+    padding: 10px;
+  }
+
+  .settings-header {
+    padding: 8px 10px;
+  }
+}
+@media (max-width: 480px) {
+  .settings-modal-content {
+    max-height: 85vh; /* Çok küçük ekranlarda daha fazla alan */
+  }
+
+  .settings-nav li {
+    font-size: clamp(0.6875rem, 1.8vw, 0.75rem);
+    padding: 6px 8px;
+  }
+
+  .settings-header h2 {
+    font-size: clamp(0.875rem, 2vw, 1rem);
+  }
+
+  .settings-content {
+    padding: 8px;
+  }
+
+  .setting-item label,
+  .setting-label {
+    font-size: clamp(0.75rem, 1.8vw, 0.875rem);
+  }
+
+  .setting-item textarea {
+    font-size: clamp(0.6875rem, 1.5vw, 0.75rem);
+    padding: 8px;
+  }
+
+  .save-btn,
+  #save-personalization {
+    padding: 6px 12px;
+    font-size: clamp(0.75rem, 1.8vw, 0.875rem);
+  }
 }
 
 /* Header */
@@ -1347,7 +1402,7 @@ body.dark .settings-modal-content {
   margin-bottom: 20px;
 }
 .settings-header h2 {
-  font-size: 1.1rem;
+  font-size: clamp(1rem, 2.5vw, 1.1rem); /* Esnek font boyutu */
   color: var(--text-color);
 }
 
@@ -1383,29 +1438,33 @@ body.dark .settings-close:hover {
 /* Ayarlar gövdesi: solda menü, sağda içerik */
 .settings-body {
   display: flex;
-  min-height: 500px;
+  flex: 1;
+  min-height: 0; /* İçeriğin taşmasını önler */
 }
 
 /* Sol Sekme Menüsü */
 .settings-nav {
   background-color: var(--nav-bg);
-
+  overflow-x: auto; /* Yatay kaydırma mobil için */
+  white-space: nowrap; /* Sekmeler tek satırda kalsın */
 }
 
 .settings-nav ul {
   list-style: none;
   margin: 0;
   padding: 0;
+
+  flex-direction: column;
 }
 
 .settings-nav li {
   padding: 10px 12px;
-  margin-right: 50px;
+  margin-right: 30px;
   margin-bottom: 10px;
   cursor: pointer;
   border-bottom: 1px solid var(--border-color);
   color: var(--text-color);
-  font-size: 0.8rem;
+  font-size: clamp(0.75rem, 2vw, 0.8rem); /* Esnek font */
   border-radius: 8px;
   display: flex;
   justify-content: flex-start;
