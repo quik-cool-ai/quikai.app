@@ -37,35 +37,6 @@
   --warning-color: #ffc107; /* Uyarılar için */
   --accent-color: #6c757d; /* İkincil vurgular için */
 }
-
-@media (max-width: 768px) {
-  .sidebar {
-    width: 100%; /* Tam ekran */
-    transform: translateX(-100%);
-    padding: 0.5rem;
-  }
-  .sidebar.open {
-    transform: translateX(0);
-  }
-  .main-content {
-    margin-left: 0; /* Sidebar kapalıyken tam genişlik */
-  }
-  .main-content.sidebar-open {
-    display: none; /* Sidebar açıkken ana içerik gizlensin */
-  }
-  #toggle-sidebar-btn, .new-chat-btn {
-    width: 36px; /* Daha küçük butonlar */
-    height: 36px;
-    top: 5px;
-  }
-  #toggle-sidebar-btn {
-    left: 5px;
-  }
-  .new-chat-btn {
-    right: 5px;
-  }
-}
-    
     body.dark {
       transition: none;
       --bg-color: #202020;
@@ -275,7 +246,11 @@ body.dark #sidebar-brand:hover {
   transform: translate(50%, -50%) !important;
 }
 
-
+/* Tıklama sonrası tooltip’i gizle */
+[data-tooltip].no-tooltip::after {
+  opacity: 0 !important;
+  visibility: hidden !important;
+}
 
 body.dark .new-chat-btn img {
   filter: brightness(0) invert(1);
@@ -290,35 +265,6 @@ body.dark .new-chat-btn:hover img {
   filter: none; /* ikon doğal renginde (muhtemelen siyah) görünsün */
 }
 
-/* Mobil için Ekleme */
-@media (max-width: 768px) {
-  button, .chat-history-item, .settings-nav li {
-    min-width: 44px; /* Dokunmatik dostu minimum boyut */
-    min-height: 44px;
-    font-size: 0.9rem;
-  }
-  body {
-    font-size: 0.9rem; /* Genel okunabilirlik */
-  }
-  ::-webkit-scrollbar {
-    width: 6px; /* Daha ince kaydırma çubuğu */
-  }
-}
-
-@media (max-width: 480px) {
-  .chat-bubble {
-    font-size: 0.85rem;
-    padding: 0.5rem;
-  }
-  #chat-input-textarea {
-    font-size: 0.85rem;
-  }
-  .send-btn {
-    width: 28px;
-    height: 28px;
-  }
-}
-    
 .chat-history-list {
   list-style: none;
   padding: 0.5rem 0;
@@ -589,27 +535,9 @@ body.dark .dark-mode-toggle:hover {
   background-color: var(--bg-color);
   max-width: 800px;
   margin: 0 auto;
-  max-width: 800px;
   width: 100%;
   scroll-behavior: smooth;
 }
-
-/* Mobil için Ekleme */
-@media (max-width: 768px) {
-  .chat-container {
-    max-width: 100%; /* Tam genişlik */
-    padding: 0 0.5rem; /* Daha az kenar boşluğu */
-  }
-  .chat-bubble {
-    max-width: 90%; /* Daha geniş balonlar */
-    padding: 0.5rem 0.75rem;
-    font-size: 0.9rem; /* Küçük ama okunabilir */
-    margin-bottom: 1rem;
-  }
-  .user-bubble, .assistant-bubble {
-    border-radius: 16px; /* Daha yuvarlak köşeler */
-  }
-}    
 
 .chat-container::after {
   content: "";
@@ -627,10 +555,10 @@ body.dark .dark-mode-toggle:hover {
 }
 
     .welcome-message h1 {
-      font-size: 2vh;
+      font-size: 2rem;
     }
     .welcome-message p {
-      font-size: 1.5vh;
+      font-size: 1.5rem;
     }
 
     /* Animasyon */
@@ -725,29 +653,12 @@ body.sidebar-open .chat-input {
 }
 
 /* Responsive ayar: Küçük ekranlar için minimum genişlik */
-/* Mobil için Ekleme */
 @media (max-width: 768px) {
   .chat-input {
-    position: fixed; /* Altta sabit */
-    bottom: 5px;
-    left: 0;
-    transform: none; /* Merkezleme kaldır */
-    width: 100%;
-    max-width: 100%;
-    padding: 0.5rem;
-    border-radius: 20px;
+    width: calc(100% - 1rem); /* Daha dar ekranlarda padding azalır */
   }
-  #chat-input-textarea {
-    font-size: 0.9rem;
-    min-height: 2.5rem;
-    max-height: 80px;
-    margin: 0 0.25rem;
-  }
-  .send-btn {
-    width: 32px;
-    height: 32px;
-    bottom: 8px;
-    right: 8px;
+  body.sidebar-open .chat-input {
+    width: calc(100% - var(--sidebar-width) - 1rem);
   }
 }
 
@@ -1184,6 +1095,15 @@ body.dark #quik-icon {
   height: 21px;
 }
 
+.settings-btn.blurred {
+  filter: blur(3px);
+  pointer-events: none;
+  transition: filter 0.3s ease;
+  opacity: 0.8;
+  z-index: 200; /* Modalın altına düşür */
+}
+
+
 .settings-btn:hover {
   background-color: #c0c0c0;
 }
@@ -1321,11 +1241,11 @@ body.dark .dark-mode-toggle-modal:hover {
 /* Modal İçeriği */
 .settings-modal-content {
   background-color: #fff;  /* Light modda beyaz */
-  width: 100%;
-  max-width: 675px;
-  max-height: 500px;
-  margin: 50px auto;
-  border-radius: 12px;
+  width: 90%; /* Mobilde daha geniş bir görünüm */
+  max-width: 700px; /* Masaüstü için ideal maksimum genişlik */
+  max-height: 90%; /* Ekran kenarlarından biraz boşluk bırak */
+  margin: 3vh auto;
+  border-radius: 3vh;
   box-shadow: 0 8px 30px rgba(0, 0, 0, 0.5);
   overflow: hidden;
   display: flex;
@@ -1334,34 +1254,6 @@ body.dark .dark-mode-toggle-modal:hover {
 
 body.dark .settings-modal-content {
   background-color: var(--sidebar-bg); /* ya da sidebar rengi olarak kullandığın değişken */
-}
-
-/* Mobil için Ekleme */
-@media (max-width: 768px) {
-  .settings-modal-content {
-    max-width: 100%;
-    max-height: 100vh;
-    margin: 0;
-    border-radius: 0;
-    overflow-y: auto;
-  }
-  .settings-body {
-    flex-direction: column; /* Sekmeler üstte */
-  }
-  .settings-nav ul {
-    display: flex;
-    flex-direction: row;
-    overflow-x: auto;
-    white-space: nowrap;
-  }
-  .settings-nav li {
-    padding: 8px;
-    font-size: 0.85rem;
-    margin-right: 10px;
-  }
-  .settings-content {
-    padding: 1rem;
-  }
 }
 
 /* Header */
@@ -2127,7 +2019,7 @@ body.dark td {
       left: 0;
       background-color: var(--input-bg);
       border-radius: 6px;
-      min-width: 118px;
+      min-width: 110px;
       z-index: 305;
       box-shadow: 0 0 8px rgba(192, 192, 192, 0.75);
     }
@@ -2139,20 +2031,30 @@ body.dark td {
     .model-dropdown.show {
       display: block;
     }
-.model-option {
-  background: none;
-  border: none;
-  width: 100%;
-  padding: 10px 5px;
-  text-align: left;
-  cursor: pointer;
-  display: flex;
-  flex-direction: column;
-  gap: 4px;
-  color: var(--text-color);
-  transition: background-color 0.2s ease, color 0.2s ease; /* Renk geçişi için transition eklendi */
-  border-radius: 12px;
-}
+    .model-option {
+      display: block;
+      width: 100%;
+      padding: 8px 4px;
+      background: none;
+      border: none;
+      border-radius: 6px;
+      text-align: left;
+      color: var(--text-color);
+      font-size: 1rem;
+      cursor: pointer;
+    }
+
+    .model-option:hover {
+      background-color: #c0c0c0;
+    }
+    body.dark .model-option:hover {
+      background-color: #c0c0c0;
+      color: var(--sidebar-bg);
+    }
+    body.sidebar-open .model-selector {
+      left: calc(var(--sidebar-width) + 10px);
+      transition: left 0.29s ease;
+    }
 
 .model-option:hover {
   background: #c0c0c0;
@@ -3168,6 +3070,30 @@ document.addEventListener("DOMContentLoaded", () => {
   console.log("Toplam tooltip’li buton sayısı:", otherButtons.length);
   otherButtons.forEach(button => {
     console.log("Diğer buton işleme alındı:", button.dataset.tooltip);
+// Tüm tooltip’li butonları seç
+  const tooltipButtons = document.querySelectorAll("[data-tooltip]");
+
+  tooltipButtons.forEach(button => {
+    button.addEventListener("click", () => {
+      // Tıklama anında tooltip’i gizle
+      button.classList.add("no-tooltip");
+
+      // Fare ayrıldığında veya 1 saniye sonra tooltip’i tekrar aktif et
+      const resetTooltip = () => {
+        button.classList.remove("no-tooltip");
+      };
+
+      // Fare ayrıldığında reset
+      button.addEventListener("mouseleave", resetTooltip, { once: true });
+
+      // Alternatif olarak, 1 saniye sonra reset (isteğe bağlı)
+      setTimeout(() => {
+        button.classList.remove("no-tooltip");
+      }, 1000);
+    });
+  });
+
+
   });
 });
 
@@ -3438,7 +3364,6 @@ async function startNewConversation() {
 function openSidebar() {
   sidebar.classList.add("open");
   mainContent.classList.add("sidebar-open");
-  if (window.innerWidth <= 768) mainContent.style.display = "none";
   document.body.classList.add("sidebar-open");
   newChatBtn.classList.remove("sidebar-closed");
   toggleSidebarBtn.dataset.tooltip = "Kenar çubuğunu kapat"; // title yerine dataset
@@ -3453,7 +3378,6 @@ function closeSidebar() {
   sidebar.classList.remove("open");
   mainContent.classList.remove("sidebar-open");
   document.body.classList.remove("sidebar-open");
-  mainContent.style.display = "block";
   newChatBtn.classList.add("sidebar-closed");
   toggleSidebarBtn.dataset.tooltip = "Kenar çubuğunu aç"; // title yerine dataset
   const img = toggleSidebarBtn.querySelector("img");
@@ -4291,9 +4215,25 @@ newChatBtn.addEventListener("click", () => {
 });
 
 toggleSidebarBtn.addEventListener("click", () => {
-  if (sidebar.classList.contains("open")) closeSidebar();
-  else openSidebar();
-});
+    // Tıklama anında tooltip’i gizle
+    toggleSidebarBtn.classList.add("no-tooltip");
+
+    // Sidebar açma/kapama mantığını koru
+    if (sidebar.classList.contains("open")) {
+      closeSidebar();
+    } else {
+      openSidebar();
+    }
+
+    // Fare ayrıldığında tooltip’i tekrar aktif et
+    toggleSidebarBtn.addEventListener(
+      "mouseleave",
+      () => {
+        toggleSidebarBtn.classList.remove("no-tooltip");
+      },
+      { once: true } // Event listener bir kere çalışsın ve silinsin
+    );
+  });
 
 sidebarBrand.addEventListener("click", () => {
   currentConversation = null;
@@ -4321,22 +4261,24 @@ function makeWelcomeActive() {
   }
 }
 
+// Modal açıldığında settings butonuna "blurred" sınıfı ekle
 document.getElementById("settings-btn").addEventListener("click", () => {
-  console.log("Ayarlar modalı açılıyor, Genel sekmesi zorlanıyor"); // Teşhis için log
   document.getElementById("settings-modal").style.display = "block";
-  setActiveTab("genel"); // Modal açıldığında her zaman "Genel" sekmesini aktif yap
+  document.getElementById("settings-btn").classList.add("blurred");
+  setActiveTab("genel"); // Modal açıldığında "Genel" sekmesini aktif yap
 });
 
+// Modal kapatma işlemi: kapatma butonu veya modal dışına tıklama
 document.getElementById("settings-close").addEventListener("click", () => {
   document.getElementById("settings-modal").style.display = "none";
-  // Kapanırken sekme durumunu değiştirmiyoruz, açılışta sıfırlıyoruz
+  document.getElementById("settings-btn").classList.remove("blurred");
 });
 
 window.addEventListener("click", (event) => {
   const modal = document.getElementById("settings-modal");
-  if (event.target == modal) {
+  if (event.target === modal) {
     modal.style.display = "none";
-    // Kapanırken sekme durumunu değiştirmiyoruz, açılışta sıfırlıyoruz
+    document.getElementById("settings-btn").classList.remove("blurred");
   }
 });
 
@@ -4345,10 +4287,11 @@ window.addEventListener("keydown", (e) => {
     const modal = document.getElementById("settings-modal");
     if (modal && modal.style.display === "block") {
       modal.style.display = "none";
-      // Kapanırken sekme durumunu değiştirmiyoruz, açılışta sıfırlıyoruz
+      document.getElementById("settings-btn").classList.remove("blurred");
     }
   }
 });
+
 
 function adjustTooltipPosition(element) {
   // Sidebar toggle butonu için özel yan pozisyonlandırma
