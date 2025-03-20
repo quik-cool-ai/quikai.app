@@ -290,6 +290,35 @@ body.dark .new-chat-btn:hover img {
   filter: none; /* ikon doğal renginde (muhtemelen siyah) görünsün */
 }
 
+/* Mobil için Ekleme */
+@media (max-width: 768px) {
+  button, .chat-history-item, .settings-nav li {
+    min-width: 44px; /* Dokunmatik dostu minimum boyut */
+    min-height: 44px;
+    font-size: 0.9rem;
+  }
+  body {
+    font-size: 0.9rem; /* Genel okunabilirlik */
+  }
+  ::-webkit-scrollbar {
+    width: 6px; /* Daha ince kaydırma çubuğu */
+  }
+}
+
+@media (max-width: 480px) {
+  .chat-bubble {
+    font-size: 0.85rem;
+    padding: 0.5rem;
+  }
+  #chat-input-textarea {
+    font-size: 0.85rem;
+  }
+  .send-btn {
+    width: 28px;
+    height: 28px;
+  }
+}
+    
 .chat-history-list {
   list-style: none;
   padding: 0.5rem 0;
@@ -560,9 +589,27 @@ body.dark .dark-mode-toggle:hover {
   background-color: var(--bg-color);
   max-width: 800px;
   margin: 0 auto;
+  max-width: 800px;
   width: 100%;
   scroll-behavior: smooth;
 }
+
+/* Mobil için Ekleme */
+@media (max-width: 768px) {
+  .chat-container {
+    max-width: 100%; /* Tam genişlik */
+    padding: 0 0.5rem; /* Daha az kenar boşluğu */
+  }
+  .chat-bubble {
+    max-width: 90%; /* Daha geniş balonlar */
+    padding: 0.5rem 0.75rem;
+    font-size: 0.9rem; /* Küçük ama okunabilir */
+    margin-bottom: 1rem;
+  }
+  .user-bubble, .assistant-bubble {
+    border-radius: 16px; /* Daha yuvarlak köşeler */
+  }
+}    
 
 .chat-container::after {
   content: "";
@@ -678,12 +725,29 @@ body.sidebar-open .chat-input {
 }
 
 /* Responsive ayar: Küçük ekranlar için minimum genişlik */
+/* Mobil için Ekleme */
 @media (max-width: 768px) {
   .chat-input {
-    width: calc(100% - 1rem); /* Daha dar ekranlarda padding azalır */
+    position: fixed; /* Altta sabit */
+    bottom: 5px;
+    left: 0;
+    transform: none; /* Merkezleme kaldır */
+    width: 100%;
+    max-width: 100%;
+    padding: 0.5rem;
+    border-radius: 20px;
   }
-  body.sidebar-open .chat-input {
-    width: calc(100% - var(--sidebar-width) - 1rem);
+  #chat-input-textarea {
+    font-size: 0.9rem;
+    min-height: 2.5rem;
+    max-height: 80px;
+    margin: 0 0.25rem;
+  }
+  .send-btn {
+    width: 32px;
+    height: 32px;
+    bottom: 8px;
+    right: 8px;
   }
 }
 
@@ -1270,6 +1334,34 @@ body.dark .dark-mode-toggle-modal:hover {
 
 body.dark .settings-modal-content {
   background-color: var(--sidebar-bg); /* ya da sidebar rengi olarak kullandığın değişken */
+}
+
+/* Mobil için Ekleme */
+@media (max-width: 768px) {
+  .settings-modal-content {
+    max-width: 100%;
+    max-height: 100vh;
+    margin: 0;
+    border-radius: 0;
+    overflow-y: auto;
+  }
+  .settings-body {
+    flex-direction: column; /* Sekmeler üstte */
+  }
+  .settings-nav ul {
+    display: flex;
+    flex-direction: row;
+    overflow-x: auto;
+    white-space: nowrap;
+  }
+  .settings-nav li {
+    padding: 8px;
+    font-size: 0.85rem;
+    margin-right: 10px;
+  }
+  .settings-content {
+    padding: 1rem;
+  }
 }
 
 /* Header */
@@ -3346,6 +3438,7 @@ async function startNewConversation() {
 function openSidebar() {
   sidebar.classList.add("open");
   mainContent.classList.add("sidebar-open");
+  if (window.innerWidth <= 768) mainContent.style.display = "none";
   document.body.classList.add("sidebar-open");
   newChatBtn.classList.remove("sidebar-closed");
   toggleSidebarBtn.dataset.tooltip = "Kenar çubuğunu kapat"; // title yerine dataset
@@ -3361,6 +3454,7 @@ function closeSidebar() {
   sidebar.classList.remove("open");
   mainContent.classList.remove("sidebar-open");
   document.body.classList.remove("sidebar-open");
+  mainContent.style.display = "block";
   newChatBtn.classList.add("sidebar-closed");
   toggleSidebarBtn.dataset.tooltip = "Kenar çubuğunu aç"; // title yerine dataset
   const img = toggleSidebarBtn.querySelector("img");
