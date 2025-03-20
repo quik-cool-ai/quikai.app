@@ -3176,13 +3176,18 @@ function renderChatHistory() {
           <button class="delete-btn"><img src="icons/delete_btn.png" alt="Sil" /></button>
         </div>
       `;
-      li.addEventListener("click", () => {
-        currentConversation = conv;
-        renderChat();
-        document.querySelectorAll(".chat-history-item").forEach(item => item.classList.remove("active"));
-        li.classList.add("active");
+li.addEventListener("click", () => {
+  currentConversation = conv;
+  renderChat();
+  document.querySelectorAll(".chat-history-item").forEach(item => item.classList.remove("active"));
+  li.classList.add("active");
+  
+  // Mobilde sidebar'ı kapat
+  if (window.innerWidth <= 768) {
+    closeSidebar();
+  }
+});
 
-      });
 li.querySelector(".edit-btn").addEventListener("click", (e) => {
   e.stopPropagation();
   const titleSpan = li.querySelector(".chat-history-title");
