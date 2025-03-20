@@ -563,20 +563,58 @@ body.dark .history-icon {
     }
 
 .welcome-message {
-  position: absolute;
+  position: fixed; /* absolute yerine fixed, ekranın ortasında sabit kalır */
   top: 35%;
   left: 50%;
   transform: translate(-50%, -50%);
   text-align: center;
-  width: 100%;
+  width: 90%; /* Mobil cihazlarda daha esnek */
+  max-width: 600px; /* Masaüstünde maksimum genişlik sınırı */
+  padding: 1rem;
+  box-sizing: border-box;
 }
 
-    .welcome-message h1 {
-      font-size: 2rem;
-    }
-    .welcome-message p {
-      font-size: 1.5rem;
-    }
+.welcome-message h1 {
+  font-size: clamp(1.5rem, 4vw, 2rem); /* Esnek font boyutu: min 1.5rem, max 2rem */
+  margin: 0 0 0.5rem;
+}
+
+.welcome-message p {
+  font-size: clamp(1rem, 3vw, 1.5rem); /* Esnek font boyutu: min 1rem, max 1.5rem */
+  margin: 0;
+}
+
+/* Küçük ekranlar için medya sorgusu */
+@media (max-width: 768px) {
+  .welcome-message {
+    width: 85%; /* Daha küçük ekranlarda biraz daha dar */
+    padding: 0.75rem;
+  }
+
+  .welcome-message h1 {
+    font-size: clamp(1.25rem, 3.5vw, 1.75rem); /* Mobil için biraz küçültülmüş */
+  }
+
+  .welcome-message p {
+    font-size: clamp(0.875rem, 2.5vw, 1.25rem); /* Mobil için optimize */
+  }
+}
+
+/* Çok küçük ekranlar için (örneğin 480px altı) */
+@media (max-width: 480px) {
+  .welcome-message {
+    width: 90%;
+    padding: 0.5rem;
+  }
+
+  .welcome-message h1 {
+    font-size: clamp(1rem, 3vw, 1.5rem);
+  }
+
+  .welcome-message p {
+    font-size: clamp(0.75rem, 2vw, 1rem);
+  }
+}
 
     /* Animasyon */
     @keyframes fadeIn {
@@ -676,7 +714,28 @@ body.dark .history-icon {
         left: 50%;
         width: calc(100% - 1rem);
       }
+#chat-input-textarea {
+    font-size: clamp(0.75rem, 2.5vw, 0.875rem); /* Daha küçük font */
+    min-height: clamp(35px, 8vh, 50px); /* Mobil için daha kompakt */
+    max-height: clamp(60px, 15vh, 100px);
+    margin: 0 0.25rem; /* Daha az yan boşluk */
+  }
     }
+
+/* Çok küçük ekranlar için (örneğin 480px altı) */
+@media (max-width: 480px) {
+  .chat-input {
+    width: calc(100% - 0.5rem);
+    padding: 0.25rem;
+  }
+
+  #chat-input-textarea {
+    font-size: clamp(0.6875rem, 2vw, 0.75rem);
+    min-height: clamp(30px, 6vh, 40px);
+    max-height: clamp(50px, 12vh, 80px);
+    padding: 0.25rem 0;
+  }
+}
 
     #chat-input-textarea {
       font-family: 'Inter', sans-serif;
@@ -688,8 +747,8 @@ body.dark .history-icon {
       outline: none;
       background: transparent;
       resize: none;
-      max-height: 100px;
-      min-height: 100px;
+min-height: clamp(40px, 10vh, 60px); /* Mobil için daha küçük, masaüstü için uygun */
+  max-height: clamp(80px, 20vh, 120px); /* Maksimum yükseklik esnek */
       overflow-y: auto;
       margin: 0 0.5rem;
       width: 100%;
@@ -3826,7 +3885,7 @@ async function sendMessage() {
       newAssistantMessage.complete = false;
       console.log("Streaming iptal edildi.");
     } else {
-      updateAssistantBubble("Bir hata oluştu: " + err.message);
+      updateAssistantBubble("Hata: " + err.message);
     }
   } finally {
     isStreaming = false;
