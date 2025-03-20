@@ -563,8 +563,8 @@ body.dark .history-icon {
     }
 
 .welcome-message {
-  position: fixed; /* absolute yerine fixed, ekranın ortasında sabit kalır */
-  top: 40%;
+  position: absolute; /* absolute yerine fixed, ekranın ortasında sabit kalır */
+  top: 35%;
   left: 50%;
   transform: translate(-50%, -50%);
   text-align: center;
@@ -706,8 +706,10 @@ body.dark .history-icon {
     @media (max-width: 768px) {
       .chat-input {
         width: 100%;
-        bottom: 10px;
+        bottom: 20px;
         padding-bottom: 1rem;
+
+        border-radius: 20px;
       }
       body.sidebar-open .chat-input {
         left: 50%;
@@ -1060,6 +1062,11 @@ body.dark #web-search-btn:hover {
   background-color: #96bfff;
 }
 
+body.dark #web-search-btn.active:hover {
+  background-color: #96bfff;
+}
+
+
 body.dark #send-btn.stop-state img {
   filter: brightness(0) invert(1);
 }
@@ -1327,10 +1334,6 @@ body.dark .settings-modal-content {
     border-radius: 12px 12px 0 0; /* Üstte yuvarlak, altta düz */
   }
 
-  .settings-body {
-    flex-direction: column; /* Sekmeler üstte, içerik altta */
-  }
-
   .settings-nav {
     border-bottom: 1px solid var(--code-border);
   }
@@ -1438,8 +1441,10 @@ body.dark .settings-close:hover {
 /* Ayarlar gövdesi: solda menü, sağda içerik */
 .settings-body {
   display: flex;
-  flex: 1;
-  min-height: 0; /* İçeriğin taşmasını önler */
+  flex: 1; /* Modal içeriğinin tamamını kaplasın */
+  min-height: 0; /* Flex içindeki taşmayı önler */
+  max-height: 100%; /* Modalın iç yüksekliğini aşmasın */
+  overflow: hidden; /* Taşmayı tamamen engelle */
 }
 
 /* Sol Sekme Menüsü */
