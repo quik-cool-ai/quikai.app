@@ -4268,6 +4268,13 @@ toggleSidebarBtn.addEventListener("click", () => {
       openSidebar();
     }
 
+if (sidebar.classList.contains("open")) {
+  document.getElementById("settings-btn").style.zIndex = "100"; // Sidebar'ın z-index'inden düşük
+} else {
+  document.getElementById("settings-btn").style.zIndex = "1000"; // Normal değere döndür
+}
+
+
     // Fare ayrıldığında tooltip’i tekrar aktif et
     toggleSidebarBtn.addEventListener(
       "mouseleave",
