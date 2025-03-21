@@ -4054,50 +4054,87 @@ async function sendMessage() {
   const userMessage = chatInput.value.trim();
   if (!userMessage) return;
 
-  // Yeni sohbet oluşturma kontrolü
-  if (!currentConversation) {
-    startNewConversation();
+  // Dosya içeriğini ayrı bir değişkende tutalım (kullanıcı arayüzünde görünmeyecek)
+  let fileContent = "";
+if (uploadedFiles.length > 0) {
+    const formData = new FormData();
+    uploadedFiles.forEach(file => formData.append("files", file));
+    fetch("http://localhost:5000/upload", { method: "POST", body: formData })
+        .then(response => response.json())
+        .then(data => {
+            fileContent = data.content;
+            // Dosya içeriği geldikten sonra ek işlem yap
+        });
+
+    try {
+      const response = await fetch("http://localhost:5000/upload", {
+        method: "POST",
+        body: formData
+      });
+      if (response.ok) {
+        const data = await response.json();
+        fileContent = data.content; // Bu içerik backend tarafından döndürülen dosya metni
+      } else {
+        console.error("Dosya yükleme hatası:", response.statusText);
+      }
+    } catch (err) {
+      console.error("Dosya yükleme API hatası:", err);
+    }
+    // Dosya yükleme işlemi bittikten sonra diziyi temizleyin
+    uploadedFiles = [];
+    fileContainer.innerHTML = "";
   }
 
-  // 1) Kullanıcı mesajına ID ekleyin
+  // Kullanıcıya gösterilen mesajı yalnızca chatInput.value'den alıyoruz
+  const displayedMessage = userMessage;
+  // Backend'e gönderilecek mesaj; dosya içeriği eklenmiş halde
+  const combinedMessage = fileContent 
+  ? `${userMessage}\n\n[DOSYA EKİ]:\n${fileContent}`
+  : userMessage;
+
+  // Yeni sohbet oluşturma kontrolü
+  if (!currentConversation) {
+    await startNewConversation();
+  }
+
+  // Kullanıcı mesajı için ID oluşturun ve chat geçmişine ekleyin (UI'da sadece displayedMessage gösterilecek)
   const userMessageId = Date.now().toString() + "_user";
   currentConversation.messages.push({
     id: userMessageId,
     sender: "user",
-    text: userMessage
+    text: displayedMessage // Arayüzde sadece bu mesaj gözükür
   });
 
-  // Kullanıcı balonu oluştururken ID'yi de gönder
-  appendMessageBubble("user", userMessage, userMessageId);
+  // Kullanıcı balonunu UI'ya ekleyin
+  appendMessageBubble("user", displayedMessage, userMessageId);
 
   chatInput.value = "";
   chatInput.style.height = "auto";
   scrollChatToBottom();
 
-  // Eğer ilk mesajsa başlık oluştur (aynı mantık)
+  // Eğer ilk mesajsa sohbet başlığı üretimi
   if (currentConversation.messages.length === 1) {
     try {
       const response = await fetch("http://localhost:5000/generate-title", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ message: userMessage })
+        body: JSON.stringify({ message: combinedMessage })
       });
       const data = await response.json();
       currentConversation.title = data.title || "Yeni Sohbet";
       renderChatHistory();
     } catch (err) {
       console.error("Title fetch error:", err);
-      currentConversation.title = "Yeni Sohbet"; // Fallback
+      currentConversation.title = "Yeni Sohbet";
       renderChatHistory();
     }
   }
 
   saveConversations();
 
-  // 2) Asistan cevabı için de ID ekleyin
+  // Asistan mesajı için ID oluşturun ve UI'ya ekleyin
   const assistantMessageId = (Date.now() + 1).toString() + "_assistant";
   createAssistantBubble(assistantMessageId);
-
   let assistantText = "";
   let newAssistantMessage = {
     id: assistantMessageId,
@@ -4114,11 +4151,12 @@ async function sendMessage() {
   setSendButtonToStopState();
 
   try {
+    // Backend'e gönderilen payload içerisinde combinedMessage kullanılıyor
     const response = await fetch("http://localhost:5000/chat", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
-        message: userMessage,
+        message: combinedMessage, // Burada dosya içeriği de var
         history: currentConversation.messages,
         enable_web_search: enableWebSearch,
         model: selectedModel,
@@ -4154,14 +4192,11 @@ async function sendMessage() {
           const event = events[i];
           if (event.startsWith("data: ")) {
             const dataStr = event.substring(6).trim();
-
-            // [DONE] kontrolü
             if (dataStr === "[DONE]") {
               done = true;
               addFeedbackControls(currentAssistantBubble, assistantText);
               break;
             }
-
             try {
               const dataObj = JSON.parse(dataStr);
               const content = dataObj.text;
@@ -4178,7 +4213,7 @@ async function sendMessage() {
       }
     }
 
-    // Streaming bitti ama [DONE] gelmediyse yine de feedback ekle
+    // Streaming tamamlandığında geri bildirim ekle
     if (!done) {
       addFeedbackControls(currentAssistantBubble, assistantText);
     }
@@ -4776,6 +4811,31 @@ const fileContainer = document.getElementById("file-container");
 let uploadedFiles = []; // Yüklenen dosyaları tutacak dizi
 const allowedExtensions = [".pdf", ".doc", ".docx", ".txt"]; // İzin verilen uzantılar
 
+
+// Dosyalar yüklendikten sonra, backend'e gönderim için örnek API çağrısı
+async function sendFileToBackend(file) {
+  const formData = new FormData();
+  formData.append("file", file);
+  
+  try {
+    const response = await fetch("http://localhost:5000/process-file", {
+      method: "POST",
+      body: formData
+    });
+    if (!response.ok) {
+      console.error("Dosya işleme hatası:", response.statusText);
+      return;
+    }
+    const result = await response.json();
+    // result.text, dosyadan ayrıştırılmış metin içeriği olacak
+    // Bu metni bot mesajı olarak ekleyebilirsiniz
+    console.log("Dosya içeriği:", result.text);
+  } catch (err) {
+    console.error("API çağrısı sırasında hata:", err);
+  }
+}
+
+
 // Dosyaları gösterme fonksiyonu
 function displayFiles(files) {
   for (const file of files) {
@@ -4783,13 +4843,11 @@ function displayFiles(files) {
       alert("Maksimum 5 dosya yükleyebilirsiniz.");
       return;
     }
-
     const ext = "." + file.name.split(".").pop().toLowerCase();
     if (!allowedExtensions.includes(ext)) {
       alert("Sadece .pdf, .doc, .docx, .txt uzantılı dosya yükleyebilirsiniz.");
       continue;
     }
-
     uploadedFiles.push(file);
     const fileBox = document.createElement("div");
     fileBox.className = "file-box";
@@ -4801,11 +4859,14 @@ function displayFiles(files) {
     `;
     fileContainer.appendChild(fileBox);
 
-    // Dosyayı kaldırma işlevi
+    // Dosya kaldırma işlevi
     fileBox.querySelector(".remove-file-btn").addEventListener("click", () => {
       uploadedFiles = uploadedFiles.filter(f => f !== file);
       fileBox.remove();
     });
+
+    // Eklenen dosyayı backend'e gönder ve metni al
+    sendFileToBackend(file);
   }
 }
 
