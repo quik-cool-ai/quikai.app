@@ -657,12 +657,11 @@ body.dark .history-icon {
   white-space: normal;   /* Fazla boşluklar ortadan kalksın */
   overflow-wrap: break-word;
   max-width: 100% !important;
-
   flex-direction: column;
   gap: 0;
   padding-bottom: 0;
   line-height: 1.5;
-  margin-bottom: 2rem;
+  margin-bottom: 3rem;
 }
 
 .assistant-bubble pre code {
@@ -1004,7 +1003,7 @@ pre code {
 #web-search-btn {
   position: fixed;    /* Sayfanın sol altına sabitle */
   bottom: 15px;       /* Alttan 20px boşluk */
-  left: 18px;         /* Soldan 20px boşluk */
+  left: 70px;         /* Soldan 20px boşluk */
   z-index: 200;       /* Chat inputtan daha üstte veya altta olmasına göre ayarla */
   background-color: transparent;
   border: none;
@@ -2524,6 +2523,7 @@ body.dark .feedback-controls button[data-tooltip]::after {
   transform: var(--tooltip-transform, translateX(-50%) translateY(5px));
 }
 
+#file-upload-btn[data-tooltip]::after,
 #web-search-btn[data-tooltip]::after,
 #send-btn[data-tooltip]::after {
   left: 50%;
@@ -2792,6 +2792,148 @@ body.dark .data-control-card {
   font-size: 0.9rem;
 }
 
+/* File Upload Button */
+.file-upload-btn {
+  position: fixed;
+  background-color: var(--input-bg);
+  border: none;
+  border-radius: 12px;
+  width: 40px;
+  height: 35px;
+  bottom: 15px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-left: 10px; /* Butonu soldan 10px sağa kaydırır */
+  margin-right: 10px; /* Space between file upload and web search buttons */
+  box-shadow: 0 4px 6px -2px rgba(0, 0, 0, 0.15), 4px 0 6px -2px rgba(0, 0, 0, 0.15), -4px 0 6px -2px rgba(0, 0, 0, 0.15), 0 -4px 6px -2px rgba(0, 0, 0, 0.15);
+}
+
+.file-upload-btn:hover {
+  background-color: #c0c0c0;
+}
+
+body.dark .file-upload-btn img {
+  filter: brightness(0) invert(1);
+}
+
+body.dark .file-upload-btn:hover img {
+  filter: none;
+}
+
+/* File Container */
+.file-container {
+  position: absolute;
+  top: -40px; /* Position above the chat input */
+  left: 18px;
+  display: flex;
+  gap: 10px; /* Space between file boxes */
+  flex-wrap: nowrap; /* Keep files in a single row */
+  overflow-x: auto; /* Allow horizontal scrolling if files exceed width */
+  max-width: calc(100% - 20px); /* Fit within chat input width */
+}
+
+/* Individual File Box */
+.file-box {
+  display: flex;
+  align-items: center;
+  background-color: var(--input-bg);
+  border: 1px solid var(--code-border);
+  border-radius: 8px;
+  padding: 5px 10px;
+  max-width: 144px; /* Limit width of each file box */
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+body.dark .file-box {
+  background-color: #303030;
+  border-color: #444;
+}
+
+.file-name {
+  font-size: 0.8rem;
+  color: var(--text-color);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 100px; /* Limit text width within box */
+}
+
+.remove-file-btn {
+  background: none;
+  border: none;
+  cursor: pointer;
+  margin-left: 5px;
+  padding: 0;
+  width: 20px;
+  height: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.remove-file-btn img {
+  width: 12px;
+  height: 12px;
+}
+
+body.dark .remove-file-btn img {
+  filter: brightness(0) invert(1);
+}
+
+body.dark .remove-file-btn:hover img {
+  filter: none;
+}
+
+/* Drop zone penceresi */
+.drop-zone {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 400px;
+  padding: 20px;
+  background-color: rgba(255, 255, 255, 0.95); /* Hafif şeffaf beyaz */
+  border: 2px dashed #007bff; /* Kesikli mavi çerçeve */
+  border-radius: 10px;
+  text-align: center;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+  z-index: 1000; /* En üstte olsun */
+  display: none; /* Normalde gizli */
+  transition: opacity 0.3s ease;
+}
+
+.drop-zone.active {
+  display: block; /* Sürükleme sırasında görünür */
+  opacity: 1;
+}
+
+.drop-zone p {
+  margin: 10px 0;
+  font-size: 1.2rem;
+  color: #333;
+}
+
+.drop-zone .subtext {
+  font-size: 0.9rem;
+  color: #666;
+}
+
+/* Dark mod uyumluluğu */
+body.dark .drop-zone {
+  background-color: rgba(50, 50, 50, 0.95); /* Koyu tema için */
+  border-color: #1e90ff;
+}
+
+body.dark .drop-zone p {
+  color: #fff;
+}
+
+body.dark .drop-zone .subtext {
+  color: #ccc;
+}
+
   </style>
 </head>
 
@@ -2855,7 +2997,12 @@ body.dark .data-control-card {
   </div>
 </div>
 
+<!-- Chat Input kısmı -->
 <div class="chat-input">
+  <div class="file-container" id="file-container"></div> <!-- Container for uploaded files -->
+  <button class="file-upload-btn" id="file-upload-btn" data-tooltip="Dosya Ekle">
+    <img src="icons/addfile_btn.png" alt="Add File Icon" style="width:20px; height:20px;">
+  </button>
   <button id="web-search-btn" data-tooltip="Web Araması">
     <img src="icons/web_search_btn.png" alt="Web Search Icon" style="width:19px; height:19px; vertical-align: middle; margin-right: 5px;">
     <span>Ara</span>
@@ -2864,6 +3011,11 @@ body.dark .data-control-card {
   <button id="send-btn" class="send-btn" data-tooltip="Gönder">
     <img src="icons/send_btn.png" alt="Send Icon" style="width:17px; height:17px;">
   </button>
+</div>
+
+<div id="drop-zone" class="drop-zone">
+  <p>Dosyalarınızı buraya bırakın</p>
+  <p class="subtext">Dosyalarınızı buraya bırakarak sohbete ekleyin</p>
 </div>
 
 <!-- Ayarlar Butonu -->
@@ -4607,6 +4759,101 @@ document.addEventListener('keydown', function (e) {
   }
 });
 
+// File upload handling
+const fileUploadBtn = document.getElementById("file-upload-btn");
+const fileInput = document.createElement("input");
+fileInput.type = "file";
+fileInput.accept = ".pdf,.doc,.docx,.txt"; // İzin verilen dosya türleri
+fileInput.multiple = true; // Çoklu dosya seçimi
+fileInput.style.display = "none"; // Girdi alanını gizle
+document.body.appendChild(fileInput);
+
+const fileContainer = document.getElementById("file-container");
+let uploadedFiles = []; // Yüklenen dosyaları tutacak dizi
+const allowedExtensions = [".pdf", ".doc", ".docx", ".txt"]; // İzin verilen uzantılar
+
+// Dosyaları gösterme fonksiyonu
+function displayFiles(files) {
+  for (const file of files) {
+    if (uploadedFiles.length >= 5) {
+      alert("Maksimum 5 dosya yükleyebilirsiniz.");
+      return;
+    }
+
+    const ext = "." + file.name.split(".").pop().toLowerCase();
+    if (!allowedExtensions.includes(ext)) {
+      alert("Sadece .pdf, .doc, .docx, .txt uzantılı dosya yükleyebilirsiniz.");
+      continue;
+    }
+
+    uploadedFiles.push(file);
+    const fileBox = document.createElement("div");
+    fileBox.className = "file-box";
+    fileBox.innerHTML = `
+      <span class="file-name">${file.name}</span>
+      <button class="remove-file-btn">
+        <img src="icons/close_btn.png" alt="Remove File">
+      </button>
+    `;
+    fileContainer.appendChild(fileBox);
+
+    // Dosyayı kaldırma işlevi
+    fileBox.querySelector(".remove-file-btn").addEventListener("click", () => {
+      uploadedFiles = uploadedFiles.filter(f => f !== file);
+      fileBox.remove();
+    });
+  }
+}
+
+// Butonla dosya yükleme
+fileUploadBtn.addEventListener("click", () => {
+  fileInput.click();
+});
+
+fileInput.addEventListener("change", () => {
+  if (fileInput.files.length > 0) {
+    displayFiles(fileInput.files);
+    fileInput.value = ""; // Girdi alanını sıfırla
+  }
+});
+
+// Tüm sayfa için sürükleyip bırakma işlevi
+// Drop zone’u seç
+const dropZone = document.getElementById("drop-zone");
+
+// Tüm sayfa için olay dinleyicileri
+document.addEventListener("dragover", (e) => {
+  e.preventDefault(); // Varsayılan davranışı engelle
+  dropZone.classList.add("active"); // Drop zone’u göster
+});
+
+document.addEventListener("dragleave", (e) => {
+  // İmleç sayfa dışına çıktığında drop zone’u gizle
+  if (e.relatedTarget === null || !document.contains(e.relatedTarget)) {
+    dropZone.classList.remove("active");
+  }
+});
+
+document.addEventListener("drop", (e) => {
+  e.preventDefault(); // Varsayılan davranışı engelle
+  dropZone.classList.remove("active"); // Drop zone’u gizle
+  const files = e.dataTransfer.files; // Sürüklenen dosyaları al
+  if (files.length > 0) {
+    displayFiles(files); // Dosyaları file-container’a ekle
+  }
+});
+
+// Yeni sohbet başlatıldığında dosyaları temizle
+newChatBtn.addEventListener("click", () => {
+  uploadedFiles = [];
+  fileContainer.innerHTML = "";
+});
+
+// Sidebar marka tıklandığında dosyaları temizle (isteğe bağlı)
+sidebarBrand.addEventListener("click", () => {
+  uploadedFiles = [];
+  fileContainer.innerHTML = "";
+});
 
   </script>
 </body>
