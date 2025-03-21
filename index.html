@@ -583,23 +583,23 @@ body.dark .history-icon {
   margin: 0;
 }
 
-/* Küçük ekranlar için medya sorgusu */
+/* Media query for small screens (max-width: 768px) */
 @media (max-width: 768px) {
   .welcome-message {
-    width: 85%; /* Daha küçük ekranlarda biraz daha dar */
+    width: 85%; /* Slightly narrower for smaller screens */
     padding: 0.75rem;
   }
 
   .welcome-message h1 {
-    font-size: clamp(1.25rem, 3.5vw, 1.75rem); /* Mobil için biraz küçültülmüş */
+    font-size: clamp(1.5rem, 4vw, 2rem); /* Increased from 1.25rem-1.75rem range */
   }
 
   .welcome-message p {
-    font-size: clamp(0.875rem, 2.5vw, 1.25rem); /* Mobil için optimize */
+    font-size: clamp(1rem, 3vw, 1.5rem); /* Increased from 0.875rem-1.25rem range */
   }
 }
 
-/* Çok küçük ekranlar için (örneğin 480px altı) */
+/* Media query for very small screens (max-width: 480px) */
 @media (max-width: 480px) {
   .welcome-message {
     width: 90%;
@@ -607,11 +607,11 @@ body.dark .history-icon {
   }
 
   .welcome-message h1 {
-    font-size: clamp(1rem, 3vw, 1.5rem);
+    font-size: clamp(1.25rem, 3.5vw, 1.75rem); /* Increased from 1rem-1.5rem range */
   }
 
   .welcome-message p {
-    font-size: clamp(0.75rem, 2vw, 1rem);
+    font-size: clamp(0.875rem, 2.5vw, 1.25rem); /* Increased from 0.75rem-1rem range */
   }
 }
 
@@ -3098,7 +3098,7 @@ body.dark .data-control-card {
 
             <!-- Açıklayıcı Metin -->
             <p class="general-description">
-              Sana daha iyi bir tecrübe sunmak için aşağıdaki kutucuğu doldurabilirsin.
+              Sana daha iyi bir hizmet sunabilmem için bana ne istediğini söyleyebilirsin.
             </p>
              
             <p class="general-description">
