@@ -1326,12 +1326,14 @@ body.dark .settings-modal-content {
 @media (max-width: 768px) {
   .settings-modal-content {
     width: 100%;
-    max-height: 80vh; /* Mobil için daha fazla alan */
+    height: 80vh; /* Mobil için de sabit yükseklik */
+    max-height: 80vh; /* Maksimum yükseklik korunsun */
     margin: 0;
     position: fixed;
     bottom: 0;
     left: 0;
     border-radius: 12px 12px 0 0; /* Üstte yuvarlak, altta düz */
+    overflow: hidden; /* Taşma gizlensin */
   }
 
   .settings-nav {
@@ -1351,9 +1353,10 @@ body.dark .settings-modal-content {
   }
 
   .settings-content {
-    padding: 10px;
+    height: 100%; /* Mobil için de sabit */
+    overflow-y: auto; /* Kaydırma çubuğu aktif */
   }
-
+}
   .settings-header {
     padding: 8px 10px;
   }
@@ -1441,10 +1444,10 @@ body.dark .settings-close:hover {
 /* Ayarlar gövdesi: solda menü, sağda içerik */
 .settings-body {
   display: flex;
-  flex: 1; /* Modal içeriğinin tamamını kaplasın */
-  min-height: 0; /* Flex içindeki taşmayı önler */
-  max-height: 100%; /* Modalın iç yüksekliğini aşmasın */
-  overflow: hidden; /* Taşmayı tamamen engelle */
+  flex: 1; /* Modalın içini doldursun */
+  min-height: 0; /* Flex taşmasını önler */
+  height: 100%; /* Üst kapsayıcının tam yüksekliği */
+  overflow: hidden; /* Taşma gizlensin */
 }
 
 /* Sol Sekme Menüsü */
@@ -1521,11 +1524,10 @@ body.dark .settings-nav li.active {
 
 /* Sağ içerik */
 .settings-content {
-  flex: 1;
-  overflow-y: auto; /* Dikey kaydırma, zoomda taşmayı önler */
-  overflow-x: hidden; /* Yatay taşmayı engelle */
-  max-height: 100%; /* Modalın yüksekliğini aşmasın */
-  padding: 15px;
+  flex: 1; /* Genişlik esnek kalsın */
+  overflow-y: auto; /* İçerik taşarsa dikey kaydırma çubuğu */
+  overflow-x: hidden; /* Yatay taşma olmasın */
+  height: 100%; /* Üst kapsayıcının tam yüksekliği */
   box-sizing: border-box;
 }
 
@@ -2040,15 +2042,19 @@ body.dark input:checked + .notification-slider {
 .web-search-toggle-group {
   display: flex;
   gap: 1rem;
+  flex-wrap: wrap; /* Zoomda alt alta kayacak */
+  justify-content: center; /* Ortalı hizalama */
 }
 
 /* Web Arama Butonları */
 .web-search-toggle-group .web-search-btn {
-  flex: 1;  /* Butonlar eşit genişlikte olacak */
+  flex: 1; /* Esnek genişlik */
+  min-width: 100px; /* Minimum genişlik */
+  max-width: 200px; /* Maksimum genişlik */
+  padding: 0.5rem; /* Sabit padding */
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 0.5rem;
   border: 1px solid var(--code-border);
   border-radius: 8px;
   background-color: var(--sidebar-bg);
@@ -2057,6 +2063,7 @@ body.dark input:checked + .notification-slider {
   font-weight: 600;
   box-sizing: border-box;
   cursor: pointer;
+  transition: background-color 0.3s ease;
 }
 
 /* Hover ve aktif durum: */
@@ -2096,6 +2103,44 @@ body.dark .web-search-toggle-group .web-search-btn:not(.active):hover .web-searc
 
 .web-search-toggle-group .web-search-btn.active .web-search-icon {
   filter: none !important;
+}
+
+/* Responsive Ayarlar: Görünüm kartındaki gibi */
+@media (max-width: 768px) {
+  .web-search-toggle-group {
+    gap: 0.75rem;
+    flex-direction: column;
+    align-items: stretch;
+  }
+  .web-search-toggle-group .web-search-btn {
+    min-width: unset;
+    max-width: unset;
+    padding: 0.75rem;
+    font-size: clamp(0.75rem, 2vw, 0.875rem);
+  }
+}
+
+@media (max-width: 480px) {
+  .web-search-toggle-group {
+    gap: 0.5rem;
+    flex-direction: column;
+    align-items: stretch;
+  }
+  .web-search-toggle-group .web-search-btn {
+    font-size: clamp(0.75rem, 2vw, 0.875rem);
+    padding: 0.5rem;
+  }
+  .web-search-toggle-group .web-search-btn .web-search-icon {
+    width: 10px;
+    height: 10px;
+    margin-right: 0.4rem;
+  }
+}
+
+@media (max-width: 768px) {
+  .card {
+    padding: 10px;
+  }
 }
 
 /* Tablo Stilleri */
@@ -4229,23 +4274,27 @@ deleteAllChatsBtn.addEventListener("click", () => {
   const navItems = document.querySelectorAll(".settings-nav li");
   const tabContents = document.querySelectorAll(".tab-content");
 
-  function setActiveTab(tabId) {
-    console.log("setActiveTab çağrıldı, sekme:", tabId); // Teşhis için log
-    navItems.forEach(i => i.classList.remove("active"));
-    tabContents.forEach(tc => {
-      tc.classList.remove("active");
-      tc.style.display = "none";
-    });
-    const selectedNav = Array.from(navItems).find(item => item.getAttribute("data-tab") === tabId);
-    const selectedTab = document.getElementById(tabId);
-    if (selectedNav && selectedTab) {
-      selectedNav.classList.add("active");
-      selectedTab.classList.add("active");
-      selectedTab.style.display = "block";
-    } else {
-      console.error("Sekme bulunamadı:", tabId); // Hata teşhisi
-    }
+function setActiveTab(tabId) {
+  navItems.forEach(i => i.classList.remove("active"));
+  tabContents.forEach(tc => {
+    tc.classList.remove("active");
+    tc.style.display = "none";
+  });
+  const selectedNav = Array.from(navItems).find(item => item.getAttribute("data-tab") === tabId);
+  const selectedTab = document.getElementById(tabId);
+  if (selectedNav && selectedTab) {
+    selectedNav.classList.add("active");
+    selectedTab.classList.add("active");
+    selectedTab.style.display = "block";
+
+    // Modalın yüksekliğini sabit tut
+    const settingsModalContent = document.querySelector(".settings-modal-content");
+    settingsModalContent.style.height = "80vh"; // CSS ile aynı değeri kullan
+    settingsModalContent.style.maxHeight = "80vh";
+  } else {
+    console.error("Sekme bulunamadı:", tabId);
   }
+}
 
   navItems.forEach(item => {
     item.addEventListener("click", () => {
