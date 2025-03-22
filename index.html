@@ -1914,7 +1914,6 @@ body.dark .setting-row select {
   color: var(--text-color);
   font-weight: 600;
   box-sizing: border-box;
-  transition: background-color 0.3s ease; /* Pürüzsüz renk değişimi */
 }
 .theme-selection .theme-btn:hover,
 .theme-selection .theme-btn.active {
@@ -1985,12 +1984,15 @@ body.dark .theme-selection .theme-btn:not(.active):hover .theme-icon {
 .notification-switch {
   position: relative;
   display: inline-block;
-  width: 40px; /* Daha küçük hale getirdik */
-  height: 20px; /* Daha ince bir görünüm sağladık */
-  vertical-align: middle; /* Metinle hizala */
+  /* Ebeveyn boyut: 2.5em x 1.25em */
+  width: 2.5em;   
+  height: 1.25em;
+  vertical-align: middle;
 }
 
+
 .notification-switch input {
+  /* Görünmez input */
   opacity: 0;
   width: 0;
   height: 0;
@@ -1998,35 +2000,55 @@ body.dark .theme-selection .theme-btn:not(.active):hover .theme-icon {
 
 .notification-slider {
   position: absolute;
+  inset: 0;                /* top:0; right:0; bottom:0; left:0; */
   cursor: pointer;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
   background-color: #c0c0c0;
   transition: 0.3s;
-  border-radius: 22px;
+  border-radius: 9999px;   /* Tam yuvarlak uçlar */
+  overflow: hidden;        /* İç taşmaları gizle */
 }
 
 .notification-slider:before {
   position: absolute;
   content: "";
-  height: 14px; /* Küçültüldü */
-  width: 14px;
-  left: 2px;
-  bottom: 3px;
-  background-color: white;
-  transition: transform 0.2s ease-in-out;
+  /* Top, ebeveynin 1em'ine denk gelecek şekilde boyutlanır */
+  width: 1em;
+  height: 1em;
+  /* Pist kenarından 0.125em boşluk bırakalım */
+  left: 0.125em;
+  bottom: 0.125em;
+  background-color: #fff;
   border-radius: 50%;
+  transition: transform 0.2s ease-in-out;
 }
 
+/* Switch açılınca arka plan rengi ve topun kayma mesafesi */
 input:checked + .notification-slider {
-  background-color: #000000; /* Açık olduğunda mavi renk */
+  background-color: #10a37f; /* Veya istediğiniz renk */
+}
+input:checked + .notification-slider:before {
+  /* Top, sağ tarafa 1em kayacak (pist genişliğinin geri kalanı kadar) */
+  transform: translateX(1.2em);
 }
 
-input:checked + .notification-slider:before {
-  transform: translateX(22px); /* Buton açılınca tam kayacak */
+@media (max-width: 768px) {
+  .notification-switch {
+    width: 2em;    /* Biraz küçültülmüş */
+    height: 1em;   /* Boyutu düşürdük */
+  }
+  .notification-slider:before {
+    width: 0.8em;
+    height: 0.8em;
+    left: 0.1em;
+    bottom: 0.1em;
+  }
+  input:checked + .notification-slider:before {
+    /* 2em genişlik - top (0.8em) = 1.2em kalan; 
+       kenarlardan (0.1em x2) çıkarınca ~1em kayma */
+    transform: translateX(1em);
+  }
 }
+
 
 /* Dark Mode Ayarları */
 body.dark .notification-slider {
@@ -2062,7 +2084,6 @@ body.dark input:checked + .notification-slider {
   font-weight: 600;
   box-sizing: border-box;
   cursor: pointer;
-  transition: background-color 0.3s ease;
 }
 
 /* Hover ve aktif durum: */
@@ -3166,13 +3187,13 @@ body.dark .drop-zone .subtext {
   <!-- Konteyner: Tüm bildirim ayarlarını saran ana kapsayıcı -->
   <div class="notifications-container">
 
-    <!-- 1. Kart: Anlık mesaj bildirimi -->
+    <!-- 1. Kart: Uygulama bildirimi -->
     <div class="notification-card">
       <div class="notification-header">
         <!-- İkon (opsiyonel) -->
         <div class="notification-heading-left">
           <img src="icons/notification.png" alt="Bildirim" class="notification-icon">
-          <span class="notification-name">Anlık mesaj bildirimi</span>
+          <span class="notification-name">Uygulama bildirimi</span>
         </div>
 
         <!-- Switch (Toggle) -->
@@ -3227,7 +3248,7 @@ body.dark .drop-zone .subtext {
   <div class="notification-header">
     <div class="notification-heading-left">
       <img src="icons/download.png" alt="Dosya İndirme" class="notification-icon">
-      <span class="notification-name">Dosya indirme bildirimi</span>
+      <span class="notification-name">İndirme bildirimi</span>
     </div>
     <label class="notification-switch">
       <input type="checkbox" id="toggle-download-notifications" checked>
@@ -4054,18 +4075,10 @@ async function sendMessage() {
   const userMessage = chatInput.value.trim();
   if (!userMessage) return;
 
-  // Dosya içeriğini ayrı bir değişkende tutalım (kullanıcı arayüzünde görünmeyecek)
   let fileContent = "";
-if (uploadedFiles.length > 0) {
+  if (uploadedFiles.length > 0) {
     const formData = new FormData();
     uploadedFiles.forEach(file => formData.append("files", file));
-    fetch("http://localhost:5000/upload", { method: "POST", body: formData })
-        .then(response => response.json())
-        .then(data => {
-            fileContent = data.content;
-            // Dosya içeriği geldikten sonra ek işlem yap
-        });
-
     try {
       const response = await fetch("http://localhost:5000/upload", {
         method: "POST",
@@ -4073,46 +4086,42 @@ if (uploadedFiles.length > 0) {
       });
       if (response.ok) {
         const data = await response.json();
-        fileContent = data.content; // Bu içerik backend tarafından döndürülen dosya metni
+        fileContent = data.content;
       } else {
-        console.error("Dosya yükleme hatası:", response.statusText);
+        console.error("File upload error:", response.statusText);
       }
     } catch (err) {
-      console.error("Dosya yükleme API hatası:", err);
+      console.error("File upload API error:", err);
     }
-    // Dosya yükleme işlemi bittikten sonra diziyi temizleyin
     uploadedFiles = [];
     fileContainer.innerHTML = "";
   }
 
-  // Kullanıcıya gösterilen mesajı yalnızca chatInput.value'den alıyoruz
   const displayedMessage = userMessage;
-  // Backend'e gönderilecek mesaj; dosya içeriği eklenmiş halde
   const combinedMessage = fileContent 
-  ? `${userMessage}\n\n[DOSYA EKİ]:\n${fileContent}`
-  : userMessage;
+    ? `${userMessage}\n\n[DOSYA EKİ]:\n${fileContent}`
+    : userMessage;
 
-  // Yeni sohbet oluşturma kontrolü
   if (!currentConversation) {
     await startNewConversation();
   }
 
-  // Kullanıcı mesajı için ID oluşturun ve chat geçmişine ekleyin (UI'da sadece displayedMessage gösterilecek)
   const userMessageId = Date.now().toString() + "_user";
   currentConversation.messages.push({
     id: userMessageId,
     sender: "user",
-    text: displayedMessage // Arayüzde sadece bu mesaj gözükür
+    text: displayedMessage
   });
 
-  // Kullanıcı balonunu UI'ya ekleyin
   appendMessageBubble("user", displayedMessage, userMessageId);
+
+  // Check for URL and notify user
+  const urlRegex = /https?:\/\/(?:[-\w.]|(?:%[\da-fA-F]{2}))+[^\s]*/;
 
   chatInput.value = "";
   chatInput.style.height = "auto";
   scrollChatToBottom();
 
-  // Eğer ilk mesajsa sohbet başlığı üretimi
   if (currentConversation.messages.length === 1) {
     try {
       const response = await fetch("http://localhost:5000/generate-title", {
@@ -4132,7 +4141,6 @@ if (uploadedFiles.length > 0) {
 
   saveConversations();
 
-  // Asistan mesajı için ID oluşturun ve UI'ya ekleyin
   const assistantMessageId = (Date.now() + 1).toString() + "_assistant";
   createAssistantBubble(assistantMessageId);
   let assistantText = "";
@@ -4145,18 +4153,16 @@ if (uploadedFiles.length > 0) {
   currentConversation.messages.push(newAssistantMessage);
   saveConversations();
 
-  // Streaming için hazırlık
   currentFetchAbortController = new AbortController();
   isStreaming = true;
   setSendButtonToStopState();
 
   try {
-    // Backend'e gönderilen payload içerisinde combinedMessage kullanılıyor
     const response = await fetch("http://localhost:5000/chat", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
-        message: combinedMessage, // Burada dosya içeriği de var
+        message: combinedMessage,
         history: currentConversation.messages,
         enable_web_search: enableWebSearch,
         model: selectedModel,
@@ -4166,13 +4172,8 @@ if (uploadedFiles.length > 0) {
     });
 
     if (!response.ok) {
-      console.error("Fetch hatası:", response.statusText);
-      updateAssistantBubble("Hata: " + response.statusText);
-      return;
-    }
-    if (!response.body) {
-      console.error("Response body boş!");
-      updateAssistantBubble("Hata: Response body boş, tarayıcınız stream desteği sunmuyor.");
+      console.error("Fetch error:", response.statusText);
+      updateAssistantBubble("Error: " + response.statusText);
       return;
     }
 
@@ -4205,7 +4206,7 @@ if (uploadedFiles.length > 0) {
               newAssistantMessage.text = assistantText;
               saveConversations();
             } catch (e) {
-              console.error("JSON parse hatası:", e, dataStr);
+              console.error("JSON parse error:", e, dataStr);
             }
           }
         }
@@ -4213,7 +4214,6 @@ if (uploadedFiles.length > 0) {
       }
     }
 
-    // Streaming tamamlandığında geri bildirim ekle
     if (!done) {
       addFeedbackControls(currentAssistantBubble, assistantText);
     }
@@ -4221,9 +4221,9 @@ if (uploadedFiles.length > 0) {
   } catch (err) {
     if (err.name === "AbortError") {
       newAssistantMessage.complete = false;
-      console.log("Streaming iptal edildi.");
+      console.log("Streaming aborted.");
     } else {
-      updateAssistantBubble("Hata: " + err.message);
+      updateAssistantBubble("Error: " + err.message);
     }
   } finally {
     isStreaming = false;
