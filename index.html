@@ -1308,7 +1308,7 @@ body.dark .dark-mode-toggle-modal:hover {
   background-color: var(--sidebar-bg);
   width: 90%;
   max-width: 700px;
-  max-height: 90vh;
+  min-height: 90vh;
   margin: 3vh auto;
   border-radius: 3vh;
   box-shadow: 0 8px 30px rgba(0, 0, 0, 0.5);
@@ -1325,11 +1325,11 @@ body.dark .settings-modal-content {
 @media (max-width: 768px) {
   .settings-modal-content {
     width: 100%;
-    height: 80vh; /* Mobil için de sabit yükseklik */
-    max-height: 80vh; /* Maksimum yükseklik korunsun */
+    height: 100vh; /* Mobil için de sabit yükseklik */
+    min-height: 100vh; /* Maksimum yükseklik korunsun */
     margin: 0;
     position: fixed;
-    bottom: 0;
+    top: 0;
     left: 0;
     border-radius: 12px 12px 0 0; /* Üstte yuvarlak, altta düz */
     overflow: hidden; /* Taşma gizlensin */
@@ -2955,6 +2955,46 @@ body.dark .drop-zone .subtext {
   color: #ccc;
 }
 
+#voice-record-btn {
+  position: absolute;
+  right: 62px;
+  background-color: var(--input-bg);
+  border: none;
+  border-radius: 12px;
+  width: 40px;
+  height: 35px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-right: 0.5rem;
+  box-shadow: 0 4px 6px -2px rgba(0, 0, 0, 0.15), 
+              4px 0 6px -2px rgba(0, 0, 0, 0.15), 
+              -4px 0 6px -2px rgba(0, 0, 0, 0.15), 
+              0 -4px 6px -2px rgba(0, 0, 0, 0.15);
+}
+
+
+#voice-record-btn:hover {
+  background-color: #c0c0c0;
+}
+
+#voice-record-btn.recording {
+  background-color: #f44336; /* Kayıt sırasında kırmızı */
+}
+
+body.dark #voice-record-btn img {
+  filter: brightness(0) invert(1);
+}
+
+body.dark #voice-record-btn:hover img {
+  filter: none;
+}
+
+body.dark #voice-record-btn.recording img {
+  filter: brightness(0) invert(1);
+}
+
   </style>
 </head>
 
@@ -3032,6 +3072,11 @@ body.dark .drop-zone .subtext {
     <img src="icons/web_search_btn.png" alt="Web Search Icon" style="width:19px; height:19px; vertical-align: middle; margin-right: 5px;">
     <span>Ara</span>
   </button>
+
+<button id="voice-record-btn" title="Ses Kaydet">
+    <img src="icons/mic_btn.png" alt="Ses Kaydet" style="width: 17px; height: 17px;">
+  </button>
+
   <textarea id="chat-input-textarea" placeholder="Quik uygulamasına ileti gönder..."></textarea>
   <button id="send-btn" class="send-btn" data-tooltip="Gönder">
     <img src="icons/send_btn.png" alt="Send Icon" style="width:17px; height:17px;">
@@ -4919,6 +4964,105 @@ sidebarBrand.addEventListener("click", () => {
   uploadedFiles = [];
   fileContainer.innerHTML = "";
 });
+
+document.addEventListener("DOMContentLoaded", () => {
+  // Quik’in mevcut kodları...
+
+  const voiceRecordBtn = document.getElementById('voice-record-btn');
+  const chatInput = document.getElementById('chat-input-textarea');
+  let mediaRecorder;
+  let isRecording = false;
+  const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+
+  if (SpeechRecognition) {
+    const recognition = new SpeechRecognition();
+    recognition.continuous = true;
+    recognition.interimResults = true;
+    recognition.lang = 'tr-TR';
+
+    let finalTranscript = '';
+
+    function addSmartPunctuation(text) {
+      let processedText = text;
+      processedText = processedText.replace(/(\w+)(\s+)([A-ZÇĞİÖŞÜ])/g, (match, p1, p2, p3) => 
+        p1.length > 1 ? p1 + '.' + p2 + p3 : match
+      );
+      processedText = processedText.replace(/(\w+)(\s{2,})/g, '$1.$2');
+      processedText = processedText.replace(/(\s|^)(mi|mı|mu|mü|ne|niye|neden|nasıl|hangi|kim|kimin|ne zaman|nerede|niçin)(\s+)(\w+)(\s*$|\s+[a-z])/gi, 
+        (match, p1, p2, p3, p4, p5) => p5.trim() === '' ? p1 + p2 + p3 + p4 + '?' : match
+      );
+      processedText = processedText.replace(/(\w+)(\s+)(ama|fakat|ancak|ve|veya|ya da|çünkü|zira|ayrıca|aslında|sonra|önce|belki|bununla birlikte)(\s+)/gi, '$1,$2$3$4');
+      if (!/[.!?]$/.test(processedText.trim())) processedText = processedText.trim() + '.';
+      return processedText;
+    }
+
+    function capitalizeFirstLetter(text) {
+      return text.replace(/(^|[.!?]\s+)([a-zçğıöşü])/g, (match, p1, p2) => p1 + p2.toUpperCase());
+    }
+
+    function trimExcessWhitespace(text) {
+      return text.replace(/\s+/g, ' ').trim();
+    }
+
+    recognition.onresult = (event) => {
+      let interimTranscript = '';
+      for (let i = event.resultIndex; i < event.results.length; i++) {
+        const transcript = event.results[i][0].transcript;
+        if (event.results[i].isFinal) {
+          let processedText = addSmartPunctuation(transcript);
+          processedText = capitalizeFirstLetter(processedText);
+          processedText = trimExcessWhitespace(processedText);
+          finalTranscript += (finalTranscript ? ' ' : '') + processedText;
+        } else {
+          interimTranscript += transcript;
+        }
+      }
+      chatInput.value = finalTranscript + (interimTranscript ? ' ' + interimTranscript : '');
+      chatInput.style.height = 'auto';
+      chatInput.style.height = chatInput.scrollHeight + 'px';
+    };
+
+    recognition.onerror = (event) => {
+      console.error('Konuşma tanıma hatası:', event.error);
+      voiceRecordBtn.classList.remove('recording');
+      isRecording = false;
+    };
+
+    voiceRecordBtn.addEventListener('click', async () => {
+      if (isRecording) {
+        mediaRecorder.stop();
+        recognition.stop();
+        voiceRecordBtn.classList.remove('recording');
+        isRecording = false;
+      } else {
+        try {
+          const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+          mediaRecorder = new MediaRecorder(stream);
+          mediaRecorder.start();
+          recognition.start();
+          finalTranscript = '';
+          voiceRecordBtn.classList.add('recording');
+          isRecording = true;
+
+          mediaRecorder.onstop = () => {
+            stream.getTracks().forEach(track => track.stop());
+          };
+
+          mediaRecorder.ondataavailable = (event) => {
+            // Ses dosyası kaydedilmeyecek
+          };
+        } catch (err) {
+          console.error('Mikrofon erişim hatası:', err);
+          alert('Mikrofon erişimi reddedildi. Lütfen izin verin ve tekrar deneyin.');
+        }
+      }
+    });
+  } else {
+    console.warn('SpeechRecognition API bu tarayıcıda desteklenmiyor.');
+    voiceRecordBtn.style.display = 'none';
+  }
+});
+
 
   </script>
 </body>
