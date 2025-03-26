@@ -5615,7 +5615,7 @@ document.getElementById("static-prompt").addEventListener("keydown", function(e)
 
 
   function connectGoogleDrive() {
-    const googleDriveAuthUrl = "https://accounts.google.com/o/oauth2/v2/auth?client_id=147325926000-7if85b7ej6h8alco9t3s5trrl7eveq78.apps.googleusercontent.com&redirect_uri=http://localhost:5000&response_type=code&scope=https://www.googleapis.com/auth/drive.file";
+    const googleDriveAuthUrl = "https://accounts.google.com/o/oauth2/v2/auth?client_id=147325926000-7if85b7ej6h8alco9t3s5trrl7eveq78.apps.googleusercontent.com&redirect_uri=https://quik-chatbot.netlify.app&response_type=code&scope=https://www.googleapis.com/auth/drive.file";
     window.open(googleDriveAuthUrl, "_blank");
   }
 
@@ -5623,7 +5623,7 @@ document.getElementById("static-prompt").addEventListener("keydown", function(e)
 function connectGtalk() {
   const googleTalkAuthUrl = "https://accounts.google.com/o/oauth2/v2/auth?" +
     "client_id=147325926000-7if85b7ej6h8alco9t3s5trrl7eveq78.apps.googleusercontent.com&" +
-    "redirect_uri=http://localhost:5000&" +
+    "redirect_uri=https://quik-chatbot.netlify.app&" +
     "response_type=code&" +
     "scope=https://www.googleapis.com/auth/chat.bot";
 
@@ -5635,7 +5635,7 @@ function connectGtalk() {
     // Aşağıdaki URL'yi kendi Google OAuth ayarlarınızla güncelleyin:
     const gmailAuthUrl = "https://accounts.google.com/o/oauth2/v2/auth?" +
       "client_id=147325926000-7if85b7ej6h8alco9t3s5trrl7eveq78.apps.googleusercontent.com&" +
-      "redirect_uri=http://localhost:5000&" +
+      "redirect_uri=https://quik-chatbot.netlify.app&" +
       "response_type=code&" +
       "scope=https://www.googleapis.com/auth/gmail.readonly";
     window.open(gmailAuthUrl, "_blank");
