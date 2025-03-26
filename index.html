@@ -3651,10 +3651,7 @@ button.theme-btn:hover {
     Google Drive entegrasyonu ile dosyalarınıza hızlı ve güvenli erişim imkanı sunar.
   </p>
 </div>
-      <p class="notification-description">
-        Google Drive entegrasyonu ile dosyalarınıza hızlı ve güvenli erişim imkanı sunar.
-      </p>
-    </div>
+
     <!-- Microsoft OneDrive Kartı -->
     <div class="notification-card">
       <div class="notification-header">
@@ -5597,9 +5594,9 @@ document.getElementById("static-prompt").addEventListener("keydown", function(e)
   }
 });
 
+
   function connectGoogleDrive() {
-    // Bu URL'yi kendi Google OAuth 2.0 ayarlarınıza göre düzenleyin.
-    const googleDriveAuthUrl = "https://accounts.google.com/o/oauth2/v2/auth?client_id=147325926000-7if85b7ej6h8alco9t3s5trrl7eveq78.apps.googleusercontent.com&redirect_uri=https://quik-chatbot.netlify.app/&response_type=code&scope=https://www.googleapis.com/auth/drive.file";
+    const googleDriveAuthUrl = "https://accounts.google.com/o/oauth2/v2/auth?client_id=147325926000-7if85b7ej6h8alco9t3s5trrl7eveq78.apps.googleusercontent.com&redirect_uri=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&response_type=code&scope=https://www.googleapis.com/auth/drive.file";
     window.open(googleDriveAuthUrl, "_blank");
   }
 
