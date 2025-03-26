@@ -3626,18 +3626,19 @@ button.theme-btn:hover {
 <!-- BAĞLI UYGULAMALAR Sekmesi -->
 <div class="tab-content" id="bagliuygulamalar">
   <div class="notifications-container">
-    <!-- Gmail Kartı -->
-    <div class="notification-card">
-      <div class="notification-header">
-        <div class="notification-heading-left">
-          <img src="icons/gmail_icon.png" alt="Gmail" class="notification-icon">
-          <span class="notification-name">Gmail</span>
-        </div>
-      </div>
-      <p class="notification-description">
-        Gmail hesabınız üzerinden e-posta entegrasyonu sağlanır. Gelen e-postalarınız kolayca yönetilir.
-      </p>
+<!-- Gmail Kartı (BAĞLI UYGULAMALAR Sekmesi içinde) -->
+<div class="notification-card">
+  <div class="notification-header" style="justify-content: space-between; align-items: center;">
+    <div class="notification-heading-left">
+      <img src="icons/gmail_icon.png" alt="Gmail" class="notification-icon">
+      <span class="notification-name">Gmail</span>
     </div>
+    <button class="connect-btn" onclick="connectGmail()">Bağlan</button>
+  </div>
+  <p class="notification-description">
+    Gmail entegrasyonu ile e-postalarınızı doğrudan yönetebilir ve bildirim alabilirsiniz.
+  </p>
+</div>
     <!-- Google Drive Kartı -->
 <div class="notification-card">
   <div class="notification-header" style="justify-content: space-between; align-items: center;">
@@ -3652,6 +3653,20 @@ button.theme-btn:hover {
   </p>
 </div>
 
+    <!-- Google Talk Kartı -->
+    <div class="notification-card">
+      <div class="notification-header" style="justify-content: space-between; align-items: center;">
+        <div class="notification-heading-left">
+          <img src="icons/gtalk_icon.png" alt="Google Talk" class="notification-icon">
+          <span class="notification-name">Google Talk</span>
+        </div>
+        <button class="connect-btn" onclick="connectGtalk()">Bağlan</button>
+      </div>
+      <p class="notification-description">
+        Google Talk ile anlık mesajlaşma ve hızlı iletişim imkanına sahip olun.
+      </p>
+</div>
+
     <!-- Microsoft OneDrive Kartı -->
     <div class="notification-card">
       <div class="notification-header">
@@ -3663,6 +3678,8 @@ button.theme-btn:hover {
       <p class="notification-description">
         OneDrive entegrasyonu sayesinde belgeleriniz bulut üzerinde senkronize edilir ve güvenle saklanır.
       </p>
+
+
     </div>
   </div>
 </div>
@@ -5595,10 +5612,64 @@ document.getElementById("static-prompt").addEventListener("keydown", function(e)
 });
 
 
+
+
   function connectGoogleDrive() {
-    const googleDriveAuthUrl = "https://accounts.google.com/o/oauth2/v2/auth?client_id=147325926000-7if85b7ej6h8alco9t3s5trrl7eveq78.apps.googleusercontent.com&redirect_uri=https://quik-chatbot.netlify.app&response_type=code&scope=https://www.googleapis.com/auth/drive.file";
+    const googleDriveAuthUrl = "https://accounts.google.com/o/oauth2/v2/auth?client_id=147325926000-7if85b7ej6h8alco9t3s5trrl7eveq78.apps.googleusercontent.com&redirect_uri=http://localhost:5000&response_type=code&scope=https://www.googleapis.com/auth/drive.file";
     window.open(googleDriveAuthUrl, "_blank");
   }
+
+
+function connectGtalk() {
+  const googleTalkAuthUrl = "https://accounts.google.com/o/oauth2/v2/auth?" +
+    "client_id=147325926000-7if85b7ej6h8alco9t3s5trrl7eveq78.apps.googleusercontent.com&" +
+    "redirect_uri=http://localhost:5000&" +
+    "response_type=code&" +
+    "scope=https://www.googleapis.com/auth/chat.bot";
+
+  window.open(googleTalkAuthUrl, "_blank");
+}
+
+
+  function connectGmail() {
+    // Aşağıdaki URL'yi kendi Google OAuth ayarlarınızla güncelleyin:
+    const gmailAuthUrl = "https://accounts.google.com/o/oauth2/v2/auth?" +
+      "client_id=147325926000-7if85b7ej6h8alco9t3s5trrl7eveq78.apps.googleusercontent.com&" +
+      "redirect_uri=http://localhost:5000&" +
+      "response_type=code&" +
+      "scope=https://www.googleapis.com/auth/gmail.readonly";
+    window.open(gmailAuthUrl, "_blank");
+  }
+
+
+// Erişim token'ınızı aldıktan sonra bu fonksiyonu çağırın:
+function fetchGoogleUserProfile(accessToken) {
+  fetch("https://www.googleapis.com/oauth2/v1/userinfo?alt=json&access_token=" + accessToken)
+    .then(response => response.json())
+    .then(data => {
+      // data.picture, kullanıcının profil fotoğrafı URL'sidir.
+      // Örneğin, Gmail kartında profil fotoğrafını göstermek için bir <img> ekleyebilirsiniz.
+      const profileImg = document.getElementById("google-profile-photo");
+      if (profileImg) {
+        profileImg.src = data.picture;
+        profileImg.alt = data.name || "Profil Fotoğrafı";
+      } else {
+        // Eğer DOM'da böyle bir element yoksa, yeni bir element oluşturup ekleyebilirsiniz:
+        const img = document.createElement("img");
+        img.id = "google-profile-photo";
+        img.src = data.picture;
+        img.alt = data.name || "Profil Fotoğrafı";
+        // Bu örnekte Gmail kartının başlık kısmına ekleyelim:
+        const gmailHeader = document.querySelector(".notification-card img[alt='Gmail']").parentElement;
+        gmailHeader.appendChild(img);
+      }
+    })
+    .catch(err => {
+      console.error("Profil bilgileri alınırken hata oluştu:", err);
+    });
+}
+
+
   </script>
 </body>
 </html>
