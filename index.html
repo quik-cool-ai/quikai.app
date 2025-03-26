@@ -3146,6 +3146,41 @@ button.theme-btn:hover {
     background-color: #0056b3;
   }
 
+#gmail-profile-photo {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  cursor: pointer;
+  border: 2px solid var(--primary-color);
+  transition: transform 0.2s ease;
+}
+
+#gmail-profile-photo:hover {
+  transform: scale(1.1);
+}
+
+.danger-btn {
+  background-color: var(--danger-color);
+  border: none;
+  color: #fff;
+  padding: 7px 12px;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+.danger-btn:hover {
+  background-color: #ff6666;
+}
+
+body.dark .danger-btn {
+  background-color: var(--danger-color);
+}
+
+body.dark .danger-btn:hover {
+  background-color: #ff6666;
+}
+
   </style>
 </head>
 
@@ -5642,32 +5677,122 @@ function connectGtalk() {
   }
 
 
-// Erişim token'ınızı aldıktan sonra bu fonksiyonu çağırın:
+// Global variable to track Gmail connection state
+let isGmailConnected = localStorage.getItem("isGmailConnected") === "true";
+let gmailAccessToken = localStorage.getItem("gmailAccessToken") || null;
+
+// Function to connect to Gmail and fetch profile data
+function connectGmail() {
+  const gmailAuthUrl = "https://accounts.google.com/o/oauth2/v2/auth?" +
+    "client_id=147325926000-7if85b7ej6h8alco9t3s5trrl7eveq78.apps.googleusercontent.com&" +
+    "redirect_uri=https://quik-chatbot.netlify.app&" +
+    "response_type=code&" +
+    "scope=https://www.googleapis.com/auth/gmail.readonly";
+
+  // Open OAuth window
+  window.open(gmailAuthUrl, "_blank");
+
+  // Note: The actual token retrieval should happen via a backend redirect.
+  // For this example, assume the backend sets the token in localStorage after redirect.
+  // Simulate checking connection state after a delay (replace with actual logic).
+  setTimeout(checkGmailConnection, 5000); // Adjust based on your OAuth flow.
+}
+
+// Function to fetch Google user profile and update UI
 function fetchGoogleUserProfile(accessToken) {
   fetch("https://www.googleapis.com/oauth2/v1/userinfo?alt=json&access_token=" + accessToken)
-    .then(response => response.json())
+    .then(response => {
+      if (!response.ok) throw new Error("Profil bilgileri alınamadı.");
+      return response.json();
+    })
     .then(data => {
-      // data.picture, kullanıcının profil fotoğrafı URL'sidir.
-      // Örneğin, Gmail kartında profil fotoğrafını göstermek için bir <img> ekleyebilirsiniz.
-      const profileImg = document.getElementById("google-profile-photo");
-      if (profileImg) {
-        profileImg.src = data.picture;
-        profileImg.alt = data.name || "Profil Fotoğrafı";
-      } else {
-        // Eğer DOM'da böyle bir element yoksa, yeni bir element oluşturup ekleyebilirsiniz:
-        const img = document.createElement("img");
-        img.id = "google-profile-photo";
-        img.src = data.picture;
-        img.alt = data.name || "Profil Fotoğrafı";
-        // Bu örnekte Gmail kartının başlık kısmına ekleyelim:
-        const gmailHeader = document.querySelector(".notification-card img[alt='Gmail']").parentElement;
-        gmailHeader.appendChild(img);
-      }
+      const profileImgUrl = data.picture;
+      updateGmailUI(profileImgUrl);
+      isGmailConnected = true;
+      gmailAccessToken = accessToken; // Store token (in practice, handle securely)
+      localStorage.setItem("isGmailConnected", "true");
+      localStorage.setItem("gmailAccessToken", accessToken);
     })
     .catch(err => {
       console.error("Profil bilgileri alınırken hata oluştu:", err);
+      alert("Gmail bağlantısı sırasında bir hata oluştu.");
     });
 }
+
+// Function to update Gmail UI with profile picture and logout option
+function updateGmailUI(profileImgUrl) {
+  const connectContainer = document.getElementById("gmail-connect-container");
+  connectContainer.innerHTML = ""; // Clear existing button
+
+  const profileImg = document.createElement("img");
+  profileImg.id = "gmail-profile-photo";
+  profileImg.src = profileImgUrl;
+  profileImg.alt = "Profil Fotoğrafı";
+  profileImg.style.cssText = `
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    cursor: pointer;
+    border: 2px solid var(--primary-color);
+  `;
+
+  connectContainer.appendChild(profileImg);
+
+  // Add click event for logout option
+  profileImg.addEventListener("click", () => {
+    const logoutBtn = document.createElement("button");
+    logoutBtn.textContent = "Çıkış Yap";
+    logoutBtn.className = "danger-btn";
+    logoutBtn.style.cssText = `
+      position: absolute;
+      top: 50px;
+      right: 10px;
+      z-index: 1000;
+    `;
+    connectContainer.appendChild(logoutBtn);
+
+    logoutBtn.addEventListener("click", () => {
+      disconnectGmail();
+      connectContainer.removeChild(logoutBtn);
+    });
+
+    // Remove logout button if clicked elsewhere
+    document.addEventListener("click", function handler(e) {
+      if (!profileImg.contains(e.target) && !logoutBtn.contains(e.target)) {
+        connectContainer.removeChild(logoutBtn);
+        document.removeEventListener("click", handler);
+      }
+    }, { once: true });
+  });
+}
+
+// Function to disconnect Gmail and revert UI
+function disconnectGmail() {
+  isGmailConnected = false;
+  gmailAccessToken = null;
+  localStorage.removeItem("isGmailConnected");
+  localStorage.removeItem("gmailAccessToken");
+
+  const connectContainer = document.getElementById("gmail-connect-container");
+  connectContainer.innerHTML = `<button id="connect-gmail-btn" class="toggle-btn">Bağlan</button>`;
+  document.getElementById("connect-gmail-btn").addEventListener("click", connectGmail);
+}
+
+// Function to check Gmail connection state on page load or after auth
+function checkGmailConnection() {
+  if (isGmailConnected && gmailAccessToken) {
+    fetchGoogleUserProfile(gmailAccessToken);
+  }
+}
+
+// Initialize on page load
+document.addEventListener("DOMContentLoaded", () => {
+  const connectGmailBtn = document.getElementById("connect-gmail-btn");
+  if (connectGmailBtn) {
+    connectGmailBtn.addEventListener("click", connectGmail);
+  }
+  checkGmailConnection(); // Check if already connected
+});
 
 
   </script>
