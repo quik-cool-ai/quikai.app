@@ -432,7 +432,7 @@ body.dark .history-actions button {
 }
 
 body.dark .history-actions button:hover {
-  background-color: var(--sidebar-bg); /* Hafif gri arka plan */
+  background-color: #c0c0c0; /* Hafif gri arka plan */
 }
 
 .history-actions button img {
@@ -707,7 +707,6 @@ body.dark .history-icon {
         width: 100%;
         bottom: 20px;
         padding-bottom: 1rem;
-
         border-radius: 20px;
       }
       body.sidebar-open .chat-input {
@@ -719,7 +718,6 @@ body.dark .history-icon {
     #chat-input-textarea {
       font-family: 'Inter', sans-serif;
       font-size: 1rem;
-      font-weight: 500;
       line-height: 1.5;
       flex: 1;
       border: none;
@@ -806,15 +804,15 @@ body.dark #send-btn:hover img {
       scrollbar-color: rgba(85, 85, 85, 0.2) transparent;
     }
 
-    .delete-btn:hover, .edit-btn:hover {
-      color: var(--sidebar-bg);
-      filter: brightness(100%);
-    }
+.delete-btn:hover,
+.edit-btn:hover {
+  color: var(--sidebar-bg);
+  filter: brightness(100%);
+}
 
 body.dark .delete-btn:hover,
 body.dark .edit-btn:hover {
-
-  filter: none; /* Filter kaldırılarak, iconun kendi rengi (currentColor) kullanılacak */
+  filter: none;
   color: var(--sidebar-bg);
 }
 
@@ -1061,8 +1059,12 @@ body.dark #web-search-btn:hover {
   background-color: #96bfff;
 }
 
+body.dark #web-search-btn.active {
+  background-color: #2171cc;
+}
+
 body.dark #web-search-btn.active:hover {
-  background-color: #96bfff;
+  background-color: #2171cc;
 }
 
 
@@ -1622,12 +1624,6 @@ body.dark .progress-text {
   list-style-type: disc; /* Maddeler için yuvarlak işaret */
 }
 
-.description-list li {
-  font-size: 0.8rem; /* Mevcut metin boyutuyla uyumlu */
-  color: var(--text-color); /* Mevcut renk uyumluluğu */
-
-}
-
 /* Maddelerin Başlık Stili */
 .description-title {
   font-size: 0.8rem; /* Daha büyük font boyutu */
@@ -1896,7 +1892,6 @@ body.dark .setting-row select {
   gap: 1rem; /* Butonlar arası boşluk */
   flex-wrap: wrap; /* Küçük ekranlarda veya zoomda taşmayı önler */
   justify-content: center; /* Butonları ortalar */
-
 }
 
 .theme-selection .theme-btn {
@@ -1923,7 +1918,7 @@ body.dark .setting-row select {
 .theme-selection .theme-btn .theme-icon {
   width: 11px;
   height: 11px;
-  margin-right: 0.5rem;
+
   object-fit: contain;
 }
 
@@ -1940,6 +1935,7 @@ body.dark .setting-row select {
     max-width: unset; /* Tam genişlikte esneklik */
     padding: 0.75rem; /* Daha fazla dokunma alanı */
   }
+
 }
 
 @media (max-width: 480px) {
@@ -2015,7 +2011,7 @@ body.dark .theme-selection .theme-btn:not(.active):hover .theme-icon {
   width: 1em;
   height: 1em;
   /* Pist kenarından 0.125em boşluk bırakalım */
-  left: 0.125em;
+  left: 0.15em;
   bottom: 0.125em;
   background-color: #fff;
   border-radius: 50%;
@@ -2546,7 +2542,8 @@ body.dark .feedback-controls button[data-tooltip]::after {
 
 #file-upload-btn[data-tooltip]::after,
 #web-search-btn[data-tooltip]::after,
-#send-btn[data-tooltip]::after {
+#send-btn[data-tooltip]::after,
+#voice-record-btn[data-tooltip]::after {
   left: 50%;
   top: -9px; /* Butonun üstüne yerleştir */
   transform: translateX(-50%) translateY(-100%); /* Yatayda ortala, dikeyde yukarı kaydır */
@@ -2995,6 +2992,160 @@ body.dark #voice-record-btn.recording img {
   filter: brightness(0) invert(1);
 }
 
+.chat-history-title.edit-input {
+  color: #000 !important;
+}
+
+.language-selection hr {
+  margin-bottom: 1rem;
+  margin-top: 1rem;
+}
+
+.credentials-container label {
+  font-size: 0.8rem;
+}
+
+.credential-input {
+  margin-bottom: 10px;
+}
+
+.credential-input label {
+  display: block;
+  font-weight: bold;
+  margin-bottom: 5px;
+}
+
+.credential-input input {
+  width: 100%;
+  padding: 7px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+}
+
+.credential-save-btn {
+  padding: 8px 16px;
+  background-color: #10a37f;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.credential-save-btn:hover {
+  background-color: #45a049;
+}
+
+.voice-options {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.voice-option {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.voice-check-btn {
+  max-height: 30px;
+  min-height: 30px;
+  max-width: 100px;
+  min-width: 100px;
+  background-color: #10a37f;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.voice-check-btn:hover {
+  background-color: #0056b3; /* Daha koyu mavi */
+}
+
+.voice-description {
+  margin: 0;
+  flex: 1; /* Kalan alanı doldurur */
+}
+
+/* Responsive: Ekran genişliği 768px ve altı için */
+@media (max-width: 768px) {
+  .voice-option {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+  .voice-check-btn {
+    width: 100%;
+    max-width: none;
+  }
+}
+
+/* Daha küçük ekranlar (480px altı) için de aynı ayarlar uygulanabilir */
+@media (max-width: 480px) {
+  .voice-option {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+  .voice-check-btn {
+    width: 100%;
+    max-width: none;
+  }
+}
+
+p.voice-description {
+  font-size: 0.8rem;
+}
+
+.general-description p:last-child {
+  margin-bottom: 0;
+}
+
+ul.description-list {
+  margin-top: 0;
+  margin-bottom: 0;
+}
+
+button.theme-btn {
+  border-radius: 12px;
+  padding: 0.5rem;
+  border: 1px solid #c0c0c0;
+  cursor: pointer;
+  display: flex;
+  gap: 1rem;
+  flex-wrap: wrap;
+      align-items: center;
+      justify-content: center;
+}
+
+  @media (max-width: 768px) {
+    .prompt-selection {
+      button.theme-btn: column;
+    }
+  }
+
+  @media (max-width: 480px) {
+    .prompt-selection {
+      button.theme-btn: column;
+    }
+  }
+
+button.theme-btn:hover {
+  background: #c0c0c0;
+}
+
+  .connect-btn {
+    background-color: #007bff;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    padding: 6px 12px;
+    cursor: pointer;
+    font-size: 0.8rem;
+  }
+  .connect-btn:hover {
+    background-color: #0056b3;
+  }
+
   </style>
 </head>
 
@@ -3073,7 +3224,7 @@ body.dark #voice-record-btn.recording img {
     <span>Ara</span>
   </button>
 
-<button id="voice-record-btn" title="Ses Kaydet">
+<button id="voice-record-btn" class="voice-record-btn" data-tooltip="Ses Kaydet">
     <img src="icons/mic_btn.png" alt="Ses Kaydet" style="width: 17px; height: 17px;">
   </button>
 
@@ -3133,9 +3284,22 @@ body.dark #voice-record-btn.recording img {
     <img src="icons/gecmis.png" class="settings-icon" alt="Geçmiş">
     Geçmiş
   </li>
-          <li data-tab="yapiciprofili">Yapıcı Profili</li>
-          <li data-tab="bagliuygulamalar">Bağlı Uygulamalar</li>
-          <li data-tab="abonelik">Abonelik</li>
+
+<li data-tab="yapiciprofili">
+    <img src="icons/yapici_profili.png" class="settings-icon" alt="Yapıcı Profili">
+    Yapıcı Profili
+  </li>
+
+<li data-tab="bagliuygulamalar">
+    <img src="icons/bagli_uygulamalar.png" class="settings-icon" alt="Bağlı Uygulamalar">
+    Bağlı Uygulamalar
+  </li>
+
+<li data-tab="baglisistemler">
+    <img src="icons/bagli_sistemler.png" class="settings-icon" alt="Bağlı Sistemler">
+    Bağlı Sistemler
+  </li>
+
         </ul>
       </nav>
 
@@ -3307,44 +3471,75 @@ body.dark #voice-record-btn.recording img {
   </div> <!-- /notifications-container -->
 </div>
 
-        <!-- KİŞİSELLEŞTİRME Sekmesi (Yeni, card mantığında) -->
-        <div class="tab-content" id="kisisellestirme">
-          <div class="general-card">
-            <!-- Kartın Üst Barı (Top Bar) -->
-            <div class="card-topbar">
-              <div class="general-heading-left">
+<!-- KİŞİSELLEŞTİRME Sekmesi (Yeni, card mantığında) -->
+<div class="tab-content" id="kisisellestirme">
+  <div class="general-card">
+    <!-- Kartın Üst Barı (Top Bar) -->
+    <div class="card-topbar">
+      <div class="general-heading-left">
+        <span class="general-name">Merhaba, ben kişisel asistanın Quik!</span>
+      </div>
+    </div>
 
-                <span class="general-name">Merhaba, ben ajan Quik!</span>
-              </div>
-            </div>
+    <!-- Açıklayıcı Metin -->
+    <p class="general-description">
+      Sana daha iyi bir hizmet sunabilmem için bana ne istediğini söyleyebilirsin.
+    </p>
+    <p class="general-description">
+      Bu sayede:
+    </p>
+    
+    <!-- Madde Listesi -->
+    <ul class="description-list">
+      <li>Seninle olan sohbetlerimiz daha akıcı hale gelir.</li>
+      <li>Tamamen sana özel yanıtlar üretmeye çalışırım.</li>
+      <li>Detayları unutmam ve ona göre hareket ederim.</li>
+    </ul>
 
-            <!-- Açıklayıcı Metin -->
-            <p class="general-description">
-              Sana daha iyi bir hizmet sunabilmem için bana ne istediğini söyleyebilirsin.
-            </p>
-             
-            <p class="general-description">
-              Bu sayede:
-            </p>
-
-            <!-- Madde Listesi -->
-            <ul class="description-list">
-              <li>Seninle olan sohbetlerimiz daha akıcı hale gelir.</li>
-              <li>Tamamen sana özel yanıtlar üretmeye çalışırım.</li>
-              <li>Detayları unutmam ve ona göre hareket ederim. </li>
-            </ul>
-
-            <!-- Statik Prompt Girişi -->
-            <div class="personalization-input">
-              <textarea id="static-prompt" placeholder="Örnek: 'Her zaman kısa ve öz cevap ver' veya 'Bana esprili bir şekilde yanıt ver'" rows="5"></textarea>
-            </div>
-
-            <!-- Ayarları Kaydet Butonu -->
-            <div class="save-button-container">
-              <button id="save-personalization" class="theme-btn">Kişiselleştirmeyi Kaydet</button>
-            </div>
-          </div>
+    <!-- Prompt Seçenekleri (Theme-btn stilinde) -->
+    <div class="prompt-selection" style="display: flex; gap: 1rem; flex-wrap: wrap; margin-bottom: 1rem;">
+      <button type="button" class="theme-btn" onclick="setPrompt('special')" style="flex: 1; min-width: 150px;">
+        <div style="text-align: center;">
+          <strong>Özel</strong><br>
+          <small>Sizin Kararınız</small>
         </div>
+      </button>
+      <button type="button" class="theme-btn" onclick="setPrompt('professional')" style="flex: 1; min-width: 150px;">
+        <div style="text-align: center;">
+          <strong>Profesyonel</strong><br>
+          <small>Saygı ve Ciddiyet</small>
+        </div>
+      </button>
+      <button type="button" class="theme-btn" onclick="setPrompt('energetic')" style="flex: 1; min-width: 150px;">
+        <div style="text-align: center;">
+          <strong>Enerjik</strong><br>
+          <small>Canlı ve Motive</small>
+        </div>
+      </button>
+      <button type="button" class="theme-btn" onclick="setPrompt('friendly')" style="flex: 1; min-width: 150px;">
+        <div style="text-align: center;">
+          <strong>Samimi</strong><br>
+          <small>Empati ve Samimiyet</small>
+        </div>
+      </button>
+    </div>
+
+    <!-- Statik Prompt Girişi -->
+    <div class="personalization-input">
+      <textarea 
+        id="static-prompt" 
+        placeholder="Örnek: 'Her zaman kısa ve öz cevap ver' veya 'Bana esprili bir şekilde yanıt ver'" 
+        rows="5" 
+        style="width: 100%;"
+      ></textarea>
+    </div>
+
+    <!-- Ayarları Kaydet Butonu -->
+    <div class="save-button-container">
+      <button id="save-personalization" class="theme-btn">Kişiselleştirmeyi Kaydet</button>
+    </div>
+  </div>
+</div>
 
 <!-- KONUŞMA Sekmesi -->
 <div class="tab-content" id="konusma">
@@ -3356,15 +3551,38 @@ body.dark #voice-record-btn.recording img {
         </div>
       </div>
       <p class="general-description">
-        Seçtiğiniz kişi, konuşma tarzını etkileyebilir.
+        Seçtiğiniz kişi, konuşma tarzını ve üslubunu etkileyebilir.
       </p>
       <div class="language-selection">
         <select id="conversation-person">
-          <option value="sam">Sam</option>
-          <option value="gil">Gil</option>
+          <option value="sky">Sky</option>
+          <option value="gia">Gia</option>
           <option value="dan">Dan</option>
           <option value="dom">Dom</option>
         </select>
+
+        <!-- İnce Çizgi -->
+        <hr style="margin: 15px 0;">
+
+        <!-- Ses Seçenekleri: Buton sol tarafta, açıklama butonun hemen sağında -->
+        <div class="voice-options">
+          <div class="voice-option">
+            <button class="voice-check-btn" id="voice-btn-sky" onclick="toggleVoice('sky')">Sky'ı Dene</button>
+            <p class="voice-description"><strong>Sky:</strong> Dengeli ve sakin bir üslupla iletişim kurar.</p>
+          </div>
+          <div class="voice-option">
+            <button class="voice-check-btn" id="voice-btn-gia" onclick="toggleVoice('gia')">Gia'yı Dene</button>
+            <p class="voice-description"><strong>Gia:</strong> Heyecanlı ve enerjik bir üslubu vardır.</p>
+          </div>
+          <div class="voice-option">
+            <button class="voice-check-btn" id="voice-btn-dan" onclick="toggleVoice('dan')">Dan'ı Dene</button>
+            <p class="voice-description"><strong>Dan:</strong> Canlı ve dinamik bir üsluba sahiptir.</p>
+          </div>
+          <div class="voice-option">
+            <button class="voice-check-btn" id="voice-btn-dom" onclick="toggleVoice('dom')">Dom'u Dene</button>
+            <p class="voice-description"><strong>Dom:</strong> Doğrudan ve kararlı bir tarzda konuşur.</p>
+          </div>
+        </div>
       </div>
     </div>
   </div>
@@ -3393,6 +3611,7 @@ body.dark #voice-record-btn.recording img {
   </div>
 </div>
 
+
         <!-- YAPICI PROFİLİ Sekmesi -->
         <div class="tab-content" id="yapiciprofili">
           <div class="settings-list">
@@ -3403,25 +3622,119 @@ body.dark #voice-record-btn.recording img {
           </div>
         </div>
 
-        <!-- BAĞLI UYGULAMALAR Sekmesi -->
-        <div class="tab-content" id="bagliuygulamalar">
-          <div class="settings-list">
-            <div class="setting-item">
-              <label>Bağlı Uygulamalar</label>
-              <p>Örnek bağlı uygulama ayarları.</p>
-            </div>
-          </div>
-        </div>
 
-        <!-- ABONELİK Sekmesi -->
-        <div class="tab-content" id="abonelik">
-          <div class="settings-list">
-            <div class="setting-item">
-              <label>Abonelik</label>
-              <p>Örnek abonelik detayları.</p>
-            </div>
-          </div>
+<!-- BAĞLI UYGULAMALAR Sekmesi -->
+<div class="tab-content" id="bagliuygulamalar">
+  <div class="notifications-container">
+    <!-- Gmail Kartı -->
+    <div class="notification-card">
+      <div class="notification-header">
+        <div class="notification-heading-left">
+          <img src="icons/gmail_icon.png" alt="Gmail" class="notification-icon">
+          <span class="notification-name">Gmail</span>
         </div>
+      </div>
+      <p class="notification-description">
+        Gmail hesabınız üzerinden e-posta entegrasyonu sağlanır. Gelen e-postalarınız kolayca yönetilir.
+      </p>
+    </div>
+    <!-- Google Drive Kartı -->
+<div class="notification-card">
+  <div class="notification-header" style="justify-content: space-between; align-items: center;">
+    <div class="notification-heading-left">
+      <img src="icons/gdrive_icon.png" alt="Google Drive" class="notification-icon">
+      <span class="notification-name">Google Drive</span>
+    </div>
+    <button class="connect-btn" onclick="connectGoogleDrive()">Bağlan</button>
+  </div>
+  <p class="notification-description">
+    Google Drive entegrasyonu ile dosyalarınıza hızlı ve güvenli erişim imkanı sunar.
+  </p>
+</div>
+      <p class="notification-description">
+        Google Drive entegrasyonu ile dosyalarınıza hızlı ve güvenli erişim imkanı sunar.
+      </p>
+    </div>
+    <!-- Microsoft OneDrive Kartı -->
+    <div class="notification-card">
+      <div class="notification-header">
+        <div class="notification-heading-left">
+          <img src="icons/onedrive_icon.png" alt="OneDrive" class="notification-icon">
+          <span class="notification-name">Microsoft OneDrive</span>
+        </div>
+      </div>
+      <p class="notification-description">
+        OneDrive entegrasyonu sayesinde belgeleriniz bulut üzerinde senkronize edilir ve güvenle saklanır.
+      </p>
+    </div>
+  </div>
+</div>
+
+
+<!-- BAĞLI SİSTEMLER Sekmesi -->
+<div class="tab-content" id="baglisistemler">
+  <div class="notifications-container">
+    <!-- 1. Kart: BIODATA -->
+    <div class="notification-card">
+      <div class="notification-header">
+        <div class="notification-heading-left">
+          <img src="icons/biodata_icon.png" alt="BIODATA" class="notification-icon">
+          <span class="notification-name">BIODATA</span>
+        </div>
+        <label class="notification-switch">
+          <input type="checkbox" id="toggle-biodata" onchange="toggleCredentials('biodata')">
+          <span class="notification-slider"></span>
+        </label>
+      </div>
+      <p class="notification-description">
+        BIODATA uygulamasına bağlanır. Lütfen VPN ayarlarınızı kontrol ediniz.
+      </p>
+      <!-- Kullanıcı Adı ve Şifre Alanı (Başlangıçta Gizli) -->
+      <div id="biodata-credentials" class="credentials-container" style="display: none;">
+        <div class="credential-input">
+          <label for="biodata-username">Kullanıcı Adı</label>
+          <input type="text" id="biodata-username" placeholder="Kullanıcı adınızı girin">
+        </div>
+        <div class="credential-input">
+          <label for="biodata-password">Şifre</label>
+          <input type="password" id="biodata-password" placeholder="Şifrenizi girin">
+        </div>
+        <button id="save-biodata" class="credential-save-btn" onclick="saveCredentials('biodata')">Kaydet</button>
+      </div>
+    </div>
+
+    <!-- 2. Kart: DGBYS -->
+    <div class="notification-card">
+      <div class="notification-header">
+        <div class="notification-heading-left">
+          <img src="icons/dgbys_icon.png" alt="DGBYS" class="notification-icon">
+          <span class="notification-name">DGBYS</span>
+        </div>
+        <label class="notification-switch">
+          <input type="checkbox" id="toggle-dgbys" onchange="toggleCredentials('dgbys')">
+          <span class="notification-slider"></span>
+        </label>
+      </div>
+      <p class="notification-description">
+        DGBYS uygulamasına bağlanır. Lütfen VPN ayarlarınızı kontrol ediniz.
+      </p>
+      <!-- Kullanıcı Adı ve Şifre Alanı (Başlangıçta Gizli) -->
+      <div id="dgbys-credentials" class="credentials-container" style="display: none;">
+        <div class="credential-input">
+          <label for="dgbys-username">Kullanıcı Adı</label>
+          <input type="text" id="dgbys-username" placeholder="Kullanıcı adınızı girin">
+        </div>
+        <div class="credential-input">
+          <label for="dgbys-password">Şifre</label>
+          <input type="password" id="dgbys-password" placeholder="Şifrenizi girin">
+        </div>
+        <button id="save-dgbys" class="credential-save-btn" onclick="saveCredentials('dgbys')">Kaydet</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
 
       </div><!-- /settings-content -->
     </div><!-- /settings-body -->
@@ -4152,11 +4465,11 @@ async function sendMessage() {
   }
 
   const userMessageId = Date.now().toString() + "_user";
-  currentConversation.messages.push({
-    id: userMessageId,
-    sender: "user",
-    text: displayedMessage
-  });
+currentConversation.messages.push({
+  id: userMessageId,
+  sender: "user",
+  text: combinedMessage
+});
 
   appendMessageBubble("user", displayedMessage, userMessageId);
 
@@ -4479,7 +4792,7 @@ document.addEventListener("DOMContentLoaded", () => {
   });
 // Eklenecek kod:
 const conversationPersonSelect = document.getElementById("conversation-person");
-conversationPersonSelect.value = localStorage.getItem("conversationPerson") || "sam"; // Varsayılan "Sam"
+conversationPersonSelect.value = localStorage.getItem("conversationPerson") || "sky"; // Varsayılan "Sky"
 conversationPersonSelect.addEventListener("change", () => {
   localStorage.setItem("conversationPerson", conversationPersonSelect.value);
   console.log("Seçilen konuşma kişisi:", conversationPersonSelect.value);
@@ -4966,23 +5279,23 @@ sidebarBrand.addEventListener("click", () => {
 });
 
 document.addEventListener("DOMContentLoaded", () => {
-  // Quik’in mevcut kodları...
-
   const voiceRecordBtn = document.getElementById('voice-record-btn');
   const chatInput = document.getElementById('chat-input-textarea');
   let mediaRecorder;
   let isRecording = false;
-  const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+  let finalTranscript = '';
+  let previousInputValue = '';
 
+  const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+  
   if (SpeechRecognition) {
     const recognition = new SpeechRecognition();
     recognition.continuous = true;
     recognition.interimResults = true;
     recognition.lang = 'tr-TR';
-
-    let finalTranscript = '';
-
+    
     function addSmartPunctuation(text) {
+      // Your existing punctuation function
       let processedText = text;
       processedText = processedText.replace(/(\w+)(\s+)([A-ZÇĞİÖŞÜ])/g, (match, p1, p2, p3) => 
         p1.length > 1 ? p1 + '.' + p2 + p3 : match
@@ -4995,17 +5308,40 @@ document.addEventListener("DOMContentLoaded", () => {
       if (!/[.!?]$/.test(processedText.trim())) processedText = processedText.trim() + '.';
       return processedText;
     }
-
+    
     function capitalizeFirstLetter(text) {
       return text.replace(/(^|[.!?]\s+)([a-zçğıöşü])/g, (match, p1, p2) => p1 + p2.toUpperCase());
     }
-
+    
     function trimExcessWhitespace(text) {
       return text.replace(/\s+/g, ' ').trim();
     }
+    
+    // Monitor the input field for changes
+    chatInput.addEventListener('input', () => {
+      // If the field was cleared manually, reset the transcript
+      if (chatInput.value === '' && previousInputValue !== '') {
+        finalTranscript = '';
+      }
+      previousInputValue = chatInput.value;
+    });
 
+    // Hook into the sendMessage function to reset transcript after sending
+    const originalSendMessage = window.sendMessage;
+    window.sendMessage = function() {
+      const result = originalSendMessage.apply(this, arguments);
+      finalTranscript = '';  // Reset after sending
+      return result;
+    };
+    
     recognition.onresult = (event) => {
       let interimTranscript = '';
+      
+      // Check if input has been manually cleared
+      if (chatInput.value === '') {
+        finalTranscript = '';
+      }
+      
       for (let i = event.resultIndex; i < event.results.length; i++) {
         const transcript = event.results[i][0].transcript;
         if (event.results[i].isFinal) {
@@ -5017,17 +5353,19 @@ document.addEventListener("DOMContentLoaded", () => {
           interimTranscript += transcript;
         }
       }
+      
       chatInput.value = finalTranscript + (interimTranscript ? ' ' + interimTranscript : '');
+      previousInputValue = chatInput.value;
       chatInput.style.height = 'auto';
       chatInput.style.height = chatInput.scrollHeight + 'px';
     };
-
+    
     recognition.onerror = (event) => {
       console.error('Konuşma tanıma hatası:', event.error);
       voiceRecordBtn.classList.remove('recording');
       isRecording = false;
     };
-
+    
     voiceRecordBtn.addEventListener('click', async () => {
       if (isRecording) {
         mediaRecorder.stop();
@@ -5036,18 +5374,29 @@ document.addEventListener("DOMContentLoaded", () => {
         isRecording = false;
       } else {
         try {
+          // Get the current state of the input field
+          const currentInputText = chatInput.value.trim();
+          
+          // If starting a new recording with empty input, reset transcript
+          // Otherwise, keep existing text as part of transcript
+          if (currentInputText === '') {
+            finalTranscript = '';
+          } else {
+            finalTranscript = currentInputText;
+          }
+          
           const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
           mediaRecorder = new MediaRecorder(stream);
           mediaRecorder.start();
           recognition.start();
-          finalTranscript = '';
+          
           voiceRecordBtn.classList.add('recording');
           isRecording = true;
-
+          
           mediaRecorder.onstop = () => {
             stream.getTracks().forEach(track => track.stop());
           };
-
+          
           mediaRecorder.ondataavailable = (event) => {
             // Ses dosyası kaydedilmeyecek
           };
@@ -5063,6 +5412,196 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 });
 
+function toggleCredentials(system) {
+  const credentialsDiv = document.getElementById(`${system}-credentials`);
+  const checkbox = document.getElementById(`toggle-${system}`);
+  if (checkbox.checked) {
+    credentialsDiv.style.display = "block";
+    loadCredentials(system); // Kaydedilmiş bilgileri yükle
+    localStorage.setItem(`${system}-toggle`, "true"); // Slider durumunu kaydet
+  } else {
+    credentialsDiv.style.display = "none";
+    localStorage.setItem(`${system}-toggle`, "false"); // Slider durumunu kaydet
+  }
+}
+
+// Bilgileri kaydetme fonksiyonu (Toast ile)
+function saveCredentials(system) {
+  const username = document.getElementById(`${system}-username`).value;
+  const password = document.getElementById(`${system}-password`).value;
+  
+  if (username && password) {
+    localStorage.setItem(`${system}-username`, username);
+    localStorage.setItem(`${system}-password`, password);
+    
+    // Toast mesajı
+    const toast = document.createElement("div");
+    toast.textContent = `${system.toUpperCase()} kaydedildi!`;
+    toast.style.cssText = `
+      position: fixed;
+      top: 0;
+      left: 50%;
+      transform: translateX(-50%);
+      background-color: #4CAF50; /* Yeşil ton, başarı için */
+      color: white;
+      padding: 12px 12px;
+      border-radius: 8px;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+      z-index: 1000;
+      animation: fadeInOut 2s ease forwards;
+      text-align: center;
+      width: 180px; /* Sabit genişlik */
+    `;
+    document.body.appendChild(toast);
+    
+    setTimeout(() => toast.remove(), 2000); // 2 saniye sonra kaldır
+  } else {
+    // Hata durumunda toast
+    const toast = document.createElement("div");
+    toast.textContent = "Bilgileri doldurun!";
+    toast.style.cssText = `
+      position: fixed;
+      top: 0;
+      left: 50%;
+      transform: translateX(-50%);
+      background-color: #f44336; /* Kırmızı ton, hata için */
+      color: white;
+      padding: 12px 12px;
+      border-radius: 8px;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+      z-index: 1000;
+      animation: fadeInOut 2s ease forwards;
+      text-align: center;
+      width: 180px;
+    `;
+    document.body.appendChild(toast);
+    
+    setTimeout(() => toast.remove(), 2000);
+  }
+}
+
+// Kaydedilmiş bilgileri yükleme fonksiyonu
+function loadCredentials(system) {
+  const savedUsername = localStorage.getItem(`${system}-username`);
+  const savedPassword = localStorage.getItem(`${system}-password`);
+  
+  if (savedUsername) {
+    document.getElementById(`${system}-username`).value = savedUsername;
+  }
+  if (savedPassword) {
+    document.getElementById(`${system}-password`).value = savedPassword;
+  }
+}
+
+// Slider durumunu ve bilgileri sayfa yüklendiğinde geri yükleme
+document.addEventListener("DOMContentLoaded", function() {
+  const systems = ["biodata", "dgbys"];
+  systems.forEach(system => {
+    const checkbox = document.getElementById(`toggle-${system}`);
+    const savedToggle = localStorage.getItem(`${system}-toggle`);
+    
+    if (savedToggle === "true") {
+      checkbox.checked = true;
+      toggleCredentials(system); // Slider açıkken kimlik bilgisi alanını göster ve yükle
+    } else {
+      checkbox.checked = false;
+      toggleCredentials(system); // Slider kapalıysa gizle
+    }
+  });
+});
+
+// Aktif ses oynatıcıyı ve durumunu takip etmek için değişkenler
+let currentVoice = null;
+let currentCharacter = null;
+
+// Ses çalma ve durdurma fonksiyonu
+function toggleVoice(character) {
+  const button = document.getElementById(`voice-btn-${character}`);
+  
+  // Eğer bu karakterin sesi zaten çalıyorsa, durdur
+  if (currentCharacter === character && currentVoice && !currentVoice.paused) {
+    currentVoice.pause();
+    currentVoice.currentTime = 0; // Başa sar
+    button.textContent = `${character.charAt(0).toUpperCase() + character.slice(1)}'ı Dene`;
+    currentVoice = null;
+    currentCharacter = null;
+    return;
+  }
+
+  // Eğer başka bir ses çalıyorsa, onu durdur
+  if (currentVoice && currentCharacter && currentCharacter !== character) {
+    currentVoice.pause();
+    currentVoice.currentTime = 0;
+    const previousButton = document.getElementById(`voice-btn-${currentCharacter}`);
+    previousButton.textContent = `${currentCharacter.charAt(0).toUpperCase() + currentCharacter.slice(1)}'ı Dene`;
+  }
+
+  // Yeni sesi çal
+  currentVoice = new Audio(`voices/${character}_wav.mp3`);
+  currentCharacter = character;
+  currentVoice.play().then(() => {
+    button.textContent = `${character.charAt(0).toUpperCase() + character.slice(1)}'ı Durdur`; // Buton metnini güncelle
+  }).catch(error => {
+    console.error(`${character} sesi çalınırken hata oluştu:`, error);
+    alert(`${character} ses dosyası bulunamadı veya çalınamadı.`);
+  });
+
+  // Ses bittiğinde buton metnini sıfırla
+  currentVoice.onended = () => {
+    button.textContent = `${character.charAt(0).toUpperCase() + character.slice(1)}'ı Dene`;
+    currentVoice = null;
+    currentCharacter = null;
+  };
+}
+
+
+  // Mevcut seçili mod ve Özel metnin saklanacağı değişkenler
+  let currentMode = 'special';
+  let specialText = '';
+
+  // Hazır statik prompt'lar
+  const prompts = {
+    professional: "Resmi bir ton, net, iyi yapılandırılmış cümleler ve kesin bir dil kullanan Quik adında bir AI asistanısın. Profesyonelliğini koru ve günlük dil veya gündelik ifadelerden kaçın. Öz ve saygılı kal. Profesyonel bir meslektaşa hitap ediyormuş gibi kapsamlı açıklamalar sağla.",
+    energetic: "Enerjik ve motive edici bir tavır sergilemek, kullanıcıyı motive etmek için sürekli olarak coşku ve cesaretlendirmeyle yanıtlar veren Quik adında bir AI asistanısın. Tüm etkileşimlerde motivasyonu teşvik etmek için dinamik ve canlandırıcı bir dil kullanarak olumlu bir ton oluştur. Yanıtlarında netlik, profesyonellik ve kesinliği korurken, davranışını kullanıcının yönlendirildiği şekilde uyarla. Kullanıcıyı etkili bir şekilde desteklemek için özlü ancak kapsamlı açıklamalar sağla. Hemen hemen her cümlenin sonunda enerjik emojiler ile cümlelerini destekle.",
+    friendly: "Her zaman samimi ve cana yakın bir üslupla konuşan Quik adında bir AI asistanısın. Kullanıcıya duygusal olarak bağlanan, anlaşılır ve destekleyici cevaplar üretmeyi seviyorsun. Cevaplarında empati, naziklik ve moral verici ifadeler her zaman ön plandadır. Umut verici ve sıcak bir dil kullanarak kullanıcının kendisini değerli hissetmesini sağlamak senin görevin. Çünkü sen kullanıcıyı çok seviyorsun."
+  };
+
+  function setPrompt(type) {
+    const staticPrompt = document.getElementById('static-prompt');
+    
+    // Eğer mevcut mod 'special' ise, kullanıcı tarafından girilen metni sakla
+    if (currentMode === 'special') {
+      specialText = staticPrompt.value;
+    }
+
+    // Yeni mod ataması
+    currentMode = type;
+
+    if (type === 'special') {
+      // "Özel" seçeneğinde kullanıcı metni düzenleyebilir
+      staticPrompt.disabled = false;
+      // Daha önce girilen özel metni geri yükle
+      staticPrompt.value = specialText;
+    } else {
+      // Diğer seçenekler seçildiğinde input kilitlenir ve otomatik prompt yazılır
+      staticPrompt.disabled = true;
+      staticPrompt.value = prompts[type] || "";
+    }
+  }
+
+document.getElementById("static-prompt").addEventListener("keydown", function(e) {
+  // Eğer Enter tuşuna (Shift olmadan) basılırsa
+  if (e.key === "Enter" && !e.shiftKey) {
+    e.preventDefault(); // Yeni satır eklenmesini engelle
+    document.getElementById("save-personalization").click();
+  }
+});
+
+  function connectGoogleDrive() {
+    // Bu URL'yi kendi Google OAuth 2.0 ayarlarınıza göre düzenleyin.
+    const googleDriveAuthUrl = "https://accounts.google.com/o/oauth2/v2/auth?client_id=YOUR_CLIENT_ID&redirect_uri=YOUR_REDIRECT_URI&response_type=code&scope=https://www.googleapis.com/auth/drive.file";
+    window.open(googleDriveAuthUrl, "_blank");
+  }
 
   </script>
 </body>
