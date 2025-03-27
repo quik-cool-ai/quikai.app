@@ -2659,7 +2659,6 @@ body.dark .notification-icon {
 .general-container {
   display: flex;
   flex-direction: column;
-  gap: 1rem;           /* Kartlar arasında boşluk */
   width: 100%;
   box-sizing: border-box;
 }
@@ -3116,7 +3115,7 @@ ul.description-list {
 button.theme-btn {
   border-radius: 12px;
   padding: 0.5rem;
-  border: 1px solid #c0c0c0;
+  border: 1px solid #e0e0e0;
   cursor: pointer;
   display: flex;
   gap: 1rem;
@@ -3191,6 +3190,53 @@ body.dark .danger-btn {
 
 body.dark .danger-btn:hover {
   background-color: #ff6666;
+}
+
+.setting-row.select {
+  width: 100%;
+  max-width: 300px; /* Dropdown genişliğini sınırlıyoruz */
+  padding: 8px;
+  font-size: 0.8rem;
+  border-radius: 8px;
+  border: 1px solid var(--code-border);
+  background-color: var(--input-bg);
+  color: var(--text-color);
+  cursor: pointer;
+  margin-top: 0.5rem;
+  margin-bottom: 0.5rem;
+}
+
+body.dark .setting-row.select {
+  border-color: #444;
+  background-color: #1e1e1e;
+  color: #fff;
+}
+
+/* Kartlar arasında boşluk */
+.general-card + .general-card {
+  margin-top: 1rem; /* Kartlar arasında dikey boşluk */
+}
+
+.summary-actions-container {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem; /* Dropdown ile butonlar arasında boşluk */
+}
+
+.summary-actions {
+  display: flex;
+  gap: 0.25rem; /* Butonlar arasında boşluk */
+  opacity: 1; /* Varsayılan olarak görünür, ama devre dışıysa soluk olacak */
+}
+
+.summary-actions button:disabled {
+  opacity: 0.3; /* Devre dışı butonlar soluk görünür */
+  cursor: not-allowed; /* İmleç devre dışı olduğunu gösterir */
+}
+
+.summary-text {
+  margin-top: 0.5rem; /* Özet metni ile üstteki açıklama arasında boşluk */
+  font-style: italic; /* Özet metnini biraz farklı gösterelim */
 }
 
   </style>
@@ -3347,6 +3393,11 @@ body.dark .danger-btn:hover {
     Bağlı Sistemler
   </li>
 
+<li data-tab="hesap">
+    <img src="icons/hesap.png" class="settings-icon" alt="Hesap">
+    Hesap
+  </li>
+
         </ul>
       </nav>
 
@@ -3449,7 +3500,7 @@ body.dark .danger-btn:hover {
         <!-- İkon (opsiyonel) -->
         <div class="notification-heading-left">
           <img src="icons/notification.png" alt="Bildirim" class="notification-icon">
-          <span class="notification-name">Uygulama bildirimi</span>
+          <span class="notification-name">Uygulama Bildirimi</span>
         </div>
 
         <!-- Switch (Toggle) -->
@@ -3468,7 +3519,7 @@ body.dark .danger-btn:hover {
       <div class="notification-header">
         <div class="notification-heading-left">
           <img src="icons/desktop_notification.png" alt="Masaüstü" class="notification-icon">
-          <span class="notification-name">Masaüstü bildirimi</span>
+          <span class="notification-name">Masaüstü Bildirimi</span>
         </div>
 
         <label class="notification-switch">
@@ -3486,7 +3537,7 @@ body.dark .danger-btn:hover {
       <div class="notification-header">
         <div class="notification-heading-left">
           <img src="icons/email_notification.png" alt="E-posta" class="notification-icon">
-          <span class="notification-name">E-posta bildirimi</span>
+          <span class="notification-name">E-posta Bildirimi</span>
         </div>
 
         <label class="notification-switch">
@@ -3504,7 +3555,7 @@ body.dark .danger-btn:hover {
   <div class="notification-header">
     <div class="notification-heading-left">
       <img src="icons/download.png" alt="Dosya İndirme" class="notification-icon">
-      <span class="notification-name">İndirme bildirimi</span>
+      <span class="notification-name">İndirme Bildirimi</span>
     </div>
     <label class="notification-switch">
       <input type="checkbox" id="toggle-download-notifications" checked>
@@ -3632,23 +3683,50 @@ body.dark .danger-btn:hover {
     <div class="general-card">
       <div class="card-topbar">
         <div class="general-heading-left">
-          <span class="general-name">Mevcut Geçmiş Sohbet Sayısı: <span id="chat-count">0</span>/200</span></span>
+          <span class="general-name">Mevcut Geçmiş Sohbet Sayısı: <span id="chat-count">0</span>/200</span>
         </div>
       </div>
       <div class="description-list">
         <span class="general-count">
-        <div class="progress-container">
-          <div id="progress-bar" class="progress-bar">
-            <div id="progress-bar-fill" class="progress-bar-fill"></div>
+          <div class="progress-container">
+            <div id="progress-bar" class="progress-bar">
+              <div id="progress-bar-fill" class="progress-bar-fill"></div>
+            </div>
+            <button id="delete-all-chats" class="danger-btn">Bütün Sohbetleri Sil</button>
           </div>
-          <button id="delete-all-chats" class="danger-btn">Bütün Sohbetleri Sil</button>
-        </div>
+        </span>
       </div>
       <p class="general-description">En fazla 200 geçmiş sohbet saklanabilir. Eğer bu sınır aşılırsa en eski sohbetler otomatik olarak silinir.</p>
     </div>
+
+    <!-- Sohbet Özetleyici Kartı -->
+    <div class="general-card">
+      <div class="card-topbar">
+        <div class="general-heading-left">
+          <span class="general-name">Sohbet Özetleyici</span>
+        </div>
+      </div>
+      <div class="description-list">
+        <span class="general-count summary-actions-container">
+          <select id="chat-summary-dropdown" class="setting-row select">
+            <option value="" disabled selected>Sohbet Seçin</option>
+          </select>
+          <!-- Düzenleme ve Silme Butonları -->
+          <div class="history-actions summary-actions">
+            <button class="edit-btn" id="edit-summary-btn" disabled>
+              <img src="icons/edit_btn.png" alt="Düzenle">
+            </button>
+            <button class="delete-btn" id="delete-summary-btn" disabled>
+              <img src="icons/delete_btn.png" alt="Sil">
+            </button>
+          </div>
+        </span>
+      </div>
+      <p class="general-description">Seçilen sohbet başlığının özeti aşağıda gösterilir.</p>
+      <p class="general-description summary-text" style="display: none;"></p> <!-- Özetin gösterileceği alan -->
+    </div>
   </div>
 </div>
-
 
         <!-- YAPICI PROFİLİ Sekmesi -->
         <div class="tab-content" id="yapiciprofili">
@@ -3664,6 +3742,7 @@ body.dark .danger-btn:hover {
 <!-- BAĞLI UYGULAMALAR Sekmesi -->
 <div class="tab-content" id="bagliuygulamalar">
   <div class="notifications-container">
+
 <!-- Gmail Kartı (BAĞLI UYGULAMALAR Sekmesi içinde) -->
 <div class="notification-card">
   <div class="notification-header" style="justify-content: space-between; align-items: center;">
@@ -3671,12 +3750,15 @@ body.dark .danger-btn:hover {
       <img src="icons/gmail_icon.png" alt="Gmail" class="notification-icon">
       <span class="notification-name">Gmail</span>
     </div>
-    <button class="connect-btn" onclick="connectGmail()">Bağlan</button>
+    <div id="gmail-connect-container">
+      <button class="connect-btn" onclick="connectGmail()">Bağlan</button>
+    </div>
   </div>
   <p class="notification-description">
-    Gmail entegrasyonu ile e-postalarınızı doğrudan yönetebilir ve bildirim alabilirsiniz.
+    Gmail entegrasyonu ile e-postalarınıza erişim sağlanır.
   </p>
 </div>
+
     <!-- Google Drive Kartı -->
 <div class="notification-card">
   <div class="notification-header" style="justify-content: space-between; align-items: center;">
@@ -3687,7 +3769,7 @@ body.dark .danger-btn:hover {
     <button class="connect-btn" onclick="connectGoogleDrive()">Bağlan</button>
   </div>
   <p class="notification-description">
-    Google Drive entegrasyonu ile dosyalarınıza hızlı ve güvenli erişim imkanı sunar.
+    Google Drive entegrasyonu ile dosyalarınıza erişim sağlanır.
   </p>
 </div>
 
@@ -3701,7 +3783,7 @@ body.dark .danger-btn:hover {
         <button class="connect-btn" onclick="connectGtalk()">Bağlan</button>
       </div>
       <p class="notification-description">
-        Google Talk ile anlık mesajlaşma ve hızlı iletişim imkanına sahip olun.
+        Google Talk entegrasyonu ile mesajlarınıza cevap üretilir.
       </p>
 </div>
 
@@ -3714,7 +3796,7 @@ body.dark .danger-btn:hover {
         </div>
       </div>
       <p class="notification-description">
-        OneDrive entegrasyonu sayesinde belgeleriniz bulut üzerinde senkronize edilir ve güvenle saklanır.
+        OneDrive entegrasyonu ile dosyalarınıza erişim sağlanır.
       </p>
 
 
@@ -3783,6 +3865,66 @@ body.dark .danger-btn:hover {
         <button id="save-dgbys" class="credential-save-btn" onclick="saveCredentials('dgbys')">Kaydet</button>
         </div>
       </div>
+
+    <!-- 3. Kart: EMTIA -->
+    <div class="notification-card">
+      <div class="notification-header">
+        <div class="notification-heading-left">
+          <img src="icons/emtia_icon.png" alt="EMTIA" class="notification-icon">
+          <span class="notification-name">EMTIA</span>
+        </div>
+        <label class="notification-switch">
+          <input type="checkbox" id="toggle-emtia" onchange="toggleCredentials('emtia')">
+          <span class="notification-slider"></span>
+        </label>
+      </div>
+      <p class="notification-description">
+        EMTIA uygulamasına bağlanır. Lütfen VPN ayarlarınızı kontrol ediniz.
+      </p>
+      <!-- Kullanıcı Adı ve Şifre Alanı (Başlangıçta Gizli) -->
+      <div id="emtia-credentials" class="credentials-container" style="display: none;">
+        <div class="credential-input">
+          <label for="emtia-username">Kullanıcı Adı</label>
+          <input type="text" id="emtia-username" placeholder="Kullanıcı adınızı girin">
+        </div>
+        <div class="credential-input">
+          <label for="emtia-password">Şifre</label>
+          <input type="password" id="emtia-password" placeholder="Şifrenizi girin">
+        </div>
+        <button id="save-emtia" class="credential-save-btn" onclick="saveCredentials('emtia')">Kaydet</button>
+        </div>
+      </div>
+
+    <!-- 4. Kart: MEYER -->
+    <div class="notification-card">
+      <div class="notification-header">
+        <div class="notification-heading-left">
+          <img src="icons/meyer_icon.png" alt="MEYER" class="notification-icon">
+          <span class="notification-name">MEYER</span>
+        </div>
+        <label class="notification-switch">
+          <input type="checkbox" id="toggle-meyer" onchange="toggleCredentials('meyer')">
+          <span class="notification-slider"></span>
+        </label>
+      </div>
+      <p class="notification-description">
+        MEYER uygulamasına bağlanır. Lütfen VPN ayarlarınızı kontrol ediniz.
+      </p>
+      <!-- Kullanıcı Adı ve Şifre Alanı (Başlangıçta Gizli) -->
+      <div id="meyer-credentials" class="credentials-container" style="display: none;">
+        <div class="credential-input">
+          <label for="meyer-username">Kullanıcı Adı</label>
+          <input type="text" id="meyer-username" placeholder="Kullanıcı adınızı girin">
+        </div>
+        <div class="credential-input">
+          <label for="meyer-password">Şifre</label>
+          <input type="password" id="meyer-password" placeholder="Şifrenizi girin">
+        </div>
+        <button id="save-meyer" class="credential-save-btn" onclick="saveCredentials('meyer')">Kaydet</button>
+        </div>
+      </div>
+
+
     </div>
   </div>
 </div>
@@ -4720,6 +4862,7 @@ document.addEventListener("DOMContentLoaded", () => {
   currentConversation = null;
   renderChatHistory();
   closeSidebar();
+  populateChatSummaryDropdown();
 
 // If no conversations exist, start with a placeholder
   if (conversations.length === 0) {
@@ -5547,7 +5690,7 @@ function loadCredentials(system) {
 
 // Slider durumunu ve bilgileri sayfa yüklendiğinde geri yükleme
 document.addEventListener("DOMContentLoaded", function() {
-  const systems = ["biodata", "dgbys"];
+  const systems = ["biodata", "dgbys", "emtia", "meyer"];
   systems.forEach(system => {
     const checkbox = document.getElementById(`toggle-${system}`);
     const savedToggle = localStorage.getItem(`${system}-toggle`);
@@ -5651,34 +5794,32 @@ document.getElementById("static-prompt").addEventListener("keydown", function(e)
 
 
 
-
-  function connectGoogleDrive() {
-    const googleDriveAuthUrl = "https://accounts.google.com/o/oauth2/v2/auth?client_id=147325926000-7if85b7ej6h8alco9t3s5trrl7eveq78.apps.googleusercontent.com&redirect_uri=http://localhost:5000&response_type=code&scope=https://www.googleapis.com/auth/drive.file";
-    window.open(googleDriveAuthUrl, "_blank");
-  }
-
+function connectGoogleDrive() {
+  const googleDriveAuthUrl = "https://accounts.google.com/o/oauth2/v2/auth?" +
+    "client_id=147325926000-7if85b7ej6h8alco9t3s5trrl7eveq78.apps.googleusercontent.com&" +
+    "redirect_uri=https://quik-chatbot.netlify.app&" +
+    "response_type=code&" +
+    "scope=https://www.googleapis.com/auth/chat.bot";
+  window.open(googleDriveAuthUrl, "_blank");
+}
 
 function connectGtalk() {
   const googleTalkAuthUrl = "https://accounts.google.com/o/oauth2/v2/auth?" +
     "client_id=147325926000-7if85b7ej6h8alco9t3s5trrl7eveq78.apps.googleusercontent.com&" +
-    "redirect_uri=http://localhost:5000&" +
+    "redirect_uri=https://quik-chatbot.netlify.app&" +
     "response_type=code&" +
     "scope=https://www.googleapis.com/auth/chat.bot";
-
   window.open(googleTalkAuthUrl, "_blank");
 }
 
-
-  function connectGmail() {
-    // Aşağıdaki URL'yi kendi Google OAuth ayarlarınızla güncelleyin:
-    const gmailAuthUrl = "https://accounts.google.com/o/oauth2/v2/auth?" +
-      "client_id=147325926000-7if85b7ej6h8alco9t3s5trrl7eveq78.apps.googleusercontent.com&" +
-      "redirect_uri=http://localhost:5000&" +
-      "response_type=code&" +
-      "scope=https://www.googleapis.com/auth/gmail.readonly";
-    window.open(gmailAuthUrl, "_blank");
-  }
-
+function connectGmail() {
+  const gmailAuthUrl = "https://accounts.google.com/o/oauth2/v2/auth?" +
+    "client_id=147325926000-7if85b7ej6h8alco9t3s5trrl7eveq78.apps.googleusercontent.com&" +
+    "redirect_uri=https://quik-chatbot.netlify.app&" +
+    "response_type=code&" +
+    "scope=https://www.googleapis.com/auth/gmail.readonly";
+  window.open(gmailAuthUrl, "_blank");
+}
 
 // Global variable to track Gmail connection state
 let isGmailConnected = localStorage.getItem("isGmailConnected") === "true";
@@ -5688,7 +5829,7 @@ let gmailAccessToken = localStorage.getItem("gmailAccessToken") || null;
 function connectGmail() {
   const gmailAuthUrl = "https://accounts.google.com/o/oauth2/v2/auth?" +
     "client_id=147325926000-7if85b7ej6h8alco9t3s5trrl7eveq78.apps.googleusercontent.com&" +
-    "redirect_uri=http://localhost:5000&" +
+    "redirect_uri=https://quik-chatbot.netlify.app&" +
     "response_type=code&" +
     "scope=https://www.googleapis.com/auth/gmail.readonly";
 
@@ -5797,6 +5938,89 @@ document.addEventListener("DOMContentLoaded", () => {
   checkGmailConnection(); // Check if already connected
 });
 
+
+
+
+function populateChatSummaryDropdown() {
+  const dropdown = document.getElementById("chat-summary-dropdown");
+  const editBtn = document.getElementById("edit-summary-btn");
+  const deleteBtn = document.getElementById("delete-summary-btn");
+  const summaryText = document.querySelector(".summary-text");
+
+  if (!dropdown || !editBtn || !deleteBtn || !summaryText) {
+    console.error("Sohbet özetleyici elemanları bulunamadı.");
+    return;
+  }
+
+  // Mevcut seçenekleri temizle, sadece varsayılan seçeneği bırak
+  dropdown.innerHTML = '<option value="" disabled selected>Sohbet Seçin</option>';
+
+  // Sohbet başlıklarını ekle
+  conversations.forEach((conversation, index) => {
+    const option = document.createElement("option");
+    option.value = index; // İndeksi değer olarak kullan
+    option.textContent = conversation.title || "Yeni Sohbet"; // Başlık yoksa varsayılan
+    dropdown.appendChild(option);
+  });
+
+  // Dropdown’da bir seçim yapıldığında
+  dropdown.addEventListener("change", (e) => {
+    const selectedIndex = e.target.value;
+    if (selectedIndex !== "") {
+      const selectedConversation = conversations[selectedIndex];
+      
+      // Özeti göster
+      displayChatSummary(selectedConversation);
+      
+      // Butonları aktif hale getir
+      editBtn.disabled = false;
+      deleteBtn.disabled = false;
+
+      // Düzenleme butonu işlevi
+      editBtn.onclick = () => {
+        const newTitle = prompt("Yeni sohbet başlığını girin:", selectedConversation.title || "Yeni Sohbet");
+        if (newTitle && newTitle.trim() !== "") {
+          conversations[selectedIndex].title = newTitle.trim();
+          localStorage.setItem("conversations", JSON.stringify(conversations));
+          populateChatSummaryDropdown(); // Dropdown’u güncelle
+          renderChatHistory(); // Sidebar’ı güncelle
+          dropdown.value = selectedIndex; // Seçili öğeyi koru
+          displayChatSummary(conversations[selectedIndex]); // Özeti güncelle
+        }
+      };
+
+      // Silme butonu işlevi
+      deleteBtn.onclick = () => {
+        if (confirm("Bu sohbeti silmek istediğinizden emin misiniz?")) {
+          conversations.splice(selectedIndex, 1); // Sohbeti diziden kaldır
+          localStorage.setItem("conversations", JSON.stringify(conversations));
+          populateChatSummaryDropdown(); // Dropdown’u güncelle
+          renderChatHistory(); // Sidebar’ı güncelle
+          updateChatCount(); // Sohbet sayısını güncelle
+          summaryText.style.display = "none"; // Özeti gizle
+          editBtn.disabled = true; // Butonları devre dışı bırak
+          deleteBtn.disabled = true;
+          dropdown.value = ""; // Dropdown’u sıfırla
+        }
+      };
+    } else {
+      // Hiçbir şey seçilmediyse butonları devre dışı bırak ve özeti gizle
+      editBtn.disabled = true;
+      deleteBtn.disabled = true;
+      summaryText.style.display = "none";
+    }
+  });
+}
+
+function displayChatSummary(conversation) {
+  const summaryText = document.querySelector(".summary-text");
+  const summary = conversation.messages.length > 0 
+    ? conversation.messages.map(msg => msg.text).join(" ").substring(0, 200) + "..." 
+    : "Bu sohbette mesaj yok.";
+  
+  summaryText.textContent = `${summary}`;
+  summaryText.style.display = "block";
+}
 
   </script>
 </body>
