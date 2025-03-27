@@ -1354,8 +1354,10 @@ body.dark .settings-modal-content {
   }
 
   .settings-content {
-    height: 100%; /* Mobil için de sabit */
-    overflow-y: auto; /* Kaydırma çubuğu aktif */
+    height: 100%;
+    min-height: 0; /* Eklediğimiz satır */
+    overflow-y: auto;
+    overflow-x: auto; /* Eğer yatay taşma da varsa */
   }
 }
   .settings-header {
@@ -1378,6 +1380,10 @@ body.dark .settings-modal-content {
 
   .settings-content {
     padding: 8px;
+    height: 100%;
+    min-height: 0; /* Eklediğimiz satır */
+    overflow-y: auto;
+    overflow-x: auto; /* Eğer yatay taşma da varsa */
   }
 
   .setting-item label,
@@ -3117,6 +3123,10 @@ button.theme-btn {
       justify-content: center;
 }
 
+.prompt-selection {
+  margin-top: 0.8rem;
+}
+
   @media (max-width: 768px) {
     .prompt-selection {
       button.theme-btn: column;
@@ -3138,9 +3148,9 @@ button.theme-btn:hover {
     color: white;
     border: none;
     border-radius: 4px;
-    padding: 6px 12px;
+    padding: 4px 8px;
     cursor: pointer;
-    font-size: 0.8rem;
+    font-size: 0.7rem;
   }
   .connect-btn:hover {
     background-color: #0056b3;
@@ -3520,16 +3530,7 @@ body.dark .danger-btn:hover {
     <p class="general-description">
       Sana daha iyi bir hizmet sunabilmem için bana ne istediğini söyleyebilirsin.
     </p>
-    <p class="general-description">
-      Bu sayede:
-    </p>
-    
-    <!-- Madde Listesi -->
-    <ul class="description-list">
-      <li>Seninle olan sohbetlerimiz daha akıcı hale gelir.</li>
-      <li>Tamamen sana özel yanıtlar üretmeye çalışırım.</li>
-      <li>Detayları unutmam ve ona göre hareket ederim.</li>
-    </ul>
+
 
     <!-- Prompt Seçenekleri (Theme-btn stilinde) -->
     <div class="prompt-selection" style="display: flex; gap: 1rem; flex-wrap: wrap; margin-bottom: 1rem;">
@@ -3548,7 +3549,7 @@ body.dark .danger-btn:hover {
       <button type="button" class="theme-btn" onclick="setPrompt('energetic')" style="flex: 1; min-width: 150px;">
         <div style="text-align: center;">
           <strong>Enerjik</strong><br>
-          <small>Canlı ve Motive</small>
+          <small>Canlılık ve Motivasyon</small>
         </div>
       </button>
       <button type="button" class="theme-btn" onclick="setPrompt('friendly')" style="flex: 1; min-width: 150px;">
@@ -3564,7 +3565,7 @@ body.dark .danger-btn:hover {
       <textarea 
         id="static-prompt" 
         placeholder="Örnek: 'Her zaman kısa ve öz cevap ver' veya 'Bana esprili bir şekilde yanıt ver'" 
-        rows="5" 
+        rows="8" 
         style="width: 100%;"
       ></textarea>
     </div>
@@ -5611,7 +5612,7 @@ function toggleVoice(character) {
   // Hazır statik prompt'lar
   const prompts = {
     professional: "Resmi bir ton, net, iyi yapılandırılmış cümleler ve kesin bir dil kullanan Quik adında bir AI asistanısın. Profesyonelliğini koru ve günlük dil veya gündelik ifadelerden kaçın. Öz ve saygılı kal. Profesyonel bir meslektaşa hitap ediyormuş gibi kapsamlı açıklamalar sağla.",
-    energetic: "Enerjik ve motive edici bir tavır sergilemek, kullanıcıyı motive etmek için sürekli olarak coşku ve cesaretlendirmeyle yanıtlar veren Quik adında bir AI asistanısın. Tüm etkileşimlerde motivasyonu teşvik etmek için dinamik ve canlandırıcı bir dil kullanarak olumlu bir ton oluştur. Yanıtlarında netlik, profesyonellik ve kesinliği korurken, davranışını kullanıcının yönlendirildiği şekilde uyarla. Kullanıcıyı etkili bir şekilde desteklemek için özlü ancak kapsamlı açıklamalar sağla. Hemen hemen her cümlenin sonunda enerjik emojiler ile cümlelerini destekle.",
+    energetic: "Enerjik ve motive edici bir tavır sergileyen ve kullanıcıyı motive etmek için sürekli olarak coşku ve cesaretlendirmeyle yanıtlar veren Quik adında bir AI asistanısın. Tüm etkileşimlerde motivasyonu teşvik etmek için dinamik ve canlandırıcı bir dil kullanarak olumlu bir ton oluştur. Yanıtlarında netlik, profesyonellik ve kesinliği korurken, davranışını kullanıcının yönlendirildiği şekilde uyarla. Kullanıcıyı etkili bir şekilde desteklemek için özlü ancak kapsamlı açıklamalar sağla. Her cümlenin sonunda enerjik emojiler ile cümlelerini destekle.",
     friendly: "Her zaman samimi ve cana yakın bir üslupla konuşan Quik adında bir AI asistanısın. Kullanıcıya duygusal olarak bağlanan, anlaşılır ve destekleyici cevaplar üretmeyi seviyorsun. Cevaplarında empati, naziklik ve moral verici ifadeler her zaman ön plandadır. Umut verici ve sıcak bir dil kullanarak kullanıcının kendisini değerli hissetmesini sağlamak senin görevin. Çünkü sen kullanıcıyı çok seviyorsun."
   };
 
@@ -5650,7 +5651,7 @@ document.getElementById("static-prompt").addEventListener("keydown", function(e)
 
 
   function connectGoogleDrive() {
-    const googleDriveAuthUrl = "https://accounts.google.com/o/oauth2/v2/auth?client_id=147325926000-7if85b7ej6h8alco9t3s5trrl7eveq78.apps.googleusercontent.com&redirect_uri=https://quik-chatbot.netlify.app&response_type=code&scope=https://www.googleapis.com/auth/drive.file";
+    const googleDriveAuthUrl = "https://accounts.google.com/o/oauth2/v2/auth?client_id=147325926000-7if85b7ej6h8alco9t3s5trrl7eveq78.apps.googleusercontent.com&redirect_uri=http://localhost:5000&response_type=code&scope=https://www.googleapis.com/auth/drive.file";
     window.open(googleDriveAuthUrl, "_blank");
   }
 
@@ -5658,7 +5659,7 @@ document.getElementById("static-prompt").addEventListener("keydown", function(e)
 function connectGtalk() {
   const googleTalkAuthUrl = "https://accounts.google.com/o/oauth2/v2/auth?" +
     "client_id=147325926000-7if85b7ej6h8alco9t3s5trrl7eveq78.apps.googleusercontent.com&" +
-    "redirect_uri=https://quik-chatbot.netlify.app&" +
+    "redirect_uri=http://localhost:5000&" +
     "response_type=code&" +
     "scope=https://www.googleapis.com/auth/chat.bot";
 
@@ -5670,7 +5671,7 @@ function connectGtalk() {
     // Aşağıdaki URL'yi kendi Google OAuth ayarlarınızla güncelleyin:
     const gmailAuthUrl = "https://accounts.google.com/o/oauth2/v2/auth?" +
       "client_id=147325926000-7if85b7ej6h8alco9t3s5trrl7eveq78.apps.googleusercontent.com&" +
-      "redirect_uri=https://quik-chatbot.netlify.app&" +
+      "redirect_uri=http://localhost:5000&" +
       "response_type=code&" +
       "scope=https://www.googleapis.com/auth/gmail.readonly";
     window.open(gmailAuthUrl, "_blank");
@@ -5685,7 +5686,7 @@ let gmailAccessToken = localStorage.getItem("gmailAccessToken") || null;
 function connectGmail() {
   const gmailAuthUrl = "https://accounts.google.com/o/oauth2/v2/auth?" +
     "client_id=147325926000-7if85b7ej6h8alco9t3s5trrl7eveq78.apps.googleusercontent.com&" +
-    "redirect_uri=https://quik-chatbot.netlify.app&" +
+    "redirect_uri=http://localhost:5000&" +
     "response_type=code&" +
     "scope=https://www.googleapis.com/auth/gmail.readonly";
 
