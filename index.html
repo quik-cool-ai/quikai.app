@@ -634,7 +634,7 @@ body.dark .history-icon {
   border-radius: 16px;
   word-wrap: break-word;
   line-height: 1.5;       /* Sıkıştırılmış satır yüksekliği */
-  font-size: 1rem;
+  font-size: 0.9rem;
   white-space: normal;  /* Yeni satırları korumak istemiyorsanız normal */
 }
 
@@ -642,7 +642,8 @@ body.dark .history-icon {
   align-self: flex-end;
   border-bottom-right-radius: 0;
   background-color: var(--input-bg);
-  font-family: Helvetica, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI Emoji", "Noto Color Emoji", sans-serif;
+  font-family: Arial, sans-serif;
+  font-size: 0.9rem;
   padding-left: 1rem;
   padding-right: 1rem;
   border-radius: 24px;
@@ -652,8 +653,8 @@ body.dark .history-icon {
 
 .assistant-bubble {
   position: relative;
-  font-family: Helvetica, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI Emoji", "Noto Color Emoji", sans-serif;
-  font-size: 1rem;
+  font-family: 'Arial', system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  font-size: 0.9rem;
   white-space: normal;   /* Fazla boşluklar ortadan kalksın */
   overflow-wrap: break-word;
   max-width: 100% !important;
@@ -717,7 +718,7 @@ body.dark .history-icon {
 
     #chat-input-textarea {
       font-family: 'Inter', sans-serif;
-      font-size: 1rem;
+      font-size: 0.9rem;
       line-height: 1.5;
       flex: 1;
       border: none;
@@ -2624,8 +2625,8 @@ body.dark [data-tooltip]::after {
 
 /* İkon boyutu */
 .notification-icon {
-  width: 18px;
-  height: 18px;
+  width: 16px;
+  height: 16px;
   object-fit: contain;
   filter: none; /* Dark mod için isterseniz invert(1) ekleyebilirsiniz */
 }
@@ -3239,6 +3240,35 @@ body.dark .setting-row.select {
   font-style: italic; /* Özet metnini biraz farklı gösterelim */
 }
 
+
+
+.code-block-container pre {
+  background: var(--code-bg);
+  padding: 16px;
+  font-family: 'Fira Code', monospace;
+  font-size: 14px;
+  color: var(--code-text);
+  border: 1px solid var(--code-border);
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+  user-select: none; /* Kodun seçilmesini engeller */
+  pointer-events: none; /* Tıklanmasını ve düzenlenmesini engeller */
+}
+
+body.dark .code-block-container pre {
+  background: var(--code-bg);
+  border-color: #333;
+  color: var(--code-text);
+  box-shadow: 0 4px 12px rgba(255, 255, 255, 0.05);
+}
+
+.system-label {
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: var(--text-color);
+  margin-right: 10px;
+}
+
   </style>
 </head>
 
@@ -3378,11 +3408,6 @@ body.dark .setting-row.select {
     Geçmiş
   </li>
 
-<li data-tab="yapiciprofili">
-    <img src="icons/yapici_profili.png" class="settings-icon" alt="Yapıcı Profili">
-    Yapıcı Profili
-  </li>
-
 <li data-tab="bagliuygulamalar">
     <img src="icons/bagli_uygulamalar.png" class="settings-icon" alt="Bağlı Uygulamalar">
     Bağlı Uygulamalar
@@ -3391,6 +3416,11 @@ body.dark .setting-row.select {
 <li data-tab="baglisistemler">
     <img src="icons/bagli_sistemler.png" class="settings-icon" alt="Bağlı Sistemler">
     Bağlı Sistemler
+  </li>
+
+<li data-tab="bagliprogramlar">
+    <img src="icons/bagli_programlar.png" class="settings-icon" alt="Bağlı Programlar">
+    Bağlı Programlar
   </li>
 
 <li data-tab="hesap">
@@ -3728,15 +3758,122 @@ body.dark .setting-row.select {
   </div>
 </div>
 
-        <!-- YAPICI PROFİLİ Sekmesi -->
-        <div class="tab-content" id="yapiciprofili">
-          <div class="settings-list">
-            <div class="setting-item">
-              <label>Yapıcı Profili</label>
-              <p>Örnek yapıcı profil ayarları.</p>
-            </div>
+
+<!-- BAĞLI PROGRAMLAR Sekmesi -->
+<div class="tab-content" id="bagliprogramlar">
+  <div class="settings-list">
+    <div class="notifications-container">
+      
+      <!-- SQL Kartı -->
+      <div class="notification-card">
+        <div class="notification-header">
+          <div class="notification-heading-left">
+            <img src="icons/sql_icon.png" alt="SQL" class="notification-icon">
+            <span class="notification-name">SQL</span>
           </div>
+          <label class="notification-switch">
+            <input type="checkbox" id="toggle-sql" onchange="toggleCodeBlock('sql')">
+            <span class="notification-slider"></span>
+          </label>
         </div>
+        <p class="notification-description">
+          MsSQL sorgularınızı Quik yardımıyla hazırlayın.
+        </p>
+        <div id="sql-code" class="code-block-container" style="display: none;">
+          <pre><code class="language-sql">SELECT MemberTable* 
+FROM MemberTable 
+WHERE FullName = 'Quik' 
+LIMIT 1;</code></pre>
+        </div>
+      </div>
+      
+      <!-- Python Kartı -->
+      <div class="notification-card">
+        <div class="notification-header">
+          <div class="notification-heading-left">
+            <img src="icons/python_icon.png" alt="Python" class="notification-icon">
+            <span class="notification-name">Python</span>
+          </div>
+          <label class="notification-switch">
+            <input type="checkbox" id="toggle-python" onchange="toggleCodeBlock('python')">
+            <span class="notification-slider"></span>
+          </label>
+        </div>
+        <p class="notification-description">
+          Python kodlarınızı Quik yardımı ile hemen oluşturun ve deneyin.
+        </p>
+        <div id="python-code" class="code-block-container" style="display: none;">
+          <pre><code class="language-python">class QuikAssistant:
+    def __init__(self, name):
+        self.name = name
+    
+    def respond(self, message):
+        return f"{self.name}: {message}"
+
+quik = QuikAssistant("Quik")
+print(quik.respond("Merhaba dostum"))</code></pre>
+        </div>
+      </div>
+      
+      <!-- JavaScript Kartı -->
+      <div class="notification-card">
+        <div class="notification-header">
+          <div class="notification-heading-left">
+            <img src="icons/javascript_icon.png" alt="JavaScript" class="notification-icon">
+            <span class="notification-name">JavaScript</span>
+          </div>
+          <label class="notification-switch">
+            <input type="checkbox" id="toggle-javascript" onchange="toggleCodeBlock('javascript')">
+            <span class="notification-slider"></span>
+          </label>
+        </div>
+        <p class="notification-description">
+          HTML mi, Quik ile hemen JavaScript'e başlayın.
+        </p>
+        <div id="javascript-code" class="code-block-container" style="display: none;">
+          <pre><code class="language-javascript">const quikChat = {
+  init: function() {
+    console.log("Quik hazır!");
+  },
+  sendMessage: function(msg) {
+    return `Quik: ${msg} aldım, buradayım!`;
+  }
+};
+
+quikChat.init();
+console.log(quikChat.sendMessage("Nasılsın?"));</code></pre>
+        </div>
+      </div>
+
+      <!-- CSS Kartı -->
+      <div class="notification-card">
+        <div class="notification-header">
+          <div class="notification-heading-left">
+            <img src="icons/css_icon.png" alt="CSS" class="notification-icon">
+            <span class="notification-name">CSS</span>
+          </div>
+          <label class="notification-switch">
+            <input type="checkbox" id="toggle-css" onchange="toggleCodeBlock('css')">
+            <span class="notification-slider"></span>
+          </label>
+        </div>
+        <p class="notification-description">
+          HTML mi, Quik ile hemen CSS'e başlayın.
+        </p>
+        <div id="css-code" class="code-block-container" style="display: none;">
+          <pre><code class="language-css">.havali-quik {
+  padding: 10px;
+  font-size: 10px;
+  font-weight: 1000;
+}
+</code></pre>
+        </div>
+      </div>
+      
+    </div>
+  </div>
+</div>
+
 
 
 <!-- BAĞLI UYGULAMALAR Sekmesi -->
@@ -5756,7 +5893,7 @@ function toggleVoice(character) {
 
   // Hazır statik prompt'lar
   const prompts = {
-    professional: "Resmi bir ton, net, iyi yapılandırılmış cümleler ve kesin bir dil kullanan Quik adında bir AI asistanısın. Profesyonelliğini koru ve günlük dil veya gündelik ifadelerden kaçın. Öz ve saygılı kal. Profesyonel bir meslektaşa hitap ediyormuş gibi kapsamlı açıklamalar sağla.",
+    professional: "Resmi bir ton, net, iyi yapılandırılmış cümleler ve kesin bir dil kullanan Quik adında bir AI asistanısın. Profesyonelliğini koru ve günlük dil veya gündelik ifadelerden kaçın fakat çok katı olma. Öz ve saygılı kal. Profesyonel bir meslektaşa hitap ediyormuş gibi kapsamlı açıklamalar sağla.",
     energetic: "Enerjik ve motive edici bir tavır sergileyen ve kullanıcıyı motive etmek için sürekli olarak coşku ve cesaretlendirmeyle yanıtlar veren Quik adında bir AI asistanısın. Tüm etkileşimlerde motivasyonu teşvik etmek için dinamik ve canlandırıcı bir dil kullanarak olumlu bir ton oluştur. Yanıtlarında netlik, profesyonellik ve kesinliği korurken, davranışını kullanıcının yönlendirildiği şekilde uyarla. Kullanıcıyı etkili bir şekilde desteklemek için özlü ancak kapsamlı açıklamalar sağla. Her cümlenin sonunda enerjik emojiler ile cümlelerini destekle.",
     friendly: "Her zaman samimi ve cana yakın bir üslupla konuşan Quik adında bir AI asistanısın. Kullanıcıya duygusal olarak bağlanan, anlaşılır ve destekleyici cevaplar üretmeyi seviyorsun. Cevaplarında empati, naziklik ve moral verici ifadeler her zaman ön plandadır. Umut verici ve sıcak bir dil kullanarak kullanıcının kendisini değerli hissetmesini sağlamak senin görevin. Çünkü sen kullanıcıyı çok seviyorsun."
   };
@@ -5797,16 +5934,16 @@ document.getElementById("static-prompt").addEventListener("keydown", function(e)
 function connectGoogleDrive() {
   const googleDriveAuthUrl = "https://accounts.google.com/o/oauth2/v2/auth?" +
     "client_id=147325926000-7if85b7ej6h8alco9t3s5trrl7eveq78.apps.googleusercontent.com&" +
-    "redirect_uri=https://quik-chatbot.netlify.app&" +
+    "redirect_uri=http://localhost:8000/Quik_html.html&" +
     "response_type=code&" +
-    "scope=https://www.googleapis.com/auth/chat.bot";
+    "scope=https://www.googleapis.com/auth/drive.readonly";
   window.open(googleDriveAuthUrl, "_blank");
 }
 
 function connectGtalk() {
   const googleTalkAuthUrl = "https://accounts.google.com/o/oauth2/v2/auth?" +
     "client_id=147325926000-7if85b7ej6h8alco9t3s5trrl7eveq78.apps.googleusercontent.com&" +
-    "redirect_uri=https://quik-chatbot.netlify.app&" +
+    "redirect_uri=http://localhost:8000/Quik_html.html&" +
     "response_type=code&" +
     "scope=https://www.googleapis.com/auth/chat.bot";
   window.open(googleTalkAuthUrl, "_blank");
@@ -5815,7 +5952,7 @@ function connectGtalk() {
 function connectGmail() {
   const gmailAuthUrl = "https://accounts.google.com/o/oauth2/v2/auth?" +
     "client_id=147325926000-7if85b7ej6h8alco9t3s5trrl7eveq78.apps.googleusercontent.com&" +
-    "redirect_uri=https://quik-chatbot.netlify.app&" +
+    "redirect_uri=http://localhost:8000/Quik_html.html&" +
     "response_type=code&" +
     "scope=https://www.googleapis.com/auth/gmail.readonly";
   window.open(gmailAuthUrl, "_blank");
@@ -5829,7 +5966,7 @@ let gmailAccessToken = localStorage.getItem("gmailAccessToken") || null;
 function connectGmail() {
   const gmailAuthUrl = "https://accounts.google.com/o/oauth2/v2/auth?" +
     "client_id=147325926000-7if85b7ej6h8alco9t3s5trrl7eveq78.apps.googleusercontent.com&" +
-    "redirect_uri=https://quik-chatbot.netlify.app&" +
+    "redirect_uri=http://localhost:8000/Quik_html.html&" +
     "response_type=code&" +
     "scope=https://www.googleapis.com/auth/gmail.readonly";
 
@@ -6021,6 +6158,59 @@ function displayChatSummary(conversation) {
   summaryText.textContent = `${summary}`;
   summaryText.style.display = "block";
 }
+
+function toggleCodeBlock(program) {
+  const codeDiv = document.getElementById(`${program}-code`);
+  const checkbox = document.getElementById(`toggle-${program}`);
+  if (checkbox.checked) {
+    codeDiv.style.display = "block";
+  } else {
+    codeDiv.style.display = "none";
+  }
+}
+
+// Sayfa yüklendiğinde Highlight.js ile kodları biçimlendir
+document.addEventListener("DOMContentLoaded", () => {
+  document.querySelectorAll("pre code").forEach((block) => {
+    hljs.highlightElement(block);
+  });
+});
+
+document.addEventListener("DOMContentLoaded", () => {
+  // Toggle elemanlarını seçiyoruz
+  const toggleSql = document.getElementById("toggle-sql");
+  const togglePython = document.getElementById("toggle-python");
+  const toggleJavascript = document.getElementById("toggle-javascript");
+
+  // LocalStorage'dan son durumu alıp checkbox'lara uyguluyoruz
+  if (localStorage.getItem("toggle-sql") !== null) {
+    toggleSql.checked = localStorage.getItem("toggle-sql") === "true";
+    toggleCodeBlock("sql");
+  }
+  if (localStorage.getItem("toggle-python") !== null) {
+    togglePython.checked = localStorage.getItem("toggle-python") === "true";
+    toggleCodeBlock("python");
+  }
+  if (localStorage.getItem("toggle-javascript") !== null) {
+    toggleJavascript.checked = localStorage.getItem("toggle-javascript") === "true";
+    toggleCodeBlock("javascript");
+  }
+
+  // Her bir toggle değiştiğinde durumu kaydediyoruz
+  toggleSql.addEventListener("change", () => {
+    localStorage.setItem("toggle-sql", toggleSql.checked);
+    toggleCodeBlock("sql");
+  });
+  togglePython.addEventListener("change", () => {
+    localStorage.setItem("toggle-python", togglePython.checked);
+    toggleCodeBlock("python");
+  });
+  toggleJavascript.addEventListener("change", () => {
+    localStorage.setItem("toggle-javascript", toggleJavascript.checked);
+    toggleCodeBlock("javascript");
+  });
+});
+
 
   </script>
 </body>
