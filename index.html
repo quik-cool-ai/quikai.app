@@ -165,7 +165,7 @@
       width: 100%;
       text-align: center;
       margin: 0;
-      padding: 9px 0;
+      padding: 0.54rem 0;
       border-bottom: 1px solid rgba(128, 128, 128, 0.2);
       display: flex;
       align-items: center;
@@ -695,7 +695,13 @@ body.dark .history-icon {
       padding: 1rem 0.5rem; /* padding-bottom daha düşük */
       box-sizing: border-box;
       z-index: 302;
+      transition: left 0.3s ease, width 0.3s ease;
     }
+
+     body.dark .chat-input {
+       box-shadow: none;
+    } 
+
 
     body.sidebar-open .chat-input {
       left: calc(50% + (var(--sidebar-width) / 2));
@@ -716,23 +722,24 @@ body.dark .history-icon {
       }
     }
 
-    #chat-input-textarea {
-      font-family: 'Inter', sans-serif;
-      font-size: 0.9rem;
-      line-height: 1.5;
-      flex: 1;
-      border: none;
-      outline: none;
-      background: transparent;
-      resize: none;
-      max-height: 100px;
-      min-height: 100px;
-      overflow-y: auto;
-      margin: 0 0.5rem;
-      width: 100%;
-      box-sizing: border-box;
-      margin-bottom: 2.5rem;
-    }
+#chat-input-textarea {
+  font-family: 'Inter', sans-serif;
+  font-size: 0.9rem;
+  line-height: 1.5;
+  flex: 1;
+  border: none;
+  outline: none;
+  background: transparent;
+  resize: none;
+  max-height: calc(1.35rem * 7); /* 7 satır */
+  min-height: 1.35rem;
+  overflow-y: auto;
+  margin: 0 0.5rem;
+  width: 100%;
+  box-sizing: border-box;
+  margin-bottom: 2.5rem;
+}
+
 
     body.dark #chat-input-textarea {
       color: #fff;
@@ -5090,25 +5097,31 @@ document.addEventListener("DOMContentLoaded", () => {
   });
 
 // Yeni eklenen otomatik odaklama mantığı
-  document.addEventListener("keydown", (e) => {
-    const chatInput = document.getElementById("chat-input-textarea");
-    const settingsModal = document.getElementById("settings-modal");
+document.addEventListener("keydown", (e) => {
+  const chatInput = document.getElementById("chat-input-textarea");
+  const settingsModal = document.getElementById("settings-modal");
 
-    // Eğer ayarlar modalı açıksa veya başka bir input alanında yazıyorsak, odak kaydırmasını engelle
-    if (
-      settingsModal.style.display === "block" ||
-      document.activeElement.tagName === "INPUT" ||
-      document.activeElement.tagName === "TEXTAREA"
-    ) {
-      return;
-    }
+  // Ctrl (veya Cmd) ile bir kısayol kullanıyorsak, hiçbir şey yapma
+  if (e.ctrlKey || e.metaKey) {
+    return;
+  }
 
-    // Eğer chat-input zaten odaklanmış değilse, odakla
-    if (document.activeElement !== chatInput) {
-      chatInput.focus();
-      console.log("Chat-input otomatik olarak odaklandı.");
-    }
-  });
+  // Ayarlar modalı açıksa veya başka bir input/textarea aktifse, odaklama
+  if (
+    settingsModal.style.display === "block" ||
+    document.activeElement.tagName === "INPUT" ||
+    document.activeElement.tagName === "TEXTAREA"
+  ) {
+    return;
+  }
+
+  // Eğer chat-input zaten odaklanmamışsa, odakla
+  if (document.activeElement !== chatInput) {
+    chatInput.focus();
+    console.log("Chat-input otomatik olarak odaklandı.");
+  }
+});
+
 
   // Bildirim Ayarları
   const unreadMessagesToggle = document.getElementById("toggle-unread-messages");
