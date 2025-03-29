@@ -470,6 +470,12 @@ body.dark .history-icon {
       margin-left: 258px;
     }
 
+@media (max-width: 768px) {
+  body.sidebar-open .main-content {
+    margin-left: 0 !important;
+  }
+}
+
     .top-bar {
       display: flex;
       align-items: center;
@@ -1065,6 +1071,14 @@ body.dark #web-search-btn:hover {
 
 #web-search-btn.active {
   background-color: #96bfff;
+}
+
+#web-search-btn.active:hover {
+  color: #fff;
+}
+
+#web-search-btn.active:hover img {
+  filter: brightness(0) invert(1);
 }
 
 body.dark #web-search-btn.active {
@@ -4260,6 +4274,7 @@ li.addEventListener("click", () => {
   if (window.innerWidth <= 768) {
     closeSidebar();
   }
+  document.title = currentConversation.title || "Quik"; // Seçilen sohbetin başlığı HTML başlığına aktarılır
 });
 
 li.querySelector(".edit-btn").addEventListener("click", (e) => {
@@ -4315,10 +4330,11 @@ li.querySelector(".delete-btn").addEventListener("click", (e) => {
       chatContainer.innerHTML = "";
       chatContainer.appendChild(welcomeMessage);
       welcomeMessage.style.display = "block";
+      document.title = "Quik"; // Silme sonrası ana sayfaya geçildiğinde HTML başlığı güncellenir
     }
     renderChatHistory();
     saveConversations();
-    updateChatCount(); // Ekle: Sohbet silindiğinde sayıyı güncelle
+    updateChatCount(); // Sohbet silindiğinde sayıyı güncelle
   }
 });
       chatHistoryList.appendChild(li);
@@ -4479,6 +4495,7 @@ async function startNewConversation() {
   };
   conversations.push(currentConversation);
   renderChatHistory();
+  populateChatSummaryDropdown(); // Yeni sohbet özetleyiciye ekleniyor
   saveConversations();
   chatContainer.innerHTML = "";
   welcomeMessage.style.display = "none";
@@ -4818,22 +4835,27 @@ currentConversation.messages.push({
   chatInput.style.height = "auto";
   scrollChatToBottom();
 
-  if (currentConversation.messages.length === 1) {
-    try {
-      const response = await fetch("http://localhost:5000/generate-title", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ message: combinedMessage })
-      });
-      const data = await response.json();
-      currentConversation.title = data.title || "Yeni Sohbet";
-      renderChatHistory();
-    } catch (err) {
-      console.error("Title fetch error:", err);
-      currentConversation.title = "Yeni Sohbet";
-      renderChatHistory();
-    }
+if (currentConversation.messages.length === 1) {
+  try {
+    const response = await fetch("http://localhost:5000/generate-title", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ message: combinedMessage })
+    });
+    const data = await response.json();
+    currentConversation.title = data.title || "Yeni Sohbet";
+    renderChatHistory();
+    document.title = currentConversation.title; // HTML başlığı güncellendi
+    populateChatSummaryDropdown(); // Sohbet özetleyici güncellendi
+  } catch (err) {
+    console.error("Title fetch error:", err);
+    currentConversation.title = "Yeni Sohbet";
+    renderChatHistory();
+    document.title = currentConversation.title; // HTML başlığı güncellendi
+    populateChatSummaryDropdown(); // Sohbet özetleyici güncellendi
   }
+}
+
 
   saveConversations();
 
@@ -5359,6 +5381,7 @@ newChatBtn.addEventListener("click", () => {
   chatContainer.appendChild(welcomeMessage);
   makeWelcomeActive();
   renderChatHistory(); // Sidebar'ı güncellemek için eklendi
+  document.title = "Quik"; // Yeni sohbet başladığında HTML başlığı "Quik" olarak ayarlanır
 });
 
 toggleSidebarBtn.addEventListener("click", () => {
@@ -5397,6 +5420,7 @@ sidebarBrand.addEventListener("click", () => {
   chatContainer.appendChild(welcomeMessage);
   makeWelcomeActive();
   renderChatHistory(); // Sidebar'ı güncellemek için eklendi
+  document.title = "Quik"; // Ana sayfaya geçildiğinde HTML başlığı "Quik" olarak ayarlanır
 });
 
 
