@@ -236,12 +236,12 @@
       cursor: pointer;
       transition: transform 0.3s ease, color 0.3s ease;
       color: var(--text-color);
+      z-index: 301 !important; /* Geçici olarak düşür */
     }
+
     .new-chat-btn:hover {
       background-color: #c0c0c0;
     }
-
-
 
     .new-chat-btn[data-tooltip] {
       position: absolute;
@@ -549,7 +549,7 @@ body.dark .history-icon {
       flex-direction: column;
       padding-top: 1rem;
       background-color: var(--bg-color);
-      max-width: 800px;
+      max-width: 760px;
       margin: 0 auto;
       width: 100%;
       scroll-behavior: smooth;
@@ -690,13 +690,13 @@ body.dark .history-icon {
       transform: translateX(-50%);
       transition: left 0.3s ease;
       display: flex;
-      flex-direction: row;
-      align-items: flex-end;
+      flex-direction: column;
+      align-items: stretch;
       background-color: var(--input-bg);
       border-radius: 30px;
       box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
       width: 100%;
-      max-width: 800px;
+      max-width: 760px;
       margin: 0 auto;
       padding: 1rem 0.5rem; /* padding-bottom daha düşük */
       box-sizing: border-box;
@@ -732,18 +732,18 @@ body.dark .history-icon {
   font-family: 'Inter', sans-serif;
   font-size: 0.9rem;
   line-height: 1.5;
-  flex: 1;
+  flex: 1 1 auto; /* Esnek genişlik, küçülme ve büyüme izni */
   border: none;
   outline: none;
   background: transparent;
   resize: none;
   max-height: calc(1.35rem * 7); /* 7 satır */
   min-height: 1.35rem;
+  min-width: 0; /* Flex küçülme sorunlarını önler */
   overflow-y: auto;
   margin: 0 0.5rem;
-  width: 100%;
   box-sizing: border-box;
-  margin-bottom: 2.5rem;
+  margin-bottom: 0.5rem;
 }
 
 
@@ -757,7 +757,7 @@ body.dark .history-icon {
     }
 
 .send-btn {
-  position: relative; /* Chat-input'a göre konumlanacak */
+  position: absolute; /* Chat-input'a göre konumlanacak */
   background-color: var(--input-bg);
   border: none;
   border-radius: 12px;
@@ -766,8 +766,10 @@ body.dark .history-icon {
   cursor: pointer;
   display: flex;
   align-items: center;
+  align-self: flex-end;
   justify-content: center;
   right: 10px; /* Chat-input'un sağından 10px içeride */
+  bottom: -1px;
   box-shadow: 0 4px 6px -2px rgba(0, 0, 0, 0.15), 4px 0 6px -2px rgba(0, 0, 0, 0.15), -4px 0 6px -2px rgba(0, 0, 0, 0.15), 0 -4px 6px -2px rgba(0, 0, 0, 0.15);
 }
 
@@ -2249,13 +2251,13 @@ body.dark td {
     .model-selector {
       position: fixed;
       top: 7px;
-      left: 60px;
+      left: 94px;
       z-index: 101;
     }
 
     @media (max-width: 768px) {
       .model-selector {
-        left: 70px;
+        left: 94px;
       }
       .model-dropdown {
         width: 110px;
@@ -2270,13 +2272,13 @@ body.dark td {
       border: none;
       border-radius: 12px;
       cursor: pointer;
-      padding-left: 5px;
+      padding-left: 8px;
       color: var(--text-color);
       font-size: 1rem;
       font-weight: 750;
       height: 40px;
       margin-top: 2px;
-      min-width: 110px;
+      min-width: 114px;
     }
     .model-toggle-btn:hover {
       background-color: #c0c0c0;
@@ -2301,7 +2303,7 @@ body.dark td {
       left: 0;
       background-color: var(--input-bg);
       border-radius: 6px;
-      min-width: 118px;
+      min-width: 114px;
       z-index: 305;
       box-shadow: 0 0 8px rgba(192, 192, 192, 0.75);
     }
@@ -2982,8 +2984,7 @@ body.dark .drop-zone .subtext {
 }
 
 #voice-record-btn {
-  position: absolute;
-  right: 62px;
+  position: absolute; /* Chat-input'a göre konumlanacak */
   background-color: var(--input-bg);
   border: none;
   border-radius: 12px;
@@ -2992,12 +2993,11 @@ body.dark .drop-zone .subtext {
   cursor: pointer;
   display: flex;
   align-items: center;
+  align-self: flex-end;
   justify-content: center;
-  margin-right: 0.5rem;
-  box-shadow: 0 4px 6px -2px rgba(0, 0, 0, 0.15), 
-              4px 0 6px -2px rgba(0, 0, 0, 0.15), 
-              -4px 0 6px -2px rgba(0, 0, 0, 0.15), 
-              0 -4px 6px -2px rgba(0, 0, 0, 0.15);
+  right: 70px; /* Chat-input'un sağından 10px içeride */
+  bottom: 15px;
+  box-shadow: 0 4px 6px -2px rgba(0, 0, 0, 0.15), 4px 0 6px -2px rgba(0, 0, 0, 0.15), -4px 0 6px -2px rgba(0, 0, 0, 0.15), 0 -4px 6px -2px rgba(0, 0, 0, 0.15);
 }
 
 
@@ -3290,6 +3290,14 @@ body.dark .code-block-container pre {
   margin-right: 10px;
 }
 
+/* Ensure the tooltip for new-chat-btn appears to the right when sidebar is closed */
+body:not(.sidebar-open) .new-chat-btn[data-tooltip]::after {
+  left: calc(100% + 8px) !important; /* Position it to the right of the button */
+  right: auto !important;             /* Override the existing right positioning */
+  top: 50% !important;                /* Vertically center it */
+  transform: translateY(-50%) !important; /* Adjust for vertical centering */
+}
+
   </style>
 </head>
 
@@ -3302,18 +3310,18 @@ body.dark .code-block-container pre {
 <!-- Yeni Model Seçme Alanı -->
 <div id="model-selector" class="model-selector">
   <button id="model-toggle-btn" class="model-toggle-btn">
-    <span id="current-model-name">Quik-Prime</span>
-    <img src="icons/quik_icon.png" alt="Dropdown Arrow" style="width:16px; height:16px; margin-left: 5px;">
+    <span id="current-model-name">quik-prime</span>
+    <img src="icons/quik_icon.png" alt="Dropdown Arrow" style="width:15px; height:15px">
   </button>
   <div id="model-dropdown" class="model-dropdown">
     <button class="model-option" data-model="quik-prime">
-      <span class="model-name">Quik-Prime</span>
+      <span class="model-name">quik-prime</span>
       <div>
       <span class="model-description">Günlük ve hızlı</span>
       </div>
     </button>
     <button class="model-option" data-model="quik-think">
-      <span class="model-name">Quik-Think</span>
+      <span class="model-name">quik-think</span>
       <div>
       <span class="model-description">Mantık ve analiz</span>
       </div>
@@ -4126,6 +4134,42 @@ const welcomeMessage = document.getElementById("welcome-message");
 const sidebarBrand = document.getElementById("sidebar-brand");
 const mainContent = document.querySelector(".main-content");
 const scrollWrapper = document.querySelector(".scroll-wrapper");
+
+
+
+function updateNewChatBtnPosition() {
+  if (document.body.classList.contains("sidebar-open")) {
+    // Sidebar açık: Yeni sohbet butonu sidebar içerisindeyse
+    if (newChatBtn.parentNode !== sidebar) {
+      sidebar.appendChild(newChatBtn);
+    }
+    // Sabit konumlama kaldırılıyor, normal yerleşim kullanılıyor.
+    newChatBtn.style.position = "";
+    newChatBtn.style.top = "";
+    newChatBtn.style.left = "";
+  } else {
+    // Sidebar kapalı: Butonu body’ye taşı ve toggle butonunun sağında fixed olarak göster.
+    if (newChatBtn.parentNode !== document.body) {
+      document.body.appendChild(newChatBtn);
+    }
+    newChatBtn.style.position = "fixed";
+    const rect = toggleSidebarBtn.getBoundingClientRect();
+    newChatBtn.style.top = rect.top + "px";
+    newChatBtn.style.left = (rect.right + 0) + "px";
+  }
+}
+
+// Sidebar açma/kapama butonuna tıklanınca konumu güncelle
+toggleSidebarBtn.addEventListener("click", () => {
+  // Sidebar'ın açılıp kapanma animasyonunun bitmesi için ufak bir gecikme ekliyoruz.
+  setTimeout(updateNewChatBtnPosition, 0);
+});
+
+// Pencere yeniden boyutlandığında da güncelle
+window.addEventListener("resize", updateNewChatBtnPosition);
+
+// Sayfa yüklendiğinde de çalıştır
+document.addEventListener("DOMContentLoaded", updateNewChatBtnPosition);
 
 /* ======================
      LOCAL STORAGE İŞLEMLERİ
@@ -5043,7 +5087,7 @@ document.addEventListener("DOMContentLoaded", () => {
   function setModel(model) {
     selectedModel = model;
     localStorage.setItem("selectedModel", model);
-    document.getElementById("current-model-name").textContent = model === "quik-prime" ? "Quik-Prime" : "Quik-Think";
+    document.getElementById("current-model-name").textContent = model === "quik-prime" ? "quik-prime" : "quik-think";
   }
 
   setModel(selectedModel); // İlk durumu yükle
