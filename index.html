@@ -570,7 +570,7 @@ body.dark .history-icon {
 
 .welcome-message {
   position: absolute; /* absolute yerine fixed, ekranın ortasında sabit kalır */
-  top: 35%;
+  top: 43%;
   left: 50%;
   transform: translate(-50%, -50%);
   text-align: center;
@@ -631,7 +631,7 @@ body.dark .history-icon {
       display: inline-block;
     }
 
-    /* Chat Mesaj Balonları */
+/* Chat Mesaj Balonları */
 .chat-bubble {
   max-width: 70%;
   margin-bottom: 0.5rem; /* Azaltılmış alt boşluk */
@@ -830,6 +830,11 @@ body.dark .delete-btn:hover,
 body.dark .edit-btn:hover {
   filter: none;
   color: var(--sidebar-bg);
+}
+
+body.dark .chat-history-item.active .edit-btn:hover,
+body.dark .chat-history-item.active .delete-btn:hover {
+  background-color: #666666;
 }
 
     /* === Kod Blokları ve Kopyalama Butonu Stilleri === */
@@ -2260,7 +2265,7 @@ body.dark td {
         left: 94px;
       }
       .model-dropdown {
-        width: 110px;
+        width: 95px;
       }
     }
 
@@ -2272,13 +2277,13 @@ body.dark td {
       border: none;
       border-radius: 12px;
       cursor: pointer;
-      padding-left: 8px;
+
       color: var(--text-color);
       font-size: 1rem;
       font-weight: 750;
       height: 40px;
       margin-top: 2px;
-      min-width: 114px;
+      min-width: 95px;
     }
     .model-toggle-btn:hover {
       background-color: #c0c0c0;
@@ -2303,7 +2308,7 @@ body.dark td {
       left: 0;
       background-color: var(--input-bg);
       border-radius: 6px;
-      min-width: 114px;
+      min-width: 95px;
       z-index: 305;
       box-shadow: 0 0 8px rgba(192, 192, 192, 0.75);
     }
@@ -2352,7 +2357,7 @@ body.dark td {
 
 /* Model Açıklaması */
 .model-description {
-  font-size: 0.8rem;
+  font-size: 0.7rem;
   color: var(--accent-color);
   font-weight: 400;
 }
@@ -2575,7 +2580,8 @@ body.dark .feedback-controls button[data-tooltip]::after {
 #file-upload-btn[data-tooltip]::after,
 #web-search-btn[data-tooltip]::after,
 #send-btn[data-tooltip]::after,
-#voice-record-btn[data-tooltip]::after {
+#voice-record-btn[data-tooltip]::after,
+#voice-page-btn[data-tooltip]::after {
   left: 50%;
   top: -9px; /* Butonun üstüne yerleştir */
   transform: translateX(-50%) translateY(-100%); /* Yatayda ortala, dikeyde yukarı kaydır */
@@ -2873,14 +2879,16 @@ body.dark .file-upload-btn:hover img {
 
 /* File Container */
 .file-container {
-  position: absolute;
-  top: -40px; /* Position above the chat input */
-  left: 18px;
   display: flex;
-  gap: 10px; /* Space between file boxes */
-  flex-wrap: nowrap; /* Keep files in a single row */
-  overflow-x: auto; /* Allow horizontal scrolling if files exceed width */
-  max-width: calc(100% - 20px); /* Fit within chat input width */
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  width: 100%;
+  max-width: 760px;
+  margin: 0 auto;
+  box-sizing: border-box;
+  max-height: 200px;
+  overflow-y: hidden;
+  align-items: flex-start;
 }
 
 /* Individual File Box */
@@ -2890,9 +2898,15 @@ body.dark .file-upload-btn:hover img {
   background-color: var(--input-bg);
   border: 1px solid var(--code-border);
   border-radius: 8px;
-  padding: 5px 10px;
-  max-width: 144px; /* Limit width of each file box */
+  padding: 0.4rem 0.8rem;
+  margin-bottom: 0.15rem;
+  margin-left: 0.60rem;
+  flex: 0 0 auto;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.file-box:last-child {
+  margin-bottom: 0.65rem;
 }
 
 body.dark .file-box {
@@ -2900,13 +2914,20 @@ body.dark .file-box {
   border-color: #444;
 }
 
+.file-icon {
+  width: 20px;
+  height: 20px;
+  margin-right: 0.5rem;
+}
+
+
+
 .file-name {
   font-size: 0.8rem;
   color: var(--text-color);
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
-  max-width: 100px; /* Limit text width within box */
 }
 
 .remove-file-btn {
@@ -2923,8 +2944,8 @@ body.dark .file-box {
 }
 
 .remove-file-btn img {
-  width: 12px;
-  height: 12px;
+  width: 16px;
+  height: 16px;
 }
 
 body.dark .remove-file-btn img {
@@ -3298,20 +3319,59 @@ body:not(.sidebar-open) .new-chat-btn[data-tooltip]::after {
   transform: translateY(-50%) !important; /* Adjust for vertical centering */
 }
 
+/* Style for the new voice page button */
+#voice-page-btn {
+  position: absolute;
+  background-color: var(--input-bg);
+  border: none;
+  border-radius: 12px;
+  width: 40px;
+  height: 35px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  right: 122.5px; /* Positioned to the left of the send button, next to the mic */
+  bottom: 15px;
+  box-shadow: 0 4px 6px -2px rgba(0, 0, 0, 0.15), 4px 0 6px -2px rgba(0, 0, 0, 0.15), -4px 0 6px -2px rgba(0, 0, 0, 0.15), 0 -4px 6px -2px rgba(0, 0, 0, 0.15);
+}
+
+#voice-page-btn:hover {
+  background-color: #c0c0c0;
+}
+
+body.dark #voice-page-btn img {
+  filter: brightness(0) invert(1);
+}
+
+body.dark #voice-page-btn:hover img {
+  filter: none;
+}
+
+/* Fade-out animation */
+@keyframes fadeOut {
+  0% { opacity: 1; }
+  100% { opacity: 0; }
+}
+
+.fade-out {
+  animation: fadeOut 0.5s ease forwards;
+}
+
   </style>
 </head>
 
 <body>
   <!-- Sabit Toggle Sidebar Butonu -->
   <button id="toggle-sidebar-btn">
-    <img src="icons/sidebar_close_btn.png" alt="Sidebar Icon" style="width:24px; height:21px;">
+    <img src="icons/sidebar_close_btn.png" alt="Sidebar Icon" style="width:24px; height:21px;" draggable="false">
   </button>
 
 <!-- Yeni Model Seçme Alanı -->
 <div id="model-selector" class="model-selector">
   <button id="model-toggle-btn" class="model-toggle-btn">
     <span id="current-model-name">quik-prime</span>
-    <img src="icons/quik_icon.png" alt="Dropdown Arrow" style="width:15px; height:15px">
+
   </button>
   <div id="model-dropdown" class="model-dropdown">
     <button class="model-option" data-model="quik-prime">
@@ -3335,11 +3395,11 @@ body:not(.sidebar-open) .new-chat-btn[data-tooltip]::after {
   <div id="sidebar" class="sidebar">
 <div class="sidebar-header">
   <span class="brand" id="sidebar-brand">
-    <img src="icons/quik_icon.png" alt="Quik Logo" id="sidebar-brand-icon">
+    <img src="icons/quik_icon.png" alt="Quik Logo" id="sidebar-brand-icon" draggable="false">
   </span>
 </div>
     <button id="new-chat-btn" data-tooltip="Yeni Sohbet" class="new-chat-btn">
-      <img src="icons/new_chat_btn.png" alt="Chat Icon" style="width:21px; height:21px;">
+      <img src="icons/new_chat_btn.png" alt="Chat Icon" style="width:21px; height:21px;" draggable="false">
     </button>
     <ul id="chat-history-list" class="chat-history-list"></ul>
   </div>
@@ -3352,7 +3412,7 @@ body:not(.sidebar-open) .new-chat-btn[data-tooltip]::after {
     
     <div class="scroll-wrapper">
       <div id="chat-container" class="chat-container">
-<div id="welcome-message" class="welcome-message">
+<div id="welcome-message" class="welcome-message" ondragstart="return false;">
   <div class="logo-container">
   </div>
 
@@ -3369,20 +3429,24 @@ body:not(.sidebar-open) .new-chat-btn[data-tooltip]::after {
 <div class="chat-input">
   <div class="file-container" id="file-container"></div> <!-- Container for uploaded files -->
   <button class="file-upload-btn" id="file-upload-btn" data-tooltip="Dosya Ekle">
-    <img src="icons/addfile_btn.png" alt="Add File Icon" style="width:20px; height:20px;">
+    <img src="icons/addfile_btn.png" alt="Add File Icon" style="width:20px; height:20px;" draggable="false">
   </button>
   <button id="web-search-btn" data-tooltip="Web Araması">
-    <img src="icons/web_search_btn.png" alt="Web Search Icon" style="width:19px; height:19px; vertical-align: middle; margin-right: 5px;">
+    <img src="icons/web_search_btn.png" alt="Web Search Icon" style="width:19px; height:19px; vertical-align: middle; margin-right: 5px;" draggable="false">
     <span>Ara</span>
   </button>
 
 <button id="voice-record-btn" class="voice-record-btn" data-tooltip="Ses Kaydet">
-    <img src="icons/mic_btn.png" alt="Ses Kaydet" style="width: 17px; height: 17px;">
+    <img src="icons/mic_btn.png" alt="Ses Kaydet" style="width: 17px; height: 17px;" draggable="false">
+  </button>
+
+<button id="voice-page-btn" data-tooltip="Quik ile konuş">
+    <img src="icons/voice_page_icon.png" alt="Ses Sayfası" style= "width: 17px; height: 17px;" draggable="false">
   </button>
 
   <textarea id="chat-input-textarea" placeholder="Quik uygulamasına ileti gönder..."></textarea>
   <button id="send-btn" class="send-btn" data-tooltip="Gönder">
-    <img src="icons/send_btn.png" alt="Send Icon" style="width:17px; height:17px;">
+    <img src="icons/send_btn.png" alt="Send Icon" style="width:17px; height:17px;" draggable="false">
   </button>
 </div>
 
@@ -3393,7 +3457,7 @@ body:not(.sidebar-open) .new-chat-btn[data-tooltip]::after {
 
 <!-- Ayarlar Butonu -->
 <button id="settings-btn" data-tooltip="Ayarlar" class="settings-btn">
-  <img src="icons/settings_icon.png" alt="Settings Icon" style="width:24px; height:21px;">
+  <img src="icons/settings_icon.png" alt="Settings Icon" style="width:24px; height:21px;" draggable="false">
 </button>
 
 <!-- Ayarlar Modal'ı (GÜNCELLENMİŞ, Estetik) -->
@@ -3413,47 +3477,47 @@ body:not(.sidebar-open) .new-chat-btn[data-tooltip]::after {
         <ul>
 
   <li class="active" data-tab="genel">
-    <img src="icons/genel.png" class="settings-icon" alt="Genel">
+    <img src="icons/genel.png" class="settings-icon" alt="Genel" draggable="false">
     Genel
   </li>
 
   <li data-tab="bildirimler">
-    <img src="icons/bildirimler.png" class="settings-icon" alt="Bildirimler">
+    <img src="icons/bildirimler.png" class="settings-icon" alt="Bildirimler" draggable="false">
     Bildirimler
   </li>
 
 <li data-tab="kisisellestirme">
-    <img src="icons/kisisellestirme.png" class="settings-icon" alt="Kişiselleştirme">
+    <img src="icons/kisisellestirme.png" class="settings-icon" alt="Kişiselleştirme" draggable="false">
     Kişiselleştirme
   </li>
 
 <li data-tab="konusma">
-    <img src="icons/konusma.png" class="settings-icon" alt="Konuşma">
+    <img src="icons/konusma.png" class="settings-icon" alt="Konuşma" draggable="false">
     Konuşma
   </li>
 
 <li data-tab="gecmis">
-    <img src="icons/gecmis.png" class="settings-icon" alt="Geçmiş">
+    <img src="icons/gecmis.png" class="settings-icon" alt="Geçmiş" draggable="false">
     Geçmiş
   </li>
 
 <li data-tab="bagliuygulamalar">
-    <img src="icons/bagli_uygulamalar.png" class="settings-icon" alt="Bağlı Uygulamalar">
+    <img src="icons/bagli_uygulamalar.png" class="settings-icon" alt="Bağlı Uygulamalar" draggable="false">
     Bağlı Uygulamalar
   </li>
 
 <li data-tab="baglisistemler">
-    <img src="icons/bagli_sistemler.png" class="settings-icon" alt="Bağlı Sistemler">
+    <img src="icons/bagli_sistemler.png" class="settings-icon" alt="Bağlı Sistemler" draggable="false">
     Bağlı Sistemler
   </li>
 
 <li data-tab="bagliprogramlar">
-    <img src="icons/bagli_programlar.png" class="settings-icon" alt="Bağlı Programlar">
+    <img src="icons/bagli_programlar.png" class="settings-icon" alt="Bağlı Programlar" draggable="false">
     Bağlı Programlar
   </li>
 
 <li data-tab="hesap">
-    <img src="icons/hesap.png" class="settings-icon" alt="Hesap">
+    <img src="icons/hesap.png" class="settings-icon" alt="Hesap" draggable="false">
     Hesap
   </li>
 
@@ -3472,7 +3536,7 @@ body:not(.sidebar-open) .new-chat-btn[data-tooltip]::after {
 <div class="general-card">
   <div class="card-topbar">
     <div class="general-heading-left">
-      <img src="icons/appearance.png" alt="Görünüm" class="general-icon">
+      <img src="icons/appearance.png" alt="Görünüm" class="general-icon" draggable="false">
       <span class="general-name">Görünüm</span>
     </div>
   </div>
@@ -3481,15 +3545,15 @@ body:not(.sidebar-open) .new-chat-btn[data-tooltip]::after {
   </p>
   <div class="theme-selection">
     <button id="light-mode-btn" class="theme-btn">
-      <img src="icons/aydinlik.png" alt="Aydınlık Mod" class="theme-icon">
+      <img src="icons/aydinlik.png" alt="Aydınlık Mod" class="theme-icon" draggable="false">
       Aydınlık
     </button>
     <button id="dark-mode-btn" class="theme-btn">
-      <img src="icons/karanlik.png" alt="Karanlık Mod" class="theme-icon">
+      <img src="icons/karanlik.png" alt="Karanlık Mod" class="theme-icon" draggable="false">
       Karanlık
     </button>
     <button id="system-mode-btn" class="theme-btn">
-      <img src="icons/sistem.png" alt="Sistem Modu" class="theme-icon">
+      <img src="icons/sistem.png" alt="Sistem Modu" class="theme-icon" draggable="false">
       Sistem
     </button>
   </div>
@@ -3499,7 +3563,7 @@ body:not(.sidebar-open) .new-chat-btn[data-tooltip]::after {
     <div class="general-card">
       <div class="general-header">
         <div class="general-heading-left">
-          <img src="icons/web_search.png" alt="Web Arama" class="general-icon">
+          <img src="icons/web_search.png" alt="Web Arama" class="general-icon" draggable="false">
           <span class="general-name">Web Arama</span>
         </div>
       </div>
@@ -3508,15 +3572,15 @@ body:not(.sidebar-open) .new-chat-btn[data-tooltip]::after {
       </p>
 <div class="web-search-toggle-group">
   <button id="web-search-on-btn" class="web-search-btn active">
-    <img src="icons/web_search_btn.png" alt="Web Açık" class="web-search-icon">
+    <img src="icons/web_search_btn.png" alt="Web Açık" class="web-search-icon" draggable="false">
     Açık
   </button>
   <button id="web-search-off-btn" class="web-search-btn">
-    <img src="icons/web_search_btn_cancel.png" alt="Web Kapalı" class="web-search-icon">
+    <img src="icons/web_search_btn_cancel.png" alt="Web Kapalı" class="web-search-icon" draggable="false">
     Kapalı
   </button>
   <button id="web-search-disable-btn" class="web-search-btn">
-    <img src="icons/web_search_disable.png" alt="Devre Dışı" class="web-search-icon">
+    <img src="icons/web_search_disable.png" alt="Devre Dışı" class="web-search-icon" draggable="false">
     Devre Dışı
   </button>
 </div>
@@ -3526,7 +3590,7 @@ body:not(.sidebar-open) .new-chat-btn[data-tooltip]::after {
 <div class="general-card">
   <div class="card-topbar">
     <div class="general-heading-left">
-      <img src="icons/language.png" alt="Dil Seçimi" class="general-icon">
+      <img src="icons/language.png" alt="Dil Seçimi" class="general-icon" draggable="false">
       <span class="general-name">Dil Seçimi</span>
     </div>
   </div>
@@ -3558,7 +3622,7 @@ body:not(.sidebar-open) .new-chat-btn[data-tooltip]::after {
       <div class="notification-header">
         <!-- İkon (opsiyonel) -->
         <div class="notification-heading-left">
-          <img src="icons/notification.png" alt="Bildirim" class="notification-icon">
+          <img src="icons/notification.png" alt="Bildirim" class="notification-icon" draggable="false">
           <span class="notification-name">Uygulama Bildirimi</span>
         </div>
 
@@ -3577,7 +3641,7 @@ body:not(.sidebar-open) .new-chat-btn[data-tooltip]::after {
     <div class="notification-card">
       <div class="notification-header">
         <div class="notification-heading-left">
-          <img src="icons/desktop_notification.png" alt="Masaüstü" class="notification-icon">
+          <img src="icons/desktop_notification.png" alt="Masaüstü" class="notification-icon" draggable="false">
           <span class="notification-name">Masaüstü Bildirimi</span>
         </div>
 
@@ -3595,7 +3659,7 @@ body:not(.sidebar-open) .new-chat-btn[data-tooltip]::after {
     <div class="notification-card">
       <div class="notification-header">
         <div class="notification-heading-left">
-          <img src="icons/email_notification.png" alt="E-posta" class="notification-icon">
+          <img src="icons/email_notification.png" alt="E-posta" class="notification-icon" draggable="false">
           <span class="notification-name">E-posta Bildirimi</span>
         </div>
 
@@ -3613,7 +3677,7 @@ body:not(.sidebar-open) .new-chat-btn[data-tooltip]::after {
 <div class="notification-card">
   <div class="notification-header">
     <div class="notification-heading-left">
-      <img src="icons/download.png" alt="Dosya İndirme" class="notification-icon">
+      <img src="icons/download.png" alt="Dosya İndirme" class="notification-icon" draggable="false">
       <span class="notification-name">İndirme Bildirimi</span>
     </div>
     <label class="notification-switch">
@@ -3773,10 +3837,10 @@ body:not(.sidebar-open) .new-chat-btn[data-tooltip]::after {
           <!-- Düzenleme ve Silme Butonları -->
           <div class="history-actions summary-actions">
             <button class="edit-btn" id="edit-summary-btn" disabled>
-              <img src="icons/edit_btn.png" alt="Düzenle">
+              <img src="icons/edit_btn.png" alt="Düzenle" draggable="false">
             </button>
             <button class="delete-btn" id="delete-summary-btn" disabled>
-              <img src="icons/delete_btn.png" alt="Sil">
+              <img src="icons/delete_btn.png" alt="Sil" draggable="false">
             </button>
           </div>
         </span>
@@ -3797,7 +3861,7 @@ body:not(.sidebar-open) .new-chat-btn[data-tooltip]::after {
       <div class="notification-card">
         <div class="notification-header">
           <div class="notification-heading-left">
-            <img src="icons/sql_icon.png" alt="SQL" class="notification-icon">
+            <img src="icons/sql_icon.png" alt="SQL" class="notification-icon" draggable="false">
             <span class="notification-name">SQL</span>
           </div>
           <label class="notification-switch">
@@ -3820,7 +3884,7 @@ LIMIT 1;</code></pre>
       <div class="notification-card">
         <div class="notification-header">
           <div class="notification-heading-left">
-            <img src="icons/python_icon.png" alt="Python" class="notification-icon">
+            <img src="icons/python_icon.png" alt="Python" class="notification-icon" draggable="false">
             <span class="notification-name">Python</span>
           </div>
           <label class="notification-switch">
@@ -3848,7 +3912,7 @@ print(quik.respond("Merhaba dostum"))</code></pre>
       <div class="notification-card">
         <div class="notification-header">
           <div class="notification-heading-left">
-            <img src="icons/javascript_icon.png" alt="JavaScript" class="notification-icon">
+            <img src="icons/javascript_icon.png" alt="JavaScript" class="notification-icon" draggable="false">
             <span class="notification-name">JavaScript</span>
           </div>
           <label class="notification-switch">
@@ -3878,7 +3942,7 @@ console.log(quikChat.sendMessage("Nasılsın?"));</code></pre>
       <div class="notification-card">
         <div class="notification-header">
           <div class="notification-heading-left">
-            <img src="icons/css_icon.png" alt="CSS" class="notification-icon">
+            <img src="icons/css_icon.png" alt="CSS" class="notification-icon" draggable="false">
             <span class="notification-name">CSS</span>
           </div>
           <label class="notification-switch">
@@ -3913,7 +3977,7 @@ console.log(quikChat.sendMessage("Nasılsın?"));</code></pre>
 <div class="notification-card">
   <div class="notification-header" style="justify-content: space-between; align-items: center;">
     <div class="notification-heading-left">
-      <img src="icons/gmail_icon.png" alt="Gmail" class="notification-icon">
+      <img src="icons/gmail_icon.png" alt="Gmail" class="notification-icon" draggable="false">
       <span class="notification-name">Gmail</span>
     </div>
     <div id="gmail-connect-container">
@@ -3929,7 +3993,7 @@ console.log(quikChat.sendMessage("Nasılsın?"));</code></pre>
 <div class="notification-card">
   <div class="notification-header" style="justify-content: space-between; align-items: center;">
     <div class="notification-heading-left">
-      <img src="icons/gdrive_icon.png" alt="Google Drive" class="notification-icon">
+      <img src="icons/gdrive_icon.png" alt="Google Drive" class="notification-icon" draggable="false">
       <span class="notification-name">Google Drive</span>
     </div>
     <button class="connect-btn" onclick="connectGoogleDrive()">Bağlan</button>
@@ -3943,7 +4007,7 @@ console.log(quikChat.sendMessage("Nasılsın?"));</code></pre>
     <div class="notification-card">
       <div class="notification-header" style="justify-content: space-between; align-items: center;">
         <div class="notification-heading-left">
-          <img src="icons/gtalk_icon.png" alt="Google Talk" class="notification-icon">
+          <img src="icons/gtalk_icon.png" alt="Google Talk" class="notification-icon" draggable="false">
           <span class="notification-name">Google Talk</span>
         </div>
         <button class="connect-btn" onclick="connectGtalk()">Bağlan</button>
@@ -3957,7 +4021,7 @@ console.log(quikChat.sendMessage("Nasılsın?"));</code></pre>
     <div class="notification-card">
       <div class="notification-header">
         <div class="notification-heading-left">
-          <img src="icons/onedrive_icon.png" alt="OneDrive" class="notification-icon">
+          <img src="icons/onedrive_icon.png" alt="OneDrive" class="notification-icon" draggable="false">
           <span class="notification-name">Microsoft OneDrive</span>
         </div>
       </div>
@@ -3978,7 +4042,7 @@ console.log(quikChat.sendMessage("Nasılsın?"));</code></pre>
     <div class="notification-card">
       <div class="notification-header">
         <div class="notification-heading-left">
-          <img src="icons/biodata_icon.png" alt="BIODATA" class="notification-icon">
+          <img src="icons/biodata_icon.png" alt="BIODATA" class="notification-icon" draggable="false">
           <span class="notification-name">BIODATA</span>
         </div>
         <label class="notification-switch">
@@ -4007,7 +4071,7 @@ console.log(quikChat.sendMessage("Nasılsın?"));</code></pre>
     <div class="notification-card">
       <div class="notification-header">
         <div class="notification-heading-left">
-          <img src="icons/dgbys_icon.png" alt="DGBYS" class="notification-icon">
+          <img src="icons/dgbys_icon.png" alt="DGBYS" class="notification-icon" draggable="false">
           <span class="notification-name">DGBYS</span>
         </div>
         <label class="notification-switch">
@@ -4036,7 +4100,7 @@ console.log(quikChat.sendMessage("Nasılsın?"));</code></pre>
     <div class="notification-card">
       <div class="notification-header">
         <div class="notification-heading-left">
-          <img src="icons/emtia_icon.png" alt="EMTIA" class="notification-icon">
+          <img src="icons/emtia_icon.png" alt="EMTIA" class="notification-icon" draggable="false">
           <span class="notification-name">EMTIA</span>
         </div>
         <label class="notification-switch">
@@ -4065,7 +4129,7 @@ console.log(quikChat.sendMessage("Nasılsın?"));</code></pre>
     <div class="notification-card">
       <div class="notification-header">
         <div class="notification-heading-left">
-          <img src="icons/meyer_icon.png" alt="MEYER" class="notification-icon">
+          <img src="icons/meyer_icon.png" alt="MEYER" class="notification-icon" draggable="false">
           <span class="notification-name">MEYER</span>
         </div>
         <label class="notification-switch">
@@ -4304,8 +4368,8 @@ function renderChatHistory() {
       li.innerHTML = `
         <span class="chat-history-title">${conv.title || "Yeni Sohbet"}</span>
         <div class="history-actions">
-          <button class="edit-btn"><img src="icons/edit_btn.png" alt="Düzenle" /></button>
-          <button class="delete-btn"><img src="icons/delete_btn.png" alt="Sil" /></button>
+          <button class="edit-btn"><img src="icons/edit_btn.png" alt="Düzenle" draggable="false" /></button>
+          <button class="delete-btn"><img src="icons/delete_btn.png" alt="Sil" draggable="false" /></button>
         </div>
       `;
 li.addEventListener("click", () => {
@@ -5607,22 +5671,60 @@ async function sendFileToBackend(file) {
 }
 
 
-// Dosyaları gösterme fonksiyonu
+// Dosya türüne göre ikon belirleme fonksiyonu
+function getFileIcon(ext) {
+  switch (ext.toLowerCase()) {
+    case '.doc':
+    case '.docx':
+      return 'icons/word_icon.png';
+    case '.pdf':
+      return 'icons/pdf_icon.png';
+    case '.txt':
+      return 'icons/txt_icon.png';
+    default:
+      return 'icons/default_icon.png'; // Bilinmeyen dosya türleri için varsayılan ikon
+  }
+}
+
+// Dosyaları gösterme fonksiyonu (güncellenmiş)
 function displayFiles(files) {
   for (const file of files) {
+    // Maksimum dosya sayısını kontrol et
     if (uploadedFiles.length >= 5) {
-      alert("Maksimum 5 dosya yükleyebilirsiniz.");
+      showDuplicateToast("Maksimum 5 dosya yükleyebilirsiniz.");
       return;
     }
+
+    // Dosya uzantısını al
     const ext = "." + file.name.split(".").pop().toLowerCase();
     if (!allowedExtensions.includes(ext)) {
-      alert("Sadece .pdf, .doc, .docx, .txt uzantılı dosya yükleyebilirsiniz.");
+      showDuplicateToast("Sadece .pdf, .doc, .docx, .txt uzantılı dosya yükleyebilirsiniz.");
       continue;
     }
+
+    // Aynı isim ve türde dosya kontrolü
+    const isDuplicate = uploadedFiles.some(existingFile => 
+      existingFile.name === file.name && 
+      ("." + existingFile.name.split(".").pop().toLowerCase()) === ext
+    );
+
+    if (isDuplicate) {
+      showDuplicateToast(`"${file.name}" adında bir dosya zaten eklenmiş.`);
+      continue; // Bu dosyayı eklemeden devam et
+    }
+
+    // Dosyayı ekle
     uploadedFiles.push(file);
+
     const fileBox = document.createElement("div");
     fileBox.className = "file-box";
+
+    // Dosya türüne göre ikonu belirle
+    const fileIconSrc = getFileIcon(ext);
+
+    // Dosya kutusu içeriği (ikon + dosya adı + kaldırma butonu)
     fileBox.innerHTML = `
+      <img src="${fileIconSrc}" alt="File Icon" class="file-icon">
       <span class="file-name">${file.name}</span>
       <button class="remove-file-btn">
         <img src="icons/close_btn.png" alt="Remove File">
@@ -5639,6 +5741,27 @@ function displayFiles(files) {
     // Eklenen dosyayı backend'e gönder ve metni al
     sendFileToBackend(file);
   }
+}
+
+function showDuplicateToast(message) {
+  const toast = document.createElement("div");
+  toast.textContent = message;
+  toast.style.cssText = `
+    position: fixed;
+    top: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    background-color: var(--danger-color);
+    color: white;
+    padding: 12px 24px;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+    z-index: 1000;
+    animation: fadeInOut 2s ease forwards;
+    text-align: center;
+  `;
+  document.body.appendChild(toast);
+  setTimeout(() => toast.remove(), 2000);
 }
 
 // Butonla dosya yükleme
@@ -6258,12 +6381,13 @@ document.addEventListener("DOMContentLoaded", () => {
 });
 
 document.addEventListener("DOMContentLoaded", () => {
-  // Toggle elemanlarını seçiyoruz
+  // Existing toggles
   const toggleSql = document.getElementById("toggle-sql");
   const togglePython = document.getElementById("toggle-python");
   const toggleJavascript = document.getElementById("toggle-javascript");
+  const toggleCss = document.getElementById("toggle-css");
 
-  // LocalStorage'dan son durumu alıp checkbox'lara uyguluyoruz
+  // Load states from localStorage
   if (localStorage.getItem("toggle-sql") !== null) {
     toggleSql.checked = localStorage.getItem("toggle-sql") === "true";
     toggleCodeBlock("sql");
@@ -6276,8 +6400,12 @@ document.addEventListener("DOMContentLoaded", () => {
     toggleJavascript.checked = localStorage.getItem("toggle-javascript") === "true";
     toggleCodeBlock("javascript");
   }
+  if (localStorage.getItem("toggle-css") !== null) {
+    toggleCss.checked = localStorage.getItem("toggle-css") === "true";
+    toggleCodeBlock("css");
+  }
 
-  // Her bir toggle değiştiğinde durumu kaydediyoruz
+  // Add event listeners to save changes
   toggleSql.addEventListener("change", () => {
     localStorage.setItem("toggle-sql", toggleSql.checked);
     toggleCodeBlock("sql");
@@ -6290,6 +6418,17 @@ document.addEventListener("DOMContentLoaded", () => {
     localStorage.setItem("toggle-javascript", toggleJavascript.checked);
     toggleCodeBlock("javascript");
   });
+  toggleCss.addEventListener("change", () => {
+    localStorage.setItem("toggle-css", toggleCss.checked);
+    toggleCodeBlock("css");
+  });
+});
+
+document.getElementById("voice-page-btn").addEventListener("click", () => {
+  document.body.classList.add("fade-out");
+  setTimeout(() => {
+    window.location.href = "file:///C:/Users/bdeni/OneDrive/Masa%C3%BCst%C3%BC/Quik_App_v2/Quik_Speech.html";
+  }, 500); // Matches the animation duration (0.5s)
 });
 
 
