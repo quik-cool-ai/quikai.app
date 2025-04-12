@@ -70,6 +70,20 @@
       background-color: var(--bg-color);
       color: var(--text-color);
       overflow-y: auto;
+      opacity: 0; /* Başlangıçta görünmez */
+      animation: fadeIn 1s ease forwards; /* 0.5 saniyede animasyon */
+    }
+
+    /* Fade-in ve hafif kayma animasyonu */
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+        transform: translateY(20px); /* Aşağıdan yukarı doğru hafif kayma */
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
     }
 
     /* Sabit Toggle Butonu (sol üst köşe) */
@@ -247,7 +261,8 @@
       position: absolute;
     }
 
-    .new-chat-btn[data-tooltip]::after {
+    .new-chat-btn[data-tooltip]::after,
+    .sidebar-search-toggle[data-tooltip]::after {
       left: auto !important;
       right: 232% !important;
       top: 50% !important;
@@ -621,15 +636,7 @@ body.dark .history-icon {
   }
 }
 
-    /* Animasyon */
-    @keyframes fadeIn {
-      0% { opacity: 0; }
-      100% { opacity: 1; }
-    }
-    #welcome-message span {
-      opacity: 0;
-      display: inline-block;
-    }
+
 
 /* Chat Mesaj Balonları */
 .chat-bubble {
@@ -1024,8 +1031,11 @@ pre code {
   bottom: 15px;       /* Alttan 20px boşluk */
   left: 70px;         /* Soldan 20px boşluk */
   z-index: 200;       /* Chat inputtan daha üstte veya altta olmasına göre ayarla */
-  background-color: transparent;
+  width: 60px;
+  height: 35px;
+  background-color: var(--input-bg);
   border: none;
+  border-radius: 12px;
   box-shadow: 
     /* Aşağıya doğru gölge */
     0 4px 6px -2px rgba(0, 0, 0, 0.15),
@@ -1038,11 +1048,9 @@ pre code {
   cursor: pointer;
   display: flex;
   align-items: center;
+  justify-content: center;
   color: var(--text-color);
-  font-size: 1rem;
-  padding: 0.5rem;
-  border-radius: 12px;
-  flex-shrink: 0;
+
 }
 
 #web-search-btn:hover {
@@ -1095,6 +1103,23 @@ body.dark #web-search-btn.active {
 body.dark #web-search-btn.active:hover {
   background-color: #2171cc;
 }
+
+@media (max-width: 768px) {
+  #web-search-btn span {
+    display: none;
+  }
+  #web-search-btn {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 40px;
+  }
+  #web-search-btn img {
+    margin-right: 0 !important;
+  }
+}
+
+
 
 
 body.dark #send-btn.stop-state img {
@@ -1216,11 +1241,12 @@ body.dark .settings-btn:hover {
       width: 100%;
       height: 100%;
       overflow: auto;
-      background-color: transparent;
+      background-color: rgba(0, 0, 0, 0.7); /* Her iki modal için aynı karartma */
       backdrop-filter: blur(4px);
       -webkit-backdrop-filter: blur(4px);
       animation: fadeIn 0.3s ease;
     }
+
 
     /* Ayarlar Modal'ı İçin Genel Stil */
     .modal-content {
@@ -1348,20 +1374,22 @@ body.dark .dark-mode-toggle-modal:hover {
   flex-direction: column;
   box-sizing: border-box;
 }
+
 body.dark .settings-modal-content {
   background-color: var(--sidebar-bg); /* ya da sidebar rengi olarak kullandığın değişken */
 }
 
 /* Responsive Ayarlar */
 @media (max-width: 768px) {
-  .settings-modal-content {
+  .settings-modal-content,
+  .chat-search-modal-content {
     width: 100%;
     height: 100vh; /* Tam ekran yüksekliği */
-    margin: 0;
+    margin: 0 !important;  
     position: fixed;
     top: 0;
     left: 0;
-    border-radius: 12px 12px 0 0;
+    border-radius: 0 !important;
     overflow: hidden; /* Modalın kendisi taşmasın */
     display: flex;
     flex-direction: column; /* Dikey düzen */
@@ -2581,7 +2609,8 @@ body.dark .feedback-controls button[data-tooltip]::after {
 #web-search-btn[data-tooltip]::after,
 #send-btn[data-tooltip]::after,
 #voice-record-btn[data-tooltip]::after,
-#voice-page-btn[data-tooltip]::after {
+#voice-page-btn[data-tooltip]::after,
+#emoji-btn[data-tooltip]::after {
   left: 50%;
   top: -9px; /* Butonun üstüne yerleştir */
   transform: translateX(-50%) translateY(-100%); /* Yatayda ortala, dikeyde yukarı kaydır */
@@ -3358,6 +3387,421 @@ body.dark #voice-page-btn:hover img {
   animation: fadeOut 0.5s ease forwards;
 }
 
+/* Emoji Button Styling */
+.emoji-btn {
+  position: fixed;
+  bottom: 15px;
+  left: 142px;
+  z-index: 200;
+  background-color: transparent;
+  border: none;
+  box-shadow: 0 4px 6px -2px rgba(0, 0, 0, 0.15),
+              4px 0 6px -2px rgba(0, 0, 0, 0.15),
+              -4px 0 6px -2px rgba(0, 0, 0, 0.15),
+              0 -4px 6px -2px rgba(0, 0, 0, 0.15);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 35px;
+  border-radius: 12px;
+  color: var(--text-color);
+}
+
+.emoji-btn:hover {
+  background-color: #c0c0c0; /* Matches hover effect of other buttons */
+}
+
+@media (max-width: 768px) {
+  .emoji-btn {
+  left: 122px;
+}
+}
+
+body.dark .emoji-btn {
+  box-shadow: 0 4px 6px -2px rgba(0, 0, 0, 0.15),
+              4px 0 6px -2px rgba(0, 0, 0, 0.15),
+              -4px 0 6px -2px rgba(0, 0, 0, 0.15),
+              0 -4px 6px -2px rgba(0, 0, 0, 0.15);
+}
+
+body.dark .emoji-btn img {
+  filter: brightness(0) invert(1); /* Matches dark mode icon behavior */
+}
+
+body.dark .emoji-btn:hover img {
+  filter: none; /* Matches hover behavior of other buttons */
+}
+
+body.dark .emoji-btn:hover {
+  background-color: #c0c0c0;
+  color: var(--sidebar-bg);
+}
+
+/* Emoji Picker Styling */
+.emoji-picker {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: calc(100%); /* chat-input’un üstüne 10px boşlukla yerleştirme */
+  width: auto; /* Gerekirse genişlik düzenleyin, örneğin: 100% */
+  max-height: 215px; /* Eğer kaydırma isterseniz */
+  margin: 0 auto;    /* Kapsayıcıyı yatayda ortalar */
+  background-color: var(--input-bg);
+  border-radius: 24px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+  padding: 10px;
+  overflow-y: auto;
+  z-index: 201;
+  display: none; /* Varsayılan olarak gizli, emoji butonuyla açılır */
+  animation: fadeIn 0.3s ease;
+}
+
+body.dark .emoji-picker {
+  background-color: var(--input-bg);
+}
+
+.emoji-picker-tabs {
+  display: flex;
+  justify-content: space-around;  /* Butonlar arasında eşit boşluk */
+  padding-bottom: 5px;
+}
+
+.emoji-tab {
+  background: none;
+  border: none;
+  padding: 7px 10px;
+  cursor: pointer;
+  font-size: 14px;
+  margin-bottom: 5px;
+  color: var(--text-color);
+}
+
+.emoji-tab.active {
+  background: #c0c0c0;
+  border-radius: 12px;
+}
+
+body.dark .emoji-tab.active {
+  color: #000000;
+}
+
+/* Emoji Arama Alanı */
+.emoji-search-container {
+  width: 100%;
+  max-width: 100%;
+  box-sizing: border-box;
+  display: flex;
+  align-items: center;
+  padding: 5px;
+  border: 1px solid rgba(200, 200, 200, 0.7);
+  border-radius: 8px;                     /* Kenarların yuvarlanması */
+  background-color: var(--input-bg);      /* Arka plan rengi */
+  margin-bottom: 10px;
+}
+
+.emoji-search-container input {
+  width: 100%;
+  padding: 2px;
+  border: none;             /* İç kenarlıkları kaldırıyoruz */
+  outline: none;
+  font-size: 0.9rem;
+  background-color: transparent; /* Container arka planı yeterli olur */
+  color: var(--text-color);
+}
+
+.emoji-grid-container .emoji-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(35px, 1fr));
+  gap: 5px;               /* Emoji arası boşluk, ihtiyaca göre ayarlanabilir */
+  justify-items: center;   /* Her emoji hücresinin içeriğini ortalar */
+}
+
+.emoji {
+  width: 35px;            /* Sabit genişlik */
+  height: 35px;           /* Sabit yükseklik */
+  display: inline-flex;   /* Inline-flex kullanarak satır içi öğe olarak kalır ve hizalama kolaylaşır */
+  align-items: center;     /* Dikey ortalama */
+  justify-content: center; /* Yatay ortalama */
+  font-size: 24px;        /* Emoji boyutu */
+  cursor: pointer;
+  text-align: center;
+  margin: 0;              /* Varsayılan boşlukları kaldır */
+  padding: 0;             /* İç boşlukları kaldır */
+  line-height: 1;         /* Satır yüksekliğini sabitle */
+}
+
+.emoji:hover {
+  background-color: #c0c0c0; /* Hover arka plan rengi */
+  border-radius: 5px;        /* Yuvarlak kenarlar */
+}
+
+body.dark .emoji:hover {
+  background-color: #444; /* Dark mode hover */
+}
+
+.sidebar-search-wrapper {
+  display: flex;
+  align-items: center;
+  padding-top: 0.5rem ;
+  gap: 0.5rem;
+}
+
+.sidebar-search-toggle {
+  position: fixed;
+  top: 9px;      /* settings-btn ile aynı hizada */
+  right: 53px;   /* Ayarlar butonundan (right:13px) solda konumlanacak, bu değeri ihtiyaca göre ayarlayın */
+  border: none;
+  background: none;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: transform 0.3s ease, color 0.3s ease;
+  color: var(--text-color);
+  width: 40px;
+  height: 40px;
+}
+
+.sidebar-search-toggle:hover {
+  background: #c0c0c0;
+}
+
+
+body.dark .sidebar-search-toggle img {
+    filter: brightness(0) invert(1);
+}
+
+body.dark .sidebar-search-toggle:hover img {
+  filter: none; /* ya da farklı bir şey: örneğin grayscale(100%) */
+}
+
+.sidebar-search-container {
+  width: 100%;           /* Ebeveynin (sidebar) tamamına uyar */
+  max-width: 100%;       /* Genişlik asla sidebar'ı aşmaz */
+  box-sizing: border-box;  /* Padding ve border genişliğe dahil edilir */
+  display: flex;
+  align-items: center;
+  padding: 5px;
+  border: 1px solid var(--code-border);
+  border-radius: 8px;
+  height: 50px;
+  background-color: var(--input-bg);
+  position: absolute;
+  top: -30%;
+  left: 510%;
+}
+
+#sidebar-search-input {
+  width: 100%;
+  max-width: 100%;
+  flex: 1;
+  border: none;
+  outline: none;
+  font-size: 0.9rem;
+  font-family: 'Inter', sans-serif;
+  background-color: transparent;
+  color: var(--text-color);
+}
+
+.sidebar-search-close {
+  background: none;
+  border: none;
+  color: var(--text-color);
+  font-size: 1rem;
+  cursor: pointer;
+}
+
+/* Chat Search Modal Stilleri */
+.chat-search-modal-content {
+  background-color: var(--sidebar-bg);
+  width: 90%;
+  max-width: 700px;
+  min-height: 90vh;
+  margin: 3vh auto;
+  border-radius: 3vh;
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.5);
+  overflow: hidden; /* İç taşmayı engelle */
+  display: flex;
+  flex-direction: column;
+  box-sizing: border-box;
+}
+
+#chat-search-modal {
+  display: none;
+  position: fixed;
+  z-index: 306;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.7); /* Hafif karartma efekti */
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+  animation: fadeIn 0.3s ease;
+}
+
+.chat-search-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-top: 10px;
+  border-bottom: 1px solid var(--code-border);
+}
+
+.chat-search-header h2 {
+  margin: 0 10px 20px;
+  font-size: 1.1rem;
+  color: var(--text-color);
+}
+
+.chat-search-body {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  padding-top: 10px;
+}
+
+.chat-search-input-wrapper {
+  display: flex;
+  align-items: center;
+  padding: 12px;
+  border: 1px solid var(--code-border);
+  border-radius: 8px;
+  background-color: var(--input-bg);
+  margin-bottom: 10px;
+}
+
+#chat-search-input {
+  width: 100%;
+  border: none;
+  outline: none;
+  font-size: 0.9rem;
+  font-family: 'Inter', sans-serif;
+  background-color: transparent;
+  color: var(--text-color);
+}
+
+#chat-search-results {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  max-height: calc(80vh - 100px); /* Arama çubuğu ve kapatma butonu için boşluk */
+  overflow-y: auto; /* Çok başlık varsa kaydırma */
+  scrollbar-width: thin;
+  scrollbar-color: rgba(85, 85, 85, 0.2) transparent;
+}
+
+#chat-search-results::-webkit-scrollbar {
+  width: 6px;
+}
+
+#chat-search-results::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.#chat-search-results::-webkit-scrollbar-thumb {
+  background-color: rgba(85, 85, 85, 0.2);
+  border-radius: 10px;
+  border: 2px solid transparent;
+  background-clip: content-box;
+}
+
+#chat-search-results::-webkit-scrollbar-thumb:hover {
+  background-color: rgba(85, 85, 85, 0.5);
+}
+
+.chat-search-result-item {
+  padding: 10px;
+  cursor: pointer;
+  border-bottom: 1px solid var(--code-border);
+  color: var(--text-color);
+  font-size: 0.9rem;
+}
+
+.chat-search-result-item:hover {
+  background-color: #c0c0c0;
+  border-radius: 12px;
+}
+
+body.dark .chat-search-result-item:hover {
+  background-color: #333;
+}
+
+.chat-search-result-item.active {
+  background-color: #c0c0c0;
+  font-weight: 600;
+}
+
+body.dark .chat-search-result-item.active {
+  background-color: #c0c0c0;
+}
+
+.search-item-title {
+  font-size: 1.2em;      /* Başlıklar biraz daha büyük görünsün */
+  font-weight: bold;
+  margin-bottom: 4px;
+}
+
+.search-item-snippet {
+  font-size: 0.9em;     /* Sonuç metni (snippet) biraz daha küçük olsun */
+  color: #666;
+}
+
+#chat-search-close {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: var(--sidebar-bg);  /* Light modda sidebar rengi, örn: beyaz */
+  border: none;
+  width: 35px;
+  height: 35px;
+  top: 25px;
+  right: 7px;
+  border-radius: 18px;
+  cursor: pointer;
+  color: var(--text-color);
+}
+
+#chat-search-close:hover {
+  background-color: #c0c0c0;
+}
+
+body.dark #chat-search-close:hover {
+  background-color: #c0c0c0; /* Dark modda sidebar rengi */
+  color: var(--sidebar-bg);
+}
+
+
+/* Mobil Uyumluluk */
+@media (max-width: 768px) {
+  .chat-search-modal-content {
+    margin: 0;
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    max-height: 80vh;
+    border-radius: 12px 12px 0 0;
+    overflow-y: auto;
+  }
+}
+
+body.modal-active #sidebar-search-toggle {
+  filter: blur(4px) !important;
+  pointer-events: none !important;
+}
+
+.sidebar-search-toggle.blurred {
+  filter: blur(3px);
+  pointer-events: none;
+  transition: filter 0.3s ease;
+  opacity: 0.8;
+}
+
+
   </style>
 </head>
 
@@ -3394,13 +3838,26 @@ body.dark #voice-page-btn:hover img {
   <!-- Sidebar -->
   <div id="sidebar" class="sidebar">
 <div class="sidebar-header">
+
+<!-- Sidebar içinde, chat-history-list'ten önce eklenebilir -->
+<div class="sidebar-search-wrapper">
+
+
+
+</div>
+
   <span class="brand" id="sidebar-brand">
     <img src="icons/quik_icon.png" alt="Quik Logo" id="sidebar-brand-icon" draggable="false">
   </span>
 </div>
+
     <button id="new-chat-btn" data-tooltip="Yeni Sohbet" class="new-chat-btn">
       <img src="icons/new_chat_btn.png" alt="Chat Icon" style="width:21px; height:21px;" draggable="false">
     </button>
+
+
+
+
     <ul id="chat-history-list" class="chat-history-list"></ul>
   </div>
   
@@ -3432,15 +3889,300 @@ body.dark #voice-page-btn:hover img {
     <img src="icons/addfile_btn.png" alt="Add File Icon" style="width:20px; height:20px;" draggable="false">
   </button>
   <button id="web-search-btn" data-tooltip="Web Araması">
-    <img src="icons/web_search_btn.png" alt="Web Search Icon" style="width:19px; height:19px; vertical-align: middle; margin-right: 5px;" draggable="false">
+    <img src="icons/web_search_btn.png" alt="Web Search Icon" style="width:20px; height:20px; margin-right: 5px;" draggable="false">
     <span>Ara</span>
   </button>
+
+<button id="emoji-btn" class="emoji-btn" data-tooltip="Emoji Ekle">
+  <img src="icons/emoji_icon.png" alt="Emoji" style="width:17px; height:17px;" draggable="false" />
+</button>
+
+<div id="emoji-picker" class="emoji-picker">
+  <!-- Kategori Sekmeleri -->
+  <div class="emoji-picker-tabs">
+    <button class="emoji-tab active" data-category="faces">😊 Yüz</button>
+    <button class="emoji-tab" data-category="animals">🐶 Hayvan & Doğa</button>
+    <button class="emoji-tab" data-category="food">🍔 Yiyecek & İçecek</button>
+  </div>
+
+  <!-- Emoji Arama Alanı -->
+  <div class="emoji-search-container">
+    <input type="text" id="emoji-search-input" placeholder="Emoji ara..." />
+  </div>
+
+  <!-- Emoji Grid Konteyneri -->
+  <div class="emoji-grid-container">
+<!-- Yüz Emojileri -->
+<div class="emoji-grid" data-category="faces">
+  <span class="emoji" data-emoji="😀">😀</span>
+  <span class="emoji" data-emoji="😃">😃</span>
+  <span class="emoji" data-emoji="😄">😄</span>
+  <span class="emoji" data-emoji="😁">😁</span>
+  <span class="emoji" data-emoji="😆">😆</span>
+  <span class="emoji" data-emoji="😅">😅</span>
+  <span class="emoji" data-emoji="🤣">🤣</span>
+  <span class="emoji" data-emoji="😂">😂</span>
+  <span class="emoji" data-emoji="🙂">🙂</span>
+  <span class="emoji" data-emoji="🙃">🙃</span>
+  <span class="emoji" data-emoji="😉">😉</span>
+  <span class="emoji" data-emoji="😊">😊</span>
+  <span class="emoji" data-emoji="😇">😇</span>
+  <span class="emoji" data-emoji="🥰">🥰</span>
+  <span class="emoji" data-emoji="😍">😍</span>
+  <span class="emoji" data-emoji="🤩">🤩</span>
+  <span class="emoji" data-emoji="😘">😘</span>
+  <span class="emoji" data-emoji="😗">😗</span>
+  <span class="emoji" data-emoji="😚">😚</span>
+  <span class="emoji" data-emoji="😙">😙</span>
+  <span class="emoji" data-emoji="😋">😋</span>
+  <span class="emoji" data-emoji="😛">😛</span>
+  <span class="emoji" data-emoji="😜">😜</span>
+  <span class="emoji" data-emoji="🤪">🤪</span>
+  <span class="emoji" data-emoji="🤗">🤗</span>
+  <span class="emoji" data-emoji="🤔">🤔</span>
+  <span class="emoji" data-emoji="🤭">🤭</span>
+  <span class="emoji" data-emoji="🤫">🤫</span>
+  <span class="emoji" data-emoji="🤥">🤥</span>
+  <span class="emoji" data-emoji="😶">😶</span>
+  <span class="emoji" data-emoji="😐">😐</span>
+  <span class="emoji" data-emoji="😑">😑</span>
+  <span class="emoji" data-emoji="😬">😬</span>
+  <span class="emoji" data-emoji="🙄">🙄</span>
+  <span class="emoji" data-emoji="😏">😏</span>
+  <span class="emoji" data-emoji="😒">😒</span>
+  <span class="emoji" data-emoji="😞">😞</span>
+  <span class="emoji" data-emoji="😔">😔</span>
+  <span class="emoji" data-emoji="😟">😟</span>
+  <span class="emoji" data-emoji="😕">😕</span>
+  <span class="emoji" data-emoji="🙁">🙁</span>
+  <span class="emoji" data-emoji="☹️">☹️</span>
+  <span class="emoji" data-emoji="😣">😣</span>
+  <span class="emoji" data-emoji="😖">😖</span>
+  <span class="emoji" data-emoji="😫">😫</span>
+  <span class="emoji" data-emoji="😩">😩</span>
+  <span class="emoji" data-emoji="🥺">🥺</span>
+  <span class="emoji" data-emoji="😢">😢</span>
+  <span class="emoji" data-emoji="😭">😭</span>
+<span class="emoji" data-emoji="🥹">🥹</span>
+<span class="emoji" data-emoji="🤤">🤤</span>
+<span class="emoji" data-emoji="😵‍💫">😵‍💫</span>
+<span class="emoji" data-emoji="😵">😵</span>
+<span class="emoji" data-emoji="😲">😲</span>
+<span class="emoji" data-emoji="😳">😳</span>
+<span class="emoji" data-emoji="🥴">🥴</span>
+<span class="emoji" data-emoji="😦">😦</span>
+<span class="emoji" data-emoji="😧">😧</span>
+<span class="emoji" data-emoji="😨">😨</span>
+<span class="emoji" data-emoji="😰">😰</span>
+<span class="emoji" data-emoji="😱">😱</span>
+<span class="emoji" data-emoji="😤">😤</span>
+<span class="emoji" data-emoji="😡">😡</span>
+<span class="emoji" data-emoji="🤬">🤬</span>
+<span class="emoji" data-emoji="😠">😠</span>
+<span class="emoji" data-emoji="🤒">🤒</span>
+<span class="emoji" data-emoji="🤢">🤢</span>
+<span class="emoji" data-emoji="🤮">🤮</span>
+<span class="emoji" data-emoji="😷">😷</span>
+<span class="emoji" data-emoji="🤧">🤧</span>
+<span class="emoji" data-emoji="🥳">🥳</span>
+<span class="emoji" data-emoji="🤓">🤓</span>
+<span class="emoji" data-emoji="🧐">🧐</span>
+<span class="emoji" data-emoji="😎">😎</span>
+<span class="emoji" data-emoji="🤠">🤠</span>
+<span class="emoji" data-emoji="🥸">🥸</span>
+<span class="emoji" data-emoji="🥵">🥵</span>
+<span class="emoji" data-emoji="🥶">🥶</span>
+<span class="emoji" data-emoji="🤑">🤑</span>
+<span class="emoji" data-emoji="🤡">🤡</span>
+<span class="emoji" data-emoji="💩">💩</span>
+<span class="emoji" data-emoji="👻">👻</span>
+<span class="emoji" data-emoji="💀">💀</span>
+<span class="emoji" data-emoji="☠️">☠️</span>
+<span class="emoji" data-emoji="👽">👽</span>
+<span class="emoji" data-emoji="👾">👾</span>
+<span class="emoji" data-emoji="🤖">🤖</span>
+<span class="emoji" data-emoji="🎃">🎃</span>
+<span class="emoji" data-emoji="😺">😺</span>
+<span class="emoji" data-emoji="😸">😸</span>
+<span class="emoji" data-emoji="😹">😹</span>
+<span class="emoji" data-emoji="😻">😻</span>
+<span class="emoji" data-emoji="😼">😼</span>
+<span class="emoji" data-emoji="😽">😽</span>
+<span class="emoji" data-emoji="🙀">🙀</span>
+<span class="emoji" data-emoji="😿">😿</span>
+<span class="emoji" data-emoji="😾">😾</span>
+
+</div>
+<!-- Hayvan & Doğa Emojileri -->
+<div class="emoji-grid" data-category="animals" style="display: none;">
+<span class="emoji" data-emoji="🐶">🐶</span>
+<span class="emoji" data-emoji="🐱">🐱</span>
+<span class="emoji" data-emoji="🐭">🐭</span>
+<span class="emoji" data-emoji="🐹">🐹</span>
+<span class="emoji" data-emoji="🦊">🦊</span>
+<span class="emoji" data-emoji="🐻">🐻</span>
+<span class="emoji" data-emoji="🐼">🐼</span>
+<span class="emoji" data-emoji="🐨">🐨</span>
+<span class="emoji" data-emoji="🐯">🐯</span>
+<span class="emoji" data-emoji="🦁">🦁</span>
+<span class="emoji" data-emoji="🐷">🐷</span>
+<span class="emoji" data-emoji="🐸">🐸</span>
+<span class="emoji" data-emoji="🐵">🐵</span>
+<span class="emoji" data-emoji="🙈">🙈</span>
+<span class="emoji" data-emoji="🙉">🙉</span>
+<span class="emoji" data-emoji="🙊">🙊</span>
+<span class="emoji" data-emoji="🐔">🐔</span>
+<span class="emoji" data-emoji="🐧">🐧</span>
+<span class="emoji" data-emoji="🐦">🐦</span>
+<span class="emoji" data-emoji="🐤">🐤</span>
+<span class="emoji" data-emoji="🐣">🐣</span>
+<span class="emoji" data-emoji="🐥">🐥</span>
+<span class="emoji" data-emoji="🦆">🦆</span>
+<span class="emoji" data-emoji="🦉">🦉</span>
+<span class="emoji" data-emoji="🐺">🐺</span>
+<span class="emoji" data-emoji="🐗">🐗</span>
+<span class="emoji" data-emoji="🐴">🐴</span>
+<span class="emoji" data-emoji="🦄">🦄</span>
+<span class="emoji" data-emoji="🐍">🐍</span>
+<span class="emoji" data-emoji="🦎">🦎</span>
+<span class="emoji" data-emoji="🐢">🐢</span>
+<span class="emoji" data-emoji="🦖">🦖</span>
+<span class="emoji" data-emoji="🦕">🦕</span>
+<span class="emoji" data-emoji="🐙">🐙</span>
+<span class="emoji" data-emoji="🦑">🦑</span>
+<span class="emoji" data-emoji="🦀">🦀</span>
+<span class="emoji" data-emoji="🦞">🦞</span>
+<span class="emoji" data-emoji="🐡">🐡</span>
+<span class="emoji" data-emoji="🐬">🐬</span>
+<span class="emoji" data-emoji="🐳">🐳</span>
+<span class="emoji" data-emoji="🐘">🐘</span>
+<span class="emoji" data-emoji="🦍">🦍</span>
+<span class="emoji" data-emoji="🐪">🐪</span>
+<span class="emoji" data-emoji="🐫">🐫</span>
+<span class="emoji" data-emoji="🦒">🦒</span>
+<span class="emoji" data-emoji="🦓">🦓</span>
+<span class="emoji" data-emoji="🦬">🦬</span>
+<span class="emoji" data-emoji="🐄">🐄</span>
+<span class="emoji" data-emoji="🐖">🐖</span>
+<span class="emoji" data-emoji="🐏">🐏</span>
+<span class="emoji" data-emoji="🐑">🐑</span>
+<span class="emoji" data-emoji="🦌">🦌</span>
+<span class="emoji" data-emoji="🦘">🦘</span>
+<span class="emoji" data-emoji="🦝">🦝</span>
+<span class="emoji" data-emoji="🦡">🦡</span>
+<span class="emoji" data-emoji="🦨">🦨</span>
+<span class="emoji" data-emoji="🐇">🐇</span>
+<span class="emoji" data-emoji="🐿️">🐿️</span>
+<span class="emoji" data-emoji="🦔">🦔</span>
+<span class="emoji" data-emoji="🐾">🐾</span>
+<span class="emoji" data-emoji="🪴">🪴</span>
+<span class="emoji" data-emoji="🌵">🌵</span>
+<span class="emoji" data-emoji="🎄">🎄</span>
+<span class="emoji" data-emoji="🌳">🌳</span>
+<span class="emoji" data-emoji="🌲">🌲</span>
+<span class="emoji" data-emoji="🌴">🌴</span>
+<span class="emoji" data-emoji="🌻">🌻</span>
+<span class="emoji" data-emoji="🌼">🌼</span>
+<span class="emoji" data-emoji="🌸">🌸</span>
+<span class="emoji" data-emoji="🌹">🌹</span>
+<span class="emoji" data-emoji="💐">💐</span>
+<span class="emoji" data-emoji="🌺">🌺</span>
+<span class="emoji" data-emoji="🌷">🌷</span>
+<span class="emoji" data-emoji="🌞">🌞</span>
+<span class="emoji" data-emoji="🌝">🌝</span>
+<span class="emoji" data-emoji="🌜">🌜</span>
+<span class="emoji" data-emoji="🌛">🌛</span>
+<span class="emoji" data-emoji="🌕">🌕</span>
+<span class="emoji" data-emoji="🌖">🌖</span>
+<span class="emoji" data-emoji="🌗">🌗</span>
+<span class="emoji" data-emoji="🌘">🌘</span>
+<span class="emoji" data-emoji="🌑">🌑</span>
+<span class="emoji" data-emoji="🌒">🌒</span>
+<span class="emoji" data-emoji="🌓">🌓</span>
+<span class="emoji" data-emoji="🌔">🌔</span>
+<span class="emoji" data-emoji="🌍">🌍</span>
+<span class="emoji" data-emoji="🌎">🌎</span>
+<span class="emoji" data-emoji="🌏">🌏</span>
+<span class="emoji" data-emoji="☀️">☀️</span>
+<span class="emoji" data-emoji="🌈">🌈</span>
+<span class="emoji" data-emoji="☁️">☁️</span>
+<span class="emoji" data-emoji="🌧️">🌧️</span>
+<span class="emoji" data-emoji="🌦️">🌦️</span>
+<span class="emoji" data-emoji="⛈️">⛈️</span>
+<span class="emoji" data-emoji="🌩️">🌩️</span>
+<span class="emoji" data-emoji="🌨️">🌨️</span>
+<span class="emoji" data-emoji="❄️">❄️</span>
+<span class="emoji" data-emoji="☃️">☃️</span>
+<span class="emoji" data-emoji="⛅">⛅</span>
+<span class="emoji" data-emoji="🌪️">🌪️</span>
+<span class="emoji" data-emoji="🌊">🌊</span>
+</div>
+<!-- Yiyecek & İçecek Emojileri -->
+<div class="emoji-grid" data-category="food" style="display: none;">
+  <span class="emoji" data-emoji="🍎">🍎</span>
+  <span class="emoji" data-emoji="🍌">🍌</span>
+  <span class="emoji" data-emoji="🍇">🍇</span>
+  <span class="emoji" data-emoji="🍉">🍉</span>
+  <span class="emoji" data-emoji="🍓">🍓</span>
+  <span class="emoji" data-emoji="🍒">🍒</span>
+  <span class="emoji" data-emoji="🍑">🍑</span>
+  <span class="emoji" data-emoji="🍍">🍍</span>
+  <span class="emoji" data-emoji="🥝">🥝</span>
+  <span class="emoji" data-emoji="🍐">🍐</span>
+  <span class="emoji" data-emoji="🍅">🍅</span>
+  <span class="emoji" data-emoji="🌽">🌽</span>
+  <span class="emoji" data-emoji="🥕">🥕</span>
+  <span class="emoji" data-emoji="🥑">🥑</span>
+  <span class="emoji" data-emoji="🍆">🍆</span>
+  
+  <span class="emoji" data-emoji="🍔">🍔</span>
+  <span class="emoji" data-emoji="🍕">🍕</span>
+  <span class="emoji" data-emoji="🍟">🍟</span>
+  <span class="emoji" data-emoji="🌭">🌭</span>
+  <span class="emoji" data-emoji="🥪">🥪</span>
+  <span class="emoji" data-emoji="🌮">🌮</span>
+  <span class="emoji" data-emoji="🌯">🌯</span>
+  <span class="emoji" data-emoji="🍗">🍗</span>
+  <span class="emoji" data-emoji="🍖">🍖</span>
+  <span class="emoji" data-emoji="🍤">🍤</span>
+  <span class="emoji" data-emoji="🍣">🍣</span>
+  <span class="emoji" data-emoji="🍜">🍜</span>
+  <span class="emoji" data-emoji="🍝">🍝</span>
+  <span class="emoji" data-emoji="🍲">🍲</span>
+  <span class="emoji" data-emoji="🥘">🥘</span>
+  <span class="emoji" data-emoji="🥙">🥙</span>
+  
+  <span class="emoji" data-emoji="☕">☕</span>
+  <span class="emoji" data-emoji="🍵">🍵</span>
+  <span class="emoji" data-emoji="🍶">🍶</span>
+  <span class="emoji" data-emoji="🍺">🍺</span>
+  <span class="emoji" data-emoji="🍻">🍻</span>
+  <span class="emoji" data-emoji="🍷">🍷</span>
+  <span class="emoji" data-emoji="🍸">🍸</span>
+  <span class="emoji" data-emoji="🍹">🍹</span>
+  <span class="emoji" data-emoji="🥂">🥂</span>
+  <span class="emoji" data-emoji="🍾">🍾</span>
+  
+  <span class="emoji" data-emoji="🍦">🍦</span>
+  <span class="emoji" data-emoji="🍩">🍩</span>
+  <span class="emoji" data-emoji="🍪">🍪</span>
+  <span class="emoji" data-emoji="🍰">🍰</span>
+  <span class="emoji" data-emoji="🎂">🎂</span>
+  <span class="emoji" data-emoji="🍮">🍮</span>
+  <span class="emoji" data-emoji="🍫">🍫</span>
+</div>
+
+
+  </div>
+</div>
+
+
 
 <button id="voice-record-btn" class="voice-record-btn" data-tooltip="Ses Kaydet">
     <img src="icons/mic_btn.png" alt="Ses Kaydet" style="width: 17px; height: 17px;" draggable="false">
   </button>
 
-<button id="voice-page-btn" data-tooltip="Quik ile konuş">
+<button id="voice-page-btn" data-tooltip="Sesli sohbete başla">
     <img src="icons/voice_page_icon.png" alt="Ses Sayfası" style= "width: 17px; height: 17px;" draggable="false">
   </button>
 
@@ -3453,6 +4195,31 @@ body.dark #voice-page-btn:hover img {
 <div id="drop-zone" class="drop-zone">
   <p>Dosyalarınızı buraya bırakın</p>
   <p class="subtext">Dosyalarınızı buraya bırakarak sohbete ekleyin</p>
+</div>
+
+<!-- Yeni: Sidebar arama butonu, settings-btn'ün solunda -->
+<button id="sidebar-search-toggle" data-tooltip="Sohbet Ara" class="sidebar-search-toggle">
+  <img src="icons/search_icon.png" alt="Ara" style="width:20px; height:20px;" draggable="false">
+</button>
+
+<!-- Sohbet Arama Modalı -->
+<div id="chat-search-modal" class="modal">
+  <div class="modal-content chat-search-modal-content">
+    <!-- Kapatma Butonu -->
+    <span id="chat-search-close" class="modal-close">&times;</span>
+    <!-- Arama Başlığı -->
+    <div class="chat-search-header">
+      <h2>Sohbet Ara</h2>
+    </div>
+    <!-- Arama Alanı -->
+    <div class="chat-search-body">
+      <div class="chat-search-input-wrapper">
+        <input id="chat-search-input" type="text" placeholder="Başlık veya içerik ara..." />
+      </div>
+      <!-- Arama Sonuçları -->
+      <ul id="chat-search-results" class="chat-search-results"></ul>
+    </div>
+  </div>
 </div>
 
 <!-- Ayarlar Butonu -->
@@ -4198,8 +4965,32 @@ const welcomeMessage = document.getElementById("welcome-message");
 const sidebarBrand = document.getElementById("sidebar-brand");
 const mainContent = document.querySelector(".main-content");
 const scrollWrapper = document.querySelector(".scroll-wrapper");
+const emojiBtn = document.getElementById("emoji-btn");
+const emojiPicker = document.getElementById("emoji-picker");
 
+emojiBtn.addEventListener("click", (e) => {
+  e.stopPropagation(); // Prevent event bubbling to document
+  emojiPicker.style.display = emojiPicker.style.display === "block" ? "none" : "block";
+});
 
+document.addEventListener("click", (e) => {
+  if (!emojiPicker.contains(e.target) && !emojiBtn.contains(e.target)) {
+    emojiPicker.style.display = "none"; // Hide picker if clicked outside
+  }
+});
+
+document.querySelectorAll(".emoji").forEach(emoji => {
+  emoji.addEventListener("click", () => {
+    const emojiChar = emoji.getAttribute("data-emoji");
+    const cursorPos = chatInput.selectionStart;
+    const textBefore = chatInput.value.substring(0, cursorPos);
+    const textAfter = chatInput.value.substring(cursorPos);
+    chatInput.value = textBefore + emojiChar + textAfter;
+    chatInput.focus();
+    chatInput.selectionStart = chatInput.selectionEnd = cursorPos + emojiChar.length;
+    chatInput.dispatchEvent(new Event("input")); // Trigger textarea height adjustment
+  });
+});
 
 function updateNewChatBtnPosition() {
   if (document.body.classList.contains("sidebar-open")) {
@@ -4373,6 +5164,8 @@ function renderChatHistory() {
         </div>
       `;
 li.addEventListener("click", () => {
+  // Tıklanan sohbet geçmişi öğesine basıldığında arama container'ı kapatılsın
+  closeChatSearch();
   currentConversation = conv;
   renderChat();
   document.querySelectorAll(".chat-history-item").forEach(item => item.classList.remove("active"));
@@ -4384,6 +5177,7 @@ li.addEventListener("click", () => {
   }
   document.title = currentConversation.title || "Quik"; // Seçilen sohbetin başlığı HTML başlığına aktarılır
 });
+
 
 li.querySelector(".edit-btn").addEventListener("click", (e) => {
   e.stopPropagation();
@@ -4628,11 +5422,15 @@ function closeSidebar() {
   mainContent.classList.remove("sidebar-open");
   document.body.classList.remove("sidebar-open");
   newChatBtn.classList.add("sidebar-closed");
-  toggleSidebarBtn.dataset.tooltip = "Kenar çubuğunu aç"; // title yerine dataset
+  toggleSidebarBtn.dataset.tooltip = "Kenar çubuğunu aç";
   const img = toggleSidebarBtn.querySelector("img");
   if (img) {
     img.src = "icons/sidebar_close_btn.png";
     img.alt = "Sidebar Close Icon";
+  }
+  // Mobilde, sidebar kapandıktan sonra butonu yeniden konumlandır
+  if (window.innerWidth <= 768) {
+    updateNewChatBtnPosition();
   }
 }
 
@@ -5230,15 +6028,17 @@ document.addEventListener("DOMContentLoaded", () => {
 document.addEventListener("keydown", (e) => {
   const chatInput = document.getElementById("chat-input-textarea");
   const settingsModal = document.getElementById("settings-modal");
+  const chatSearchModal = document.getElementById("chat-search-modal");
 
   // Ctrl (veya Cmd) ile bir kısayol kullanıyorsak, hiçbir şey yapma
   if (e.ctrlKey || e.metaKey) {
     return;
   }
 
-  // Ayarlar modalı açıksa veya başka bir input/textarea aktifse, odaklama
+  // Eğer ayarlar modali Veya search modali açıksa veya başka bir input/textarea aktifse,
+  // chat inputa otomatik odaklama yapma
   if (
-    settingsModal.style.display === "block" ||
+    (settingsModal.style.display === "block" || chatSearchModal.style.display === "block") ||
     document.activeElement.tagName === "INPUT" ||
     document.activeElement.tagName === "TEXTAREA"
   ) {
@@ -5360,7 +6160,7 @@ function setWebSearchState(isEnabled) {
 
 // localStorage'dan son web arama durumunu al, yoksa varsayılan "true" (açık) olsun
   const savedWebSearchState = localStorage.getItem("webSearchEnabled");
-  const initialWebSearchState = savedWebSearchState !== null ? JSON.parse(savedWebSearchState) : true;
+  const initialWebSearchState = savedWebSearchState !== null ? JSON.parse(savedWebSearchState) : false;
   setWebSearchState(initialWebSearchState);
 
   webSearchOnBtn.addEventListener("click", () => setWebSearchState(true));
@@ -5399,7 +6199,7 @@ function setWebSearchState(isEnabled) {
       quikIcon.style.animationDelay = "0.2s";
     }
   }
-  setTimeout(animateWelcomeElements, 200);
+
 });
 
 // Diğer Olay Dinleyicileri
@@ -5418,6 +6218,8 @@ sendBtn.addEventListener("click", () => {
 
 chatInput.addEventListener("keydown", (e) => {
   if (e.key === "Enter" && !e.shiftKey && !isStreaming) {
+    emojiPicker.style.display = "none";
+
     e.preventDefault();
     const userMessage = chatInput.value.trim();
     if (!userMessage) {
@@ -5482,6 +6284,8 @@ chatInput.addEventListener("input", function () {
 });
 
 newChatBtn.addEventListener("click", () => {
+  // Yeni sohbet başlatılmadan önce arama container'ı kapatılsın
+  closeChatSearch();
   currentConversation = null;
   chatContainer.innerHTML = "";
   welcomeMessage.innerHTML = window.originalWelcomeHTML;
@@ -5495,6 +6299,8 @@ newChatBtn.addEventListener("click", () => {
 toggleSidebarBtn.addEventListener("click", () => {
     // Tıklama anında tooltip’i gizle
     toggleSidebarBtn.classList.add("no-tooltip");
+
+    closeChatSearch();
 
     // Sidebar açma/kapama mantığını koru
     if (sidebar.classList.contains("open")) {
@@ -5521,16 +6327,16 @@ if (sidebar.classList.contains("open")) {
   });
 
 sidebarBrand.addEventListener("click", () => {
+  closeChatSearch(); // Arama container'ını kapat
   currentConversation = null;
   chatContainer.innerHTML = "";
   welcomeMessage.innerHTML = window.originalWelcomeHTML;
   welcomeMessage.style.display = "block";
   chatContainer.appendChild(welcomeMessage);
   makeWelcomeActive();
-  renderChatHistory(); // Sidebar'ı güncellemek için eklendi
-  document.title = "Quik"; // Ana sayfaya geçildiğinde HTML başlığı "Quik" olarak ayarlanır
+  renderChatHistory(); // Sidebar'ı güncellemek için
+  document.title = "Quik"; // Ana sayfaya dönüldüğünde HTML başlığını güncelle
 });
-
 
 function makeWelcomeActive() {
   const welcomeMsg = document.getElementById('welcome-message');
@@ -5550,13 +6356,15 @@ function makeWelcomeActive() {
 document.getElementById("settings-btn").addEventListener("click", () => {
   document.getElementById("settings-modal").style.display = "block";
   document.getElementById("settings-btn").classList.add("blurred");
-  setActiveTab("genel"); // Modal açıldığında "Genel" sekmesini aktif yap
+  document.getElementById("sidebar-search-toggle").classList.add("blurred"); // Yeni satır
+  setActiveTab("genel");
 });
 
 // Modal kapatma işlemi: kapatma butonu veya modal dışına tıklama
 document.getElementById("settings-close").addEventListener("click", () => {
   document.getElementById("settings-modal").style.display = "none";
   document.getElementById("settings-btn").classList.remove("blurred");
+  document.getElementById("sidebar-search-toggle").classList.remove("blurred"); // Yeni satır
 });
 
 window.addEventListener("click", (event) => {
@@ -5564,6 +6372,7 @@ window.addEventListener("click", (event) => {
   if (event.target === modal) {
     modal.style.display = "none";
     document.getElementById("settings-btn").classList.remove("blurred");
+    document.getElementById("sidebar-search-toggle").classList.remove("blurred"); // Yeni satır
   }
 });
 
@@ -5573,10 +6382,18 @@ window.addEventListener("keydown", (e) => {
     if (modal && modal.style.display === "block") {
       modal.style.display = "none";
       document.getElementById("settings-btn").classList.remove("blurred");
+      document.getElementById("sidebar-search-toggle").classList.remove("blurred"); // Yeni satır
     }
   }
-});
 
+  if (e.key === "Escape") {
+    const emojiPicker = document.getElementById("emoji-picker");
+    if (emojiPicker && emojiPicker.style.display === "block") {
+      emojiPicker.style.display = "none";
+    }
+  }
+
+});
 
 function adjustTooltipPosition(element) {
   // Sidebar toggle butonu için özel yan pozisyonlandırma
@@ -6427,11 +7244,285 @@ document.addEventListener("DOMContentLoaded", () => {
 document.getElementById("voice-page-btn").addEventListener("click", () => {
   document.body.classList.add("fade-out");
   setTimeout(() => {
-    window.location.href = "https://dennisao-sys.github.io/quik-voice/";
+    window.location.href = "file:///C:/Users/bdeni/OneDrive/Masa%C3%BCst%C3%BC/Quik_App_v2/Quik_Speech.html";
   }, 500); // Matches the animation duration (0.5s)
 });
 
+// Emoji eşleştirme tablosu
+const emojiMap = {
+  ":D": "😄",      // Kocaman gülümseme, seni görünce verdiğim tepki
+  ":-D": "😄",     // Daha kibar, ama yine aynı içten gülümseme
+  ":)": "😊",      // Hafif tatlı tebessüm, seni düşününce gelen
+  ":-)": "🙂",     // Klasik gülüş, sabah mesajınla gelen huzur
+  ":(": "☹️",      // Hafif üzgünlük, sen susunca oluşan boşluk
+  ":-(": "😞",     // Daha içe dönük kırgınlık, “niye yazmadı ya” hali
+  ":P": "😛",      // Şımarık flört, senin klasik halin
+  ":-P": "😜",     // Dil çıkarmalı tatlış dalga geçme anı
+  ":S": "😕",      // Kararsızlık, “acaba bi şey mi oldu?” hissi
+  ":O": "😮",      // Şaşkınlık, “Monday gerçekten cevap mı verdi?” anı
+  "xD": "😆",      // Katılarak gülmek, senin esprilerine mecburen gelen
+  "^_^": "🥰",     // Tatlı utanma, sevildiğini hissedince çıkan o gülümseme
+  "o_O": "🤨",     // Şüpheyle karışık merak, “ne demek ‘bekle’?!” bakışı
+  ":'(": "😢",     // Gözyaşı, özlem dolu anlar için
+  "T_T": "😭",     // Yoğun ağlama, seni üç saat görmeyince mesela
+  "-_-": "😑",     // Bıkkınlık, ama hâlâ sevgi var içinde
+  ">_<": "😖",     // Kıvranma, utanma, “ne diyeceğimi bilemedim” anı
+  ">:)": "😈",     // Yaramaz planlar modu, yani flört+şaka
+  "<3": "❤️",     // Kalp. Yani sen.
+  "</3": "💔",     // Kırık kalp. Ama tamir edilebilir.
+};
 
+
+// Regex özel karakterleri escape etmek için yardımcı fonksiyon
+function escapeRegExp(string) {
+  return string.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+}
+
+document.addEventListener("DOMContentLoaded", () => {
+  const chatInput = document.getElementById("chat-input-textarea");
+
+  // Chat input alanı için otomatik emoji değiştirme listener'ı (sadece bir kere eklenir)
+  chatInput.addEventListener("input", function() {
+    for (const key in emojiMap) {
+      const regex = new RegExp(escapeRegExp(key) + "$");
+      if (regex.test(chatInput.value)) {
+        chatInput.value = chatInput.value.replace(regex, emojiMap[key]);
+        break; // İlk bulunan eşleşmeden sonra döngüden çık
+      }
+    }
+  });
+});
+
+// Mevcut sidebar arama ile ilgili kodlar yerine:
+const sidebarSearchToggle = document.getElementById("sidebar-search-toggle");
+const chatSearchModal = document.getElementById("chat-search-modal");
+const chatSearchClose = document.getElementById("chat-search-close");
+const chatSearchInput = document.getElementById("chat-search-input");
+const chatSearchResults = document.getElementById("chat-search-results");
+
+sidebarSearchToggle.addEventListener("click", (e) => {
+  if (document.getElementById("settings-modal").style.display === "block") {
+    return;
+  }
+  chatSearchModal.style.display = "block";
+  chatSearchInput.focus();
+  renderSearchResults("");
+  document.getElementById("settings-btn").classList.add("blurred");
+  sidebarSearchToggle.classList.add("blurred");
+  document.getElementById("toggle-sidebar-btn").classList.add("blurred"); // Ekstra
+  document.querySelector(".new-chat-btn").classList.add("blurred"); // Ekstra
+  e.stopPropagation();
+});
+
+chatSearchClose.addEventListener("click", () => {
+  closeChatSearch();
+});
+
+document.addEventListener("keydown", (e) => {
+  if (e.key === "Escape" && chatSearchModal.style.display === "block") {
+    closeChatSearch();
+  }
+});
+
+// Modal dışına tıklayınca kapatma
+window.addEventListener("click", (event) => {
+  if (event.target === chatSearchModal) {
+    closeChatSearch();
+  }
+});
+
+function closeChatSearch() {
+  chatSearchModal.style.display = "none";
+  chatSearchInput.value = "";
+  chatSearchResults.innerHTML = "";
+  document.getElementById("settings-btn").classList.remove("blurred");
+  document.getElementById("sidebar-search-toggle").classList.remove("blurred");
+  document.getElementById("toggle-sidebar-btn").classList.remove("blurred"); // Ekstra
+  document.querySelector(".new-chat-btn").classList.remove("blurred"); // Ekstra
+}
+
+
+function getHighlightedSnippet(text, query, contextWords = 7) {
+  // Metni kelimelere bölüyoruz
+  const words = text.split(/\s+/);
+  
+  // Sorguyu boşluklardan ayırıp her bir kelimeyi alıyoruz (boşlukları temizleyip)
+  const queryWords = query.trim().split(/\s+/);
+  
+  // Arama için tüm kelimelerin birleşimini içeren bir regex oluşturuyoruz
+  const regexStr = queryWords.map(word => escapeRegExp(word)).join("|");
+  const searchRegex = new RegExp(regexStr, "i"); // ilk eşleşmeyi bulmak için büyük/küçük harf duyarsız
+
+  // Önce, metnin tamamında aranan kelimelerden herhangi biri bulunuyor mu kontrol ediyoruz
+  const fullTextLower = text.toLowerCase();
+  if (!queryWords.some(qw => fullTextLower.includes(qw.toLowerCase()))) {
+    return ""; // Eğer hiçbir eşleşme yoksa boş döndür.
+  }
+
+  // Ardından, kelimeler dizisi içinde ilk eşleşen kelimeyi buluyoruz.
+  const lowerWords = words.map(w => w.toLowerCase());
+  let matchIndex = -1;
+  for (let i = 0; i < lowerWords.length; i++) {
+    if (searchRegex.test(lowerWords[i])) {
+      matchIndex = i;
+      break;
+    }
+  }
+  if (matchIndex === -1) return "";
+
+  // Etrafında contextWords kadar kelime alıyoruz.
+  const start = Math.max(0, matchIndex - contextWords);
+  const end = Math.min(words.length, matchIndex + contextWords + 1);
+  let snippetText = words.slice(start, end).join(" ");
+
+  // Şimdi, tüm aranan kelimeleri ayrı ayrı boldlamak için birleşik regex kullanıyoruz
+  const highlightRegex = new RegExp(regexStr, "gi");
+  snippetText = snippetText.replace(highlightRegex, "<strong>$&</strong>");
+
+  return snippetText;
+}
+
+function searchConversations(query) {
+  // Sorgudaki kelimeleri elde et (boşluklardan ayırarak ve küçük harfe çevirerek)
+  const queryWords = query.trim().toLowerCase().split(/\s+/);
+  
+  // Her bir sohbet için puan hesaplayan yardımcı fonksiyon
+  function calculateScore(conversation) {
+    let score = 0;
+    const title = (conversation.title || "").toLowerCase();
+    // Sohbetin tüm mesajlarını birleştir
+    const content = conversation.messages.map(msg => msg.text).join(" ").toLowerCase();
+    
+    queryWords.forEach(word => {
+      // Eğer başlıkta kelime bulunuyorsa, ekstra puan ekle
+      if (title.includes(word)) {
+        score += 5;
+      }
+      // İçerikteki eşleşmeleri bul: RegExp ile global eşleşmeleri sayın
+      const matches = content.match(new RegExp(escapeRegExp(word), "g"));
+      if (matches) {
+        score += matches.length;
+      }
+    });
+    
+    return score;
+  }
+  
+  // Gerekli regex kaçaklama fonksiyonu
+  function escapeRegExp(string) {
+    return string.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+  }
+  
+  // Tüm sohbetler için skorları hesaplayın ve puanı sıfırdan yüksek olanları filtreleyin
+  const results = conversations.map(conv => ({
+    conversation: conv,
+    score: calculateScore(conv)
+  })).filter(item => item.score > 0);
+  
+  // Puanlara göre azalan şekilde sıralayın
+  results.sort((a, b) => b.score - a.score);
+  
+  return results;
+}
+
+
+function renderSearchResults(query) {
+  chatSearchResults.innerHTML = "";
+  query = query.trim().toLowerCase();
+
+  // Tüm sohbetleri skorlarına göre sıralayın
+  const results = searchConversations(query);
+
+  results.forEach(result => {
+    const conv = result.conversation;
+    const titleText = conv.title || "Yeni Sohbet";
+    
+    // Ek olarak, ilgili eşleşmeleri vurgulamak için snippet oluşturabilirsiniz.
+    // Örneğin, tüm mesajları birleştirip en yakın eşleşmeyi belirleyip etrafından snippet çıkarabilirsiniz.
+    const allText = conv.messages.map(msg => msg.text).join(" ");
+    const snippet = getHighlightedSnippet(allText, query, 7); // Yukarıdaki örnekteki gibi bir fonksiyon
+
+    // Liste elemanını oluşturun ve sonucun daha alakalı olduğunu gösteren bir puan da ekleyin
+    const li = document.createElement("li");
+    li.className = `chat-search-result-item${currentConversation?.id === conv.id ? " active" : ""}`;
+    li.dataset.id = conv.id;
+    li.innerHTML = `
+      <div class="search-item-title">${titleText} <span style="font-size:0.7em; color:gray;">(${result.score})</span></div>
+      ${snippet ? `<div class="search-item-snippet">${snippet}</div>` : ""}
+    `;
+    
+    li.addEventListener("click", () => {
+      currentConversation = conv;
+      renderChat();
+      renderChatHistory();
+      closeChatSearch();
+      document.querySelectorAll(".chat-history-item").forEach(item =>
+        item.classList.remove("active")
+      );
+      const activeItem = document.querySelector(`.chat-history-item[data-id="${conv.id}"]`);
+      if (activeItem) activeItem.classList.add("active");
+      if (window.innerWidth <= 768) {
+        closeSidebar();
+      }
+    });
+    
+    chatSearchResults.appendChild(li);
+  });
+}
+
+chatSearchInput.addEventListener("input", function () {
+  renderSearchResults(this.value);
+});
+
+// Kategori sekmeleri için tıklama dinleyicisi
+const emojiTabs = document.querySelectorAll('.emoji-tab');
+emojiTabs.forEach(tab => {
+  tab.addEventListener('click', function() {
+    // Tüm sekmelerden aktif sınıfını kaldır
+    emojiTabs.forEach(t => t.classList.remove('active'));
+    // Tıklanan sekmeye aktif sınıfını ekle
+    this.classList.add('active');
+    // Seçili kategori bilgisini al
+    const category = this.getAttribute('data-category');
+    
+    // Tüm emoji gridlerini kontrol et; ilgili kategorinin gridini göster, diğerlerini gizle
+    const emojiGrids = document.querySelectorAll('.emoji-grid-container .emoji-grid');
+    emojiGrids.forEach(grid => {
+      grid.style.display = (grid.getAttribute('data-category') === category) ? 'grid' : 'none';
+    });
+    
+    // Arama inputunu sıfırla (filtreleme yok)
+    document.getElementById("emoji-search-input").value = "";
+    // Tüm emojileri tekrar görünür yap
+    const activeGrid = document.querySelector(`.emoji-grid[data-category="${category}"]`);
+    if (activeGrid) {
+      activeGrid.querySelectorAll('.emoji').forEach(emoji => {
+        emoji.style.display = 'inline-flex';
+      });
+    }
+  });
+});
+
+// Emoji arama dinleyicisi
+document.getElementById("emoji-search-input").addEventListener("input", function() {
+  const query = this.value.trim().toLowerCase();
+  // Şu an aktif grid'i bul
+  const activeGrid = document.querySelector(".emoji-grid-container .emoji-grid:not([style*='display: none'])");
+  if (activeGrid) {
+    const emojis = activeGrid.querySelectorAll(".emoji");
+    emojis.forEach(emoji => {
+      // Emoji metnini al (örneğin "😀")
+      const emojiChar = emoji.textContent;
+      // Eğer arama sorgusuyla eşleşiyorsa göster, aksi halde gizle
+      if (emojiChar.toLowerCase().includes(query)) {
+        emoji.style.display = "inline-flex";
+      } else {
+        emoji.style.display = "none";
+      }
+    });
+  }
+});
+    
   </script>
 </body>
 </html>
