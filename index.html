@@ -491,16 +491,28 @@ body.dark .history-icon {
   }
 }
 
-    .top-bar {
-      display: flex;
-      align-items: center;
-      justify-content: flex-end;
-      padding: 1.5rem 3rem;
-      background-color: var(--topbar-bg);
-      border-bottom: 1px solid rgba(128, 128, 128, 0.2);
-      z-index: 100;
-      height: 58px;
-    }
+.top-bar {
+  position: relative; /* Üst eleman içinde absolute konumlandırma için */
+  /* mevcut stil özellikleriniz: örnek */
+  display: flex;
+  align-items: center;
+  justify-content: flex-end; /* Örneğin sağda başka butonlar varsa */
+  padding: 1.5rem 3rem;
+  background-color: var(--topbar-bg);
+  border-bottom: 1px solid rgba(128, 128, 128, 0.2);
+  z-index: 100;
+  height: 58px;
+}
+
+/* Sohbet başlığının yer alacağı alan */
+.top-bar-title {
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: 1rem;
+  font-weight: bold;
+  color: var(--text-color);
+}
 
     body. dark .top-bar {
       border-bottom: 1px solid rgba(128, 128, 128, 0.5);
@@ -647,7 +659,7 @@ body.dark .history-icon {
   border-radius: 16px;
   word-wrap: break-word;
   line-height: 1.5;       /* Sıkıştırılmış satır yüksekliği */
-  font-size: 0.9rem;
+  font-size: 1rem;
   white-space: normal;  /* Yeni satırları korumak istemiyorsanız normal */
 }
 
@@ -656,7 +668,7 @@ body.dark .history-icon {
   border-bottom-right-radius: 0;
   background-color: var(--input-bg);
   font-family: Arial, sans-serif;
-  font-size: 0.9rem;
+  font-size: 1rem;
   padding-left: 1rem;
   padding-right: 1rem;
   border-radius: 24px;
@@ -667,7 +679,7 @@ body.dark .history-icon {
 .assistant-bubble {
   position: relative;
   font-family: 'Arial', system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
-  font-size: 0.9rem;
+  font-size: 1rem;
   white-space: normal;   /* Fazla boşluklar ortadan kalksın */
   overflow-wrap: break-word;
   max-width: 100% !important;
@@ -737,7 +749,7 @@ body.dark .history-icon {
 
 #chat-input-textarea {
   font-family: 'Inter', sans-serif;
-  font-size: 0.9rem;
+  font-size: 1rem;
   line-height: 1.5;
   flex: 1 1 auto; /* Esnek genişlik, küçülme ve büyüme izni */
   border: none;
@@ -960,7 +972,7 @@ body.dark .code-header {
 /* Dil adı */
 .code-language {
   font-weight: 600;
-  font-size: 0.9rem;
+  font-size: 1rem;
   color: #666;
 }
 
@@ -1339,7 +1351,7 @@ body.dark .dark-mode-toggle-modal:hover {
 }
 
 .toggle-state {
-  font-size: 0.9rem;
+  font-size: 1rem;
 }
 
 /* Modal Arka Planı ve Animasyon */
@@ -1749,7 +1761,7 @@ body.dark .setting-description .note-text {
 
 /* Yeni Label Stili */
 .setting-label {
-  font-size: 0.9rem;
+  font-size: 1rem;
   color: var(--text-color);
   font-weight: 600;
   margin-bottom: 0.5rem;
@@ -1941,7 +1953,7 @@ input:checked + .slider:before {
   width: 100%;
   max-width: 200px;
   padding: 8px;
-  font-size: 0.9rem;
+  font-size: 1rem;
   border-radius: 8px;
   border: 1px solid var(--code-border);
   background-color: var(--input-bg);
@@ -2273,7 +2285,7 @@ body.dark td {
 /* Responsive Tablo */
 @media (max-width: 768px) {
   table {
-    font-size: 0.9rem;
+    font-size: 1rem;
   }
   th, td {
     padding: 8px 12px;
@@ -2305,13 +2317,12 @@ body.dark td {
       border: none;
       border-radius: 12px;
       cursor: pointer;
-
       color: var(--text-color);
       font-size: 1rem;
       font-weight: 750;
       height: 40px;
       margin-top: 2px;
-      min-width: 95px;
+      min-width: 115px;
     }
     .model-toggle-btn:hover {
       background-color: #c0c0c0;
@@ -2332,11 +2343,11 @@ body.dark td {
     .model-dropdown {
       display: none;
       position: absolute;
-      top: 45px;
+      top: 50px;
       left: 0;
       background-color: var(--input-bg);
-      border-radius: 6px;
-      min-width: 95px;
+      border-radius: 12px;
+      min-width: 235px;
       z-index: 305;
       box-shadow: 0 0 8px rgba(192, 192, 192, 0.75);
     }
@@ -2359,6 +2370,7 @@ body.dark td {
       color: var(--text-color);
       font-size: 1rem;
       cursor: pointer;
+      padding-left: 0.36rem;
     }
 
     .model-option:hover {
@@ -2873,7 +2885,7 @@ body.dark .data-control-card {
 }
 
 .general-count {
-  font-size: 0.9rem;
+  font-size: 1rem;
 }
 
 /* File Upload Button */
@@ -3015,7 +3027,7 @@ body.dark .remove-file-btn:hover img {
 }
 
 .drop-zone .subtext {
-  font-size: 0.9rem;
+  font-size: 1rem;
   color: #666;
 }
 
@@ -3072,6 +3084,7 @@ body.dark #voice-record-btn.recording img {
 }
 
 .chat-history-title.edit-input {
+  width: 80%;
   color: #000 !important;
 }
 
@@ -3444,18 +3457,22 @@ body.dark .emoji-btn:hover {
   position: absolute;
   left: 0;
   right: 0;
-  bottom: calc(100%); /* chat-input’un üstüne 10px boşlukla yerleştirme */
-  width: auto; /* Gerekirse genişlik düzenleyin, örneğin: 100% */
-  max-height: 215px; /* Eğer kaydırma isterseniz */
-  margin: 0 auto;    /* Kapsayıcıyı yatayda ortalar */
+  bottom: calc(100%); /* Chat input'un üstü */
+  width: auto;
+  margin: 0 auto;
   background-color: var(--input-bg);
   border-radius: 24px;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
   padding: 10px;
-  overflow-y: auto;
+  /* NOT: overflow-y: auto; ifadesini kaldırdık */
   z-index: 201;
-  display: none; /* Varsayılan olarak gizli, emoji butonuyla açılır */
+  display: none;
   animation: fadeIn 0.3s ease;
+}
+
+.emoji-grid-container {
+  max-height: 115px;    /* İstediğiniz yüksekliğe göre ayarlayabilirsiniz */
+  overflow-y: auto;
 }
 
 body.dark .emoji-picker {
@@ -3506,7 +3523,7 @@ body.dark .emoji-tab.active {
   padding: 2px;
   border: none;             /* İç kenarlıkları kaldırıyoruz */
   outline: none;
-  font-size: 0.9rem;
+  font-size: 1rem;
   background-color: transparent; /* Container arka planı yeterli olur */
   color: var(--text-color);
 }
@@ -3600,7 +3617,7 @@ body.dark .sidebar-search-toggle:hover img {
   flex: 1;
   border: none;
   outline: none;
-  font-size: 0.9rem;
+  font-size: 1rem;
   font-family: 'Inter', sans-serif;
   background-color: transparent;
   color: var(--text-color);
@@ -3648,7 +3665,7 @@ body.dark .sidebar-search-toggle:hover img {
   justify-content: space-between;
   align-items: center;
   padding-top: 10px;
-  border-bottom: 1px solid var(--code-border);
+  border-bottom: 2px solid #c0c0c0;
 }
 
 .chat-search-header h2 {
@@ -3667,18 +3684,18 @@ body.dark .sidebar-search-toggle:hover img {
 .chat-search-input-wrapper {
   display: flex;
   align-items: center;
-  padding: 12px;
+  padding: 1rem;
   border: 1px solid var(--code-border);
-  border-radius: 8px;
+  border-radius: 12px;
   background-color: var(--input-bg);
-  margin-bottom: 10px;
+  margin-bottom: 0.5rem;
 }
 
 #chat-search-input {
   width: 100%;
   border: none;
   outline: none;
-  font-size: 0.9rem;
+  font-size: 1rem;
   font-family: 'Inter', sans-serif;
   background-color: transparent;
   color: var(--text-color);
@@ -3718,7 +3735,7 @@ body.dark .sidebar-search-toggle:hover img {
   cursor: pointer;
   border-bottom: 1px solid var(--code-border);
   color: var(--text-color);
-  font-size: 0.9rem;
+  font-size: 1rem;
 }
 
 .chat-search-result-item:hover {
@@ -3733,6 +3750,7 @@ body.dark .chat-search-result-item:hover {
 .chat-search-result-item.active {
   background-color: #c0c0c0;
   font-weight: 600;
+  border-radius: 12px;
 }
 
 body.dark .chat-search-result-item.active {
@@ -3740,7 +3758,7 @@ body.dark .chat-search-result-item.active {
 }
 
 .search-item-title {
-  font-size: 1.2em;      /* Başlıklar biraz daha büyük görünsün */
+  font-size: 1.1rem;      /* Başlıklar biraz daha büyük görünsün */
   font-weight: bold;
   margin-bottom: 4px;
 }
@@ -3801,6 +3819,22 @@ body.modal-active #sidebar-search-toggle {
   opacity: 0.8;
 }
 
+/* Başlangıçta opaklık 0 */
+#chat-title {
+  opacity: 0;
+}
+
+/* Akıcı fade-in animasyonu */
+@keyframes fadeInSmooth {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+/* Fade-in sınıfı: 0.5s süreyle opacity 0'dan 1'e */
+.fade-in {
+  animation: fadeInSmooth 0.5s ease forwards;
+}
+
 
   </style>
 </head>
@@ -3815,19 +3849,19 @@ body.modal-active #sidebar-search-toggle {
 <div id="model-selector" class="model-selector">
   <button id="model-toggle-btn" class="model-toggle-btn">
     <span id="current-model-name">quik-prime</span>
-
+    <img src="icons/arrow_down.png" alt="Dropdown" class="dropdown-arrow" style="width: 14px; height: 14px; margin-left: 5px;">
   </button>
   <div id="model-dropdown" class="model-dropdown">
     <button class="model-option" data-model="quik-prime">
       <span class="model-name">quik-prime</span>
       <div>
-      <span class="model-description">Günlük ve hızlı</span>
+        <span class="model-description">Günlük sorulara hızlı ve ideal yanıtlar</span>
       </div>
     </button>
     <button class="model-option" data-model="quik-think">
       <span class="model-name">quik-think</span>
       <div>
-      <span class="model-description">Mantık ve analiz</span>
+        <span class="model-description">Karmaşık sorunlara derinlemesine çözümler</span>
       </div>
     </button>
   </div>
@@ -3863,9 +3897,11 @@ body.modal-active #sidebar-search-toggle {
   
   <!-- Main İçerik -->
   <div class="main-content">
-    <div class="top-bar">
-      <!-- Top bar içerikleri (varsa) -->
-    </div>
+<div class="top-bar">
+  <!-- Diğer top bar içerikleri varsa burada kalabilir -->
+  <div id="chat-title" class="top-bar-title"></div>
+</div>
+
     
     <div class="scroll-wrapper">
       <div id="chat-container" class="chat-container">
@@ -3955,7 +3991,7 @@ body.modal-active #sidebar-search-toggle {
   <span class="emoji" data-emoji="😟">😟</span>
   <span class="emoji" data-emoji="😕">😕</span>
   <span class="emoji" data-emoji="🙁">🙁</span>
-  <span class="emoji" data-emoji="☹️">☹️</span>
+  <span class="emoji" data-emoji=☹️">☹️</span>
   <span class="emoji" data-emoji="😣">😣</span>
   <span class="emoji" data-emoji="😖">😖</span>
   <span class="emoji" data-emoji="😫">😫</span>
@@ -5163,59 +5199,84 @@ function renderChatHistory() {
           <button class="delete-btn"><img src="icons/delete_btn.png" alt="Sil" draggable="false" /></button>
         </div>
       `;
+
+// Render edilen her sohbet öğesi için:
 li.addEventListener("click", () => {
-  // Tıklanan sohbet geçmişi öğesine basıldığında arama container'ı kapatılsın
-  closeChatSearch();
+  // Seçilen sohbeti aktif hale getiriyoruz
   currentConversation = conv;
   renderChat();
-  document.querySelectorAll(".chat-history-item").forEach(item => item.classList.remove("active"));
-  li.classList.add("active");
+  renderChatHistory();
+  closeChatSearch();
   
-  // Mobilde sidebar'ı kapat
+  // Geçmiş sohbet listesindeki aktif öğeleri güncelle
+  document.querySelectorAll(".chat-history-item").forEach(item => item.classList.remove("active"));
+  const activeItem = document.querySelector(`.chat-history-item[data-id="${conv.id}"]`);
+  if (activeItem) activeItem.classList.add("active");
+  
+  // Eğer mobildeyseniz, sidebar'ı kapatın
   if (window.innerWidth <= 768) {
     closeSidebar();
   }
-  document.title = currentConversation.title || "Quik"; // Seçilen sohbetin başlığı HTML başlığına aktarılır
+  
+  // HTML sayfa başlığını ve top bar’daki sohbet başlığını güncelleyin
+  document.title = currentConversation.title || "Quik";
+  updateTopBarTitle();
 });
 
-
 li.querySelector(".edit-btn").addEventListener("click", (e) => {
-  e.stopPropagation();
+  e.stopPropagation(); // li'nin click olayının tetiklenmesini engelle
   const titleSpan = li.querySelector(".chat-history-title");
   const currentTitle = conv.title || "Yeni Sohbet";
   
-  // Giriş (input) alanını oluşturuyoruz ve chat history başlığıyla aynı sınıfı ekliyoruz
+  // Input elemanını oluştur
   const input = document.createElement("input");
   input.type = "text";
   input.value = currentTitle;
-  // Chat history başlığı için tanımlanan CSS sınıfını da ekleyerek stil uyumunu sağlıyoruz
   input.className = "chat-history-title edit-input";
   input.style.width = "80%";
   
-  // Mevcut başlık (span) elemanının stil özelliklerini alıp input alanına uyguluyoruz
+  // Mevcut span'ın stil özelliklerini input'a aktar
   const computedStyle = window.getComputedStyle(titleSpan);
   input.style.fontFamily = computedStyle.fontFamily;
   input.style.fontSize = computedStyle.fontSize;
   input.style.fontWeight = computedStyle.fontWeight;
   input.style.color = computedStyle.color;
   
-  // Mevcut span'ı input ile değiştiriyoruz
+  // Kullanıcının manuel seçebilmesi için gerekli CSS ayarı
+  input.style.userSelect = "text";
+
+  // Üst öğeye olayların taşmaması için tıklama, mousedown ve mouseup olaylarında stopPropagation ekleyin:
+  input.addEventListener("click", (event) => {
+    event.stopPropagation();
+  });
+  input.addEventListener("mousedown", (event) => {
+    event.stopPropagation();
+  });
+  input.addEventListener("mouseup", (event) => {
+    event.stopPropagation();
+  });
+  
+  // Mevcut span'ı input ile değiştir
   titleSpan.replaceWith(input);
   input.focus();
-
-  // Düzenleme tamamlandığında (blur veya Enter basıldığında) başlığı güncelleyen fonksiyon
+  
+  // Düzenleme tamamlandığında başlığı güncelleyen fonksiyon
   function finishEditing() {
     conv.title = input.value.trim() || currentTitle;
     renderChatHistory();
     saveConversations();
+    updateTopBarTitle();
   }
   
   input.addEventListener("blur", finishEditing);
   input.addEventListener("keydown", (event) => {
     if (event.key === "Enter") {
-      input.blur(); // Enter ile düzenleme tamamlanır
+      event.preventDefault();
+      event.stopPropagation();
+      input.blur();
     } else if (event.key === "Escape") {
-      // ESC tuşuna basıldığında düzenleme iptal edilir, eski başlık geri getirilir
+      event.preventDefault();
+      event.stopPropagation();
       conv.title = currentTitle;
       renderChatHistory();
       saveConversations();
@@ -5232,11 +5293,12 @@ li.querySelector(".delete-btn").addEventListener("click", (e) => {
       chatContainer.innerHTML = "";
       chatContainer.appendChild(welcomeMessage);
       welcomeMessage.style.display = "block";
-      document.title = "Quik"; // Silme sonrası ana sayfaya geçildiğinde HTML başlığı güncellenir
+      document.title = "Quik"; // HTML başlığı güncelleniyor
+      updateTopBarTitle();   // Top bar başlığını boşaltıyoruz
     }
     renderChatHistory();
     saveConversations();
-    updateChatCount(); // Sohbet silindiğinde sayıyı güncelle
+    updateChatCount(); // Sohbet sayısını güncelle
   }
 });
       chatHistoryList.appendChild(li);
@@ -5259,7 +5321,7 @@ function formatRelativeDate(timestamp) {
   if (diffDays === 0) return "Bugün"; // Same calendar day
   if (diffDays === 1) return "Dün";   // Previous calendar day
   if (diffDays >= 2 && diffDays <= 6) return `${diffDays} Gün Önce`; // 2 to 6 days ago
-  return date.toLocaleDateString("tr-TR", { day: "numeric", month: "short" }); // Older dates
+  return date.toLocaleDateString("tr-TR", { day: "numeric", month: "long", year: 'numeric' }); // Older dates
 }
 
 function isUserAtBottom(threshold = 50) {
@@ -5393,15 +5455,16 @@ async function startNewConversation() {
     id: Date.now(), 
     title: "Yeni Sohbet",
     messages: [], 
-    timestamp: Date.now()
+    timestamp: Date.now(),
+    isNew: true  // Yeni sohbete özel flag
   };
   conversations.push(currentConversation);
   renderChatHistory();
-  populateChatSummaryDropdown(); // Yeni sohbet özetleyiciye ekleniyor
+  populateChatSummaryDropdown();
   saveConversations();
   chatContainer.innerHTML = "";
   welcomeMessage.style.display = "none";
-  updateChatCount(); // Sayıyı güncelle
+  updateChatCount();
 }
 
 function openSidebar() {
@@ -5751,14 +5814,14 @@ if (currentConversation.messages.length === 1) {
     const data = await response.json();
     currentConversation.title = data.title || "Yeni Sohbet";
     renderChatHistory();
-    document.title = currentConversation.title; // HTML başlığı güncellendi
-    populateChatSummaryDropdown(); // Sohbet özetleyici güncellendi
+    document.title = currentConversation.title;
+    updateTopBarTitle();
   } catch (err) {
     console.error("Title fetch error:", err);
     currentConversation.title = "Yeni Sohbet";
     renderChatHistory();
-    document.title = currentConversation.title; // HTML başlığı güncellendi
-    populateChatSummaryDropdown(); // Sohbet özetleyici güncellendi
+    document.title = currentConversation.title;
+    updateTopBarTitle();
   }
 }
 
@@ -6284,17 +6347,27 @@ chatInput.addEventListener("input", function () {
 });
 
 newChatBtn.addEventListener("click", () => {
-  // Yeni sohbet başlatılmadan önce arama container'ı kapatılsın
+  // Arama container'ı kapat
   closeChatSearch();
+  
+  // Mevcut sohbeti temizle
   currentConversation = null;
   chatContainer.innerHTML = "";
   welcomeMessage.innerHTML = window.originalWelcomeHTML;
   welcomeMessage.style.display = "block";
   chatContainer.appendChild(welcomeMessage);
   makeWelcomeActive();
-  renderChatHistory(); // Sidebar'ı güncellemek için eklendi
-  document.title = "Quik"; // Yeni sohbet başladığında HTML başlığı "Quik" olarak ayarlanır
+  
+  // Sidebar’ı güncelle
+  renderChatHistory();
+  
+  // HTML title güncellemesi (isteğe bağlı)
+  document.title = "Quik";
+  
+  // Top bar başlığını güncelle (currentConversation null olduğundan boş kalacaktır)
+  updateTopBarTitle();
 });
+
 
 toggleSidebarBtn.addEventListener("click", () => {
     // Tıklama anında tooltip’i gizle
@@ -6327,15 +6400,25 @@ if (sidebar.classList.contains("open")) {
   });
 
 sidebarBrand.addEventListener("click", () => {
-  closeChatSearch(); // Arama container'ını kapat
+  // Arama container'ını kapat
+  closeChatSearch();
+  
+  // Mevcut sohbeti temizle
   currentConversation = null;
   chatContainer.innerHTML = "";
   welcomeMessage.innerHTML = window.originalWelcomeHTML;
   welcomeMessage.style.display = "block";
   chatContainer.appendChild(welcomeMessage);
   makeWelcomeActive();
-  renderChatHistory(); // Sidebar'ı güncellemek için
-  document.title = "Quik"; // Ana sayfaya dönüldüğünde HTML başlığını güncelle
+  
+  // Sidebar’ı güncellemek için
+  renderChatHistory();
+  
+  // HTML başlığını güncelle
+  document.title = "Quik";
+  
+  // Top bar’da sohbet başlığı boşaltılsın
+  updateTopBarTitle();
 });
 
 function makeWelcomeActive() {
@@ -7386,41 +7469,40 @@ function searchConversations(query) {
   // Sorgudaki kelimeleri elde et (boşluklardan ayırarak ve küçük harfe çevirerek)
   const queryWords = query.trim().toLowerCase().split(/\s+/);
   
-  // Her bir sohbet için puan hesaplayan yardımcı fonksiyon
+  // Her bir sohbet için puan hesaplayan yardımcı fonksiyon (ihtiyacınıza göre koruyabilirsiniz)
   function calculateScore(conversation) {
     let score = 0;
     const title = (conversation.title || "").toLowerCase();
-    // Sohbetin tüm mesajlarını birleştir
+    // Sohbetin tüm mesajlarını birleştiriyoruz
     const content = conversation.messages.map(msg => msg.text).join(" ").toLowerCase();
     
     queryWords.forEach(word => {
-      // Eğer başlıkta kelime bulunuyorsa, ekstra puan ekle
+      // Başlıkta eşleşme varsa ekstra puan ekleyelim
       if (title.includes(word)) {
         score += 5;
       }
-      // İçerikteki eşleşmeleri bul: RegExp ile global eşleşmeleri sayın
+      // Mesaj içeriklerinde eşleşme varsa puan ekleyelim
       const matches = content.match(new RegExp(escapeRegExp(word), "g"));
       if (matches) {
         score += matches.length;
       }
     });
-    
     return score;
   }
   
-  // Gerekli regex kaçaklama fonksiyonu
+  // Regex özel karakterleri escape etmek için yardımcı fonksiyon
   function escapeRegExp(string) {
     return string.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
   }
   
-  // Tüm sohbetler için skorları hesaplayın ve puanı sıfırdan yüksek olanları filtreleyin
+  // Tüm sohbetler için skorları hesaplayıp, eşleşme bulunanları filtreleyin
   const results = conversations.map(conv => ({
     conversation: conv,
     score: calculateScore(conv)
   })).filter(item => item.score > 0);
   
-  // Puanlara göre azalan şekilde sıralayın
-  results.sort((a, b) => b.score - a.score);
+  // Burada skor sıralaması yerine, timestamp'e göre sıralama yapılır:
+  results.sort((a, b) => b.conversation.timestamp - a.conversation.timestamp);
   
   return results;
 }
@@ -7430,19 +7512,14 @@ function renderSearchResults(query) {
   chatSearchResults.innerHTML = "";
   query = query.trim().toLowerCase();
 
-  // Tüm sohbetleri skorlarına göre sıralayın
   const results = searchConversations(query);
 
   results.forEach(result => {
     const conv = result.conversation;
     const titleText = conv.title || "Yeni Sohbet";
-    
-    // Ek olarak, ilgili eşleşmeleri vurgulamak için snippet oluşturabilirsiniz.
-    // Örneğin, tüm mesajları birleştirip en yakın eşleşmeyi belirleyip etrafından snippet çıkarabilirsiniz.
     const allText = conv.messages.map(msg => msg.text).join(" ");
-    const snippet = getHighlightedSnippet(allText, query, 7); // Yukarıdaki örnekteki gibi bir fonksiyon
+    const snippet = getHighlightedSnippet(allText, query, 7);
 
-    // Liste elemanını oluşturun ve sonucun daha alakalı olduğunu gösteren bir puan da ekleyin
     const li = document.createElement("li");
     li.className = `chat-search-result-item${currentConversation?.id === conv.id ? " active" : ""}`;
     li.dataset.id = conv.id;
@@ -7450,22 +7527,23 @@ function renderSearchResults(query) {
       <div class="search-item-title">${titleText} <span style="font-size:0.7em; color:gray;">(${result.score})</span></div>
       ${snippet ? `<div class="search-item-snippet">${snippet}</div>` : ""}
     `;
-    
+
     li.addEventListener("click", () => {
       currentConversation = conv;
       renderChat();
       renderChatHistory();
       closeChatSearch();
-      document.querySelectorAll(".chat-history-item").forEach(item =>
-        item.classList.remove("active")
-      );
+      document.querySelectorAll(".chat-history-item").forEach(item => item.classList.remove("active"));
       const activeItem = document.querySelector(`.chat-history-item[data-id="${conv.id}"]`);
       if (activeItem) activeItem.classList.add("active");
       if (window.innerWidth <= 768) {
         closeSidebar();
       }
+      // Güncelleme: Tarayıcı başlığı ve top bar başlığını da ayarla
+      document.title = currentConversation.title || "";
+      updateTopBarTitle();
     });
-    
+
     chatSearchResults.appendChild(li);
   });
 }
@@ -7522,7 +7600,74 @@ document.getElementById("emoji-search-input").addEventListener("input", function
     });
   }
 });
+
+function updateTopBarTitle() {
+  const titleElem = document.getElementById("chat-title");
+  const newTitle = (currentConversation && currentConversation.title) ? currentConversation.title : "";
+  
+  // Eğer bu yeni bir sohbetse animasyonu uygula:
+  if (currentConversation && currentConversation.isNew) {
+    // Flag'ı kapat ki sonraki güncellemelerde animasyon uygulanmasın
+    currentConversation.isNew = false;
     
+    // Eskiden varsa animasyon sınıfını kaldır, içeriği güncelle
+    titleElem.classList.remove("fade-in");
+    titleElem.textContent = newTitle;
+    
+    // Reflow tetikleyerek animasyonun yeniden uygulanmasını sağlıyoruz
+    void titleElem.offsetWidth;
+    
+    // Fade-in animasyonunu ekleyelim
+    titleElem.classList.add("fade-in");
+    
+  } else {
+    // Normal güncelleme: Sadece içerik değişiyor
+    titleElem.textContent = newTitle;
+    titleElem.style.opacity = "1"; // Her zaman görünür olsun
+  }
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+  const chatTitleEl   = document.querySelector('.top-bar-title');
+  const modelToggle   = document.getElementById('model-toggle-btn');
+  const modelDropdown = document.getElementById('model-dropdown');
+  
+  // Dropdown içine eklenecek başlık elementini baştan oluştur
+  const dropdownTitleEl = document.createElement('div');
+  dropdownTitleEl.className = 'dropdown-chat-title';
+
+  dropdownTitleEl.style.fontWeight = '600';
+  dropdownTitleEl.style.borderBottom = '1px solid #ccc';
+
+  function syncDropdown() {
+    // her zaman güncel başlık metnini al
+    dropdownTitleEl.textContent = chatTitleEl.textContent.trim();
+
+    if (window.innerWidth <= 768) {
+      // Mobilde: üst bardaki başlığı gizle
+      chatTitleEl.style.display = 'none';
+
+      // Dropdown’a başlığı ekle (eğer yoksa)
+      if (!modelDropdown.contains(dropdownTitleEl)) {
+        modelDropdown.insertBefore(dropdownTitleEl, modelDropdown.firstElementChild);
+      }
+    } else {
+      // Masaüstünde: dropdown başlığını kaldır ve üst bar title’ı geri göster
+      if (modelDropdown.contains(dropdownTitleEl)) {
+        modelDropdown.removeChild(dropdownTitleEl);
+      }
+      chatTitleEl.style.display = '';
+    }
+  }
+
+  // Dropdown butonuna tıklandığında ve pencere resize’te çalıştır
+  modelToggle.addEventListener('click', () => setTimeout(syncDropdown, 0));
+  window.addEventListener('resize', syncDropdown);
+
+  // İlk yüklemede de uygula
+  syncDropdown();
+});
+
   </script>
 </body>
 </html>
