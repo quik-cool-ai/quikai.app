@@ -1237,22 +1237,22 @@ body.dark #quik-icon {
   filter: brightness(0) invert(1);
 }
 
-    /* Ayarlar Butonu (Sağ Üst Köşe) */
-    .settings-btn {
-      position: fixed;
-      top: 9px;
-      right: 13px;
-      width: 40px;
-      height: 40px;
-      background-color: #fff;
-      border: none;
-      border-radius: 12px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      cursor: pointer;
-      z-index: 1000;
-    }
+/* Ayarlar Butonu */
+.settings-btn {
+  position: fixed;
+  top: 9px;
+  right: 13px;
+  width: 40px;
+  height: 40px;
+  background-color: transparent;
+  border: none;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  z-index: 1000;
+}
 
 .settings-btn img {
   width: 24px;
@@ -1267,7 +1267,6 @@ body.dark #quik-icon {
   z-index: 200; /* Modalın altına düşür */
 }
 
-
 .settings-btn:hover {
   background-color: #c0c0c0;
 }
@@ -1278,10 +1277,6 @@ body.dark .settings-btn img {
 
 body.dark .settings-btn:hover img {
   filter: none;
-}
-
-body.dark .settings-btn {
-  background-color: transparent;
 }
 
 body.dark .settings-btn:hover {
@@ -2371,7 +2366,7 @@ body.dark td {
       display: flex;
       align-items: center;
       justify-content: space-between;
-      background-color: var(--sidebar-bg);
+      background-color: transparent;
       border: none;
       border-radius: 12px;
       cursor: pointer;
@@ -2384,9 +2379,6 @@ body.dark td {
     }
     .model-toggle-btn:hover {
       background-color: #c0c0c0;
-    }
-    body.dark .model-toggle-btn {
-      background-color: var(--bg-color);
     }
     body.dark .model-toggle-btn:hover {
       background-color: #c0c0c0;
@@ -2421,7 +2413,7 @@ body.dark td {
       display: block;
       width: 100%;
       padding: 8px 4px;
-      background: none;
+      background: transparent;
       border: none;
       border-radius: 6px;
       text-align: left;
@@ -3733,7 +3725,7 @@ body.dark .sidebar-search-toggle:hover img {
   background-color: var(--sidebar-bg);
   width: 90%;
   max-width: 700px;
-  min-height: 90vh;
+  min-height: 94vh;
   margin: 3vh auto;
   border-radius: 3vh;
   box-shadow: 0 8px 30px rgba(0, 0, 0, 0.5);
@@ -3866,18 +3858,21 @@ body.dark .chat-search-result-item.active {
 }
 
 #chat-search-close {
+  position: absolute; /* BU EN ÖNEMLİSİ */
   display: flex;
   align-items: center;
   justify-content: center;
-  background-color: var(--sidebar-bg);  /* Light modda sidebar rengi, örn: beyaz */
+  background-color: var(--sidebar-bg);  /* Örn: beyaz veya açık gri */
   border: none;
-  width: 35px;
-  height: 35px;
-  top: 25px;
-  right: 7px;
-  border-radius: 18px;
+  width: 40px;
+  height: 40px;
+  top: 22px;
+  right: 12px;
+  border-radius: 50%; /* DAİRE YAPAR */
   cursor: pointer;
   color: var(--text-color);
+  font-size: 1.2rem; /* X boyutu */
+  font-weight: bold;
 }
 
 #chat-search-close:hover {
@@ -3901,6 +3896,10 @@ body.dark #chat-search-close:hover {
     max-height: 80vh;
     border-radius: 12px 12px 0 0;
     overflow-y: auto;
+  }
+
+  #chat-search-close {
+    top: 19px;
   }
 }
 
@@ -7844,36 +7843,48 @@ function fillMasterCredentials() {
 }
 
 /* ------------- Kaydırıcı mantığı ------------- */
-function toggleCredentials(system) {
+function toggleCredentials(system){
   const checkbox = document.getElementById(`toggle-${system}`);
   const checked  = checkbox.checked;
   localStorage.setItem(`${system}-toggle`, checked);
 
-  /* SGDD-ASAM kartı */
+  /* --- SGDD-ASAM kartı --- */
   if (system === "sgdd") {
     const credBox = document.getElementById("sgdd-credentials");
     credBox.style.display = checked ? "block" : "none";
-    if (checked) fillMasterCredentials();
+    if (checked) fillMasterCredentials();        // kayıtlıysa input’ları doldur
     return;
   }
 
-  /* Alt sistemler */
+  /* --- Alt sistemler --- */
   const user = localStorage.getItem("sgdd-username");
   const pass = localStorage.getItem("sgdd-password");
 
+  /* Kimlik yoksa — nazik yönlendirme */
   if (!user || !pass) {
-    showToast("Önce SGDD-ASAM kimliğini gir!", false);
-    checkbox.checked = false;
+    checkbox.checked = false;                    // anahtarı kapat
     localStorage.setItem(`${system}-toggle`, false);
+
+    /* SGDD kartını otomatik aç ve odağı oraya kaydır */
+    const sgddToggle = document.getElementById("toggle-sgdd");
+    const sgddBox    = document.getElementById("sgdd-credentials");
+    sgddToggle.checked = true;
+    sgddBox.style.display = "block";
+    fillMasterCredentials();
+
+    /* Yumuşak kaydırma (tarayıcı destekliyorsa) */
+    sgddBox.scrollIntoView({ behavior: "smooth", block: "center" });
     return;
   }
 
+  /* Kimlik var → bağlan veya bağlantıyı kes */
   if (checked) {
     connectToSystem(system, user, pass);
   } else {
     disconnectFromSystem(system);
   }
 }
+
 
 /* ------------- Alt sistem bağlan / çık ------------- */
 function connectToSystem(sys, user, pass) {
