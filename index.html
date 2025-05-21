@@ -4,7 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
-  <title>Quik</title>
+  <title>quik</title>
   <link rel="icon" href="icons/quik_icon.png" type="image/png">
 
   <!-- Google Fonts: Inter -->
@@ -16,7 +16,7 @@
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/styles/atom-one-dark.min.css">
 
 <style>
-    /* Renk Değişkenleri */
+    /* Renk Değişkenleri - Root ve Body.Dark */
     :root {
       --bg-color: #f7f7f8;
       --text-color: #333;
@@ -31,7 +31,7 @@
       --code-border: #ddd;
       --hover-bg: #3e3f4b;
       --modal-shadow: rgba(0, 0, 0, 0.5);
-      --sidebar-width: 258px;
+      --sidebar-width: 260px;
       --success-color: #28a745;
       --danger-color: #dc3545;
       --warning-color: #ffc107;
@@ -55,18 +55,18 @@
       --warning-color: #ffca2c;
       --accent-color: #adb5bd;
     }
+
     body.dark .top-bar {
       background-color: var(--bg-color);
       box-shadow: none;
     }
 
-    /* Genel Stil ve Modern Font */
     * {
       box-sizing: border-box;
     }
     body {
       margin: 0;
-      font-family: 'Arial', sans-serif;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;
       background-color: var(--bg-color);
       color: var(--text-color);
       overflow-y: auto;
@@ -149,7 +149,8 @@
       z-index: 303;
       display: flex;
       flex-direction: column;
-      padding: 1rem;
+      padding-left: 0.5rem;
+      overflow-y: auto;
     }
     
     .sidebar.open {
@@ -192,7 +193,6 @@
       justify-content: center;
       width: 40px;
       height: 40px;
-      margin-top: -16px;
       padding: 0;
       border-radius: 12px;
       border: 1px solid transparent;
@@ -289,12 +289,13 @@
 
     .chat-history-list {
       list-style: none;
-      padding: 0.5rem 0;
+      padding-left: 0.5rem;
+      padding-right: 1rem;
       margin: 0;
-      overflow-y: auto;
       flex: 1;
-      scrollbar-width: thin;
+      scrollbar-width: auto;
       scrollbar-color: rgba(85, 85, 85, 0.2) transparent;
+      overflow-y: auto;
     }
 
     /* Tarih Grubu (Başlık ve Sohbetler) */
@@ -367,10 +368,11 @@ body.dark .chat-history-item:hover .chat-history-date {
       align-items: center;
       justify-content: space-between;
       cursor: pointer;
-      padding: 0.25rem 0.25rem;
+      padding: 0.25rem;
       border-radius: 8px;
       background-color: transparent;
       box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+      position: relative;
     }
 
 .chat-history-item:hover {
@@ -414,61 +416,109 @@ body.dark .chat-history-item.active {
 
 /* History Actions (Düzenleme ve Silme Butonları) */
 .history-actions {
+  position: relative;
   display: flex;
-  gap: 0.25rem; /* Butonlar arasında daha az boşluk */
-  opacity: 0; /* Varsayılan olarak gizli */
-
+  align-items: center;
+  min-width: 30px; /* İkon görünmediğinde yer tutar, kayma olmaz */
 }
 
-.chat-history-item:hover .history-actions {
-  opacity: 1; /* Hover’da butonlar görünür */
-}
-
-.history-actions button {
+.more-options-btn {
   background: none;
   border: none;
   cursor: pointer;
+  display: none; /* Varsayılan olarak gizli */
+  transition: opacity 0.2s ease;
+  position: absolute;
+  opacity: 0;
+}
+
+.chat-history-item:hover .more-options-btn {
+  opacity: 1;
+  display: block;
+}
+
+.more-options-btn img {
+  width: 20px;
+  height: 20px;
+}
+
+.dropdown-menu {
+  position: absolute;
+  background-color: var(--input-bg);
+  border: none;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+  z-index: 1000;
+  min-width: 100px;
+  display: none;
+}
+
+body.dark .dropdown-menu {
+  background-color: #343434;
+}
+
+.dropdown-item {
+  display: block;
+  width: 100%;
+  padding: 8px 12px;
+  background-color: transparent;
+  border: none;
+  text-align: left;
+  cursor: pointer;
+  font-size: 0.85rem;
+  font-weight: 500;
   color: var(--text-color);
-  transition: background-color 0.3s ease;
-  border-radius: 6px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 24px; /* Daha küçük ve simetrik butonlar */
-  height: 24px;
+  border-radius: 12px;
 }
 
-.history-actions button:hover {
-  background-color: var(--sidebar-bg); /* Hafif gri arka plan */
+.dropdown-item:hover {
+  background: #c0c0c0;
 }
 
-body.dark .history-actions button {
-  color: var(--text-color);
+body.dark .dropdown-item:hover {
+  color: var(--sidebar-bg);
 }
 
-body.dark .history-actions button:hover {
-  background-color: #c0c0c0; /* Hafif gri arka plan */
+body.dark .dropdown-item.edit-btn:hover img {
+  filter: none;
+}
+
+body.dark .dropdown-item.delete-btn:hover img {
+  filter: none;
+}
+
+body.dark .dropdown-item.edit-btn img {
+  filter: invert(1);
+}
+
+body.dark .dropdown-item.delete-btn img {
+  filter: invert(1);
+}
+
+body.dark .chat-history-item.active .more-options-btn img {
+  filter: none; /* Hafif gri arka plan */
 }
 
 .history-actions button img {
-  width: 14px; /* İkon boyutu */
-  height: 14px;
-  filter: none; /* Varsayılan olarak filtre yok */
+  width: 12px;
+  height: 12px;
+  margin-top: 4px;
+  filter: none;
+  opacity: 1;
 }
 
-body.dark .history-actions button img {
-  filter: brightness(0) invert(1); /* Dark modda ikonlar beyaz */
+body.dark .chat-history-item:hover .more-options-btn img {
+  filter: invert(1); /* Dark modda ikonlar beyaz */
 }
 
-body.dark .history-actions button:hover img {
-  filter: none; /* Hover’da orijinal ikon rengi */
+body.dark .chat-history-item.active .more-options-btn img {
+  filter: none; /* Dark modda ikonlar beyaz */
 }
 
 /* Dark mode’da ikonu tersine çevir */
 body.dark .history-icon {
   filter: brightness(0) invert(1);
 }
-
 
     /* Main İçerik */
     .main-content {
@@ -482,7 +532,7 @@ body.dark .history-icon {
       transition: margin-left 0.3s;
     }
     .main-content.sidebar-open {
-      margin-left: 258px;
+      margin-left: 260px;
     }
 
 @media (max-width: 768px) {
@@ -512,9 +562,20 @@ body.dark .history-icon {
   font-size: 1rem;
   font-weight: bold;
   color: var(--text-color);
+  padding: 0.5rem;
+  border-radius: 12px;
 }
 
-    body. dark .top-bar {
+.top-bar-title:hover {
+  background: #c0c0c0;
+  color: var(--text-color);
+}
+
+body.dark .top-bar-title:hover {
+  color: var(--bg-color);
+}
+
+    body.dark .top-bar {
       border-bottom: 1px solid rgba(128, 128, 128, 0.5);
     }
 
@@ -667,7 +728,7 @@ body.dark .history-icon {
   align-self: flex-end;
   border-bottom-right-radius: 0;
   background-color: var(--input-bg);
-  font-family: Arial, sans-serif;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;
   font-size: 1rem;
   padding-left: 1rem;
   padding-right: 1rem;
@@ -678,7 +739,7 @@ body.dark .history-icon {
 
 .assistant-bubble {
   position: relative;
-  font-family: 'Arial', system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;
   font-size: 1rem;
   white-space: normal;   /* Fazla boşluklar ortadan kalksın */
   overflow-wrap: break-word;
@@ -686,7 +747,7 @@ body.dark .history-icon {
   flex-direction: column;
   gap: 0;
   padding-bottom: 0;
-  line-height: 1.5;
+  line-height: 1.75;
   margin-bottom: 3rem;
 }
 
@@ -727,7 +788,6 @@ body.dark .history-icon {
        box-shadow: none;
     } 
 
-
     body.sidebar-open .chat-input {
       left: calc(50% + (var(--sidebar-width) / 2));
       width: calc(100% - var(--sidebar-width) - 1rem);
@@ -737,9 +797,9 @@ body.dark .history-icon {
     @media (max-width: 768px) {
       .chat-input {
         width: 100%;
-        bottom: 20px;
+        bottom: 0px;
         padding-bottom: 1rem;
-        border-radius: 20px;
+        border-radius: 30px 30px 0 0;
       }
       body.sidebar-open .chat-input {
         left: 50%;
@@ -748,7 +808,7 @@ body.dark .history-icon {
     }
 
 #chat-input-textarea {
-  font-family: 'Inter', sans-serif;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;
   font-size: 1rem;
   line-height: 1.5;
   flex: 1 1 auto; /* Esnek genişlik, küçülme ve büyüme izni */
@@ -835,26 +895,11 @@ body.dark #send-btn:hover img {
       background-color: #555;
     }
     * {
-      scrollbar-width: thin;
+      scrollbar-width: auto;
       scrollbar-color: rgba(85, 85, 85, 0.2) transparent;
     }
 
-.delete-btn:hover,
-.edit-btn:hover {
-  color: var(--sidebar-bg);
-  filter: brightness(100%);
-}
 
-body.dark .delete-btn:hover,
-body.dark .edit-btn:hover {
-  filter: none;
-  color: var(--sidebar-bg);
-}
-
-body.dark .chat-history-item.active .edit-btn:hover,
-body.dark .chat-history-item.active .delete-btn:hover {
-  background-color: #666666;
-}
 
     /* === Kod Blokları ve Kopyalama Butonu Stilleri === */
    
@@ -991,7 +1036,7 @@ body.dark .code-language {
 /* Copy butonu */
 .code-header .copy-btn {
   position: absolute;
-  top: 4px;
+  top: 9px;
   right: 8px;
   background-color: transparent;
   color: var(--text-color);
@@ -1279,7 +1324,7 @@ body.dark .settings-btn:hover {
         bottom: 0;
         left: 0;
         width: 100%;
-        max-height: 80vh;
+        max-height: 100vh;
         border-radius: 12px 12px 0 0;
         overflow-y: auto;
       }
@@ -1377,7 +1422,7 @@ body.dark .dark-mode-toggle-modal:hover {
   background-color: var(--sidebar-bg);
   width: 90%;
   max-width: 700px;
-  min-height: 90vh;
+  min-height: 94vh;
   margin: 3vh auto;
   border-radius: 3vh;
   box-shadow: 0 8px 30px rgba(0, 0, 0, 0.5);
@@ -1396,7 +1441,8 @@ body.dark .settings-modal-content {
   .settings-modal-content,
   .chat-search-modal-content {
     width: 100%;
-    height: 100vh; /* Tam ekran yüksekliği */
+    height: 100vh !important;
+    max-height:100vh !important;
     margin: 0 !important;  
     position: fixed;
     top: 0;
@@ -1431,10 +1477,10 @@ body.dark .settings-modal-content {
   .settings-header {
     padding: 8px 10px;
   }
-}
+
 @media (max-width: 480px) {
   .settings-modal-content {
-    max-height: 85vh; /* Çok küçük ekranlarda daha fazla alan */
+    max-height: 100vh; /* Çok küçük ekranlarda daha fazla alan */
   }
 
   /* Header kısmı örneğin 60px kaplıyorsa */
@@ -1491,19 +1537,30 @@ body.dark .settings-modal-content {
 }
 
 .settings-close {
+  position: absolute; /* BU EN ÖNEMLİSİ */
   display: flex;
   align-items: center;
   justify-content: center;
-  background-color: var(--sidebar-bg);  /* Light modda sidebar rengi, örn: beyaz */
+  background-color: var(--sidebar-bg);  /* Örn: beyaz veya açık gri */
   border: none;
-  width: 35px;
-  height: 35px;
-  top: 25px;
-  right: 7px;
-  border-radius: 18px;
+  width: 40px;
+  height: 40px;
+  top: 22px;
+  right: 12px;
+  border-radius: 50%; /* DAİRE YAPAR */
   cursor: pointer;
   color: var(--text-color);
+  font-size: 1.2rem; /* X boyutu */
+  font-weight: bold;
+  z-index: 1000;
 }
+
+@media (max-width:768px) {
+  .settings-close {
+    top: 19px;
+  }
+}
+
 
 /* Hover durumunda sidebar'dakine benzer davranış */
 .settings-close:hover {
@@ -1554,7 +1611,7 @@ body.dark .settings-close:hover {
   border-radius: 8px;
   display: flex;
   justify-content: flex-start;
-  min-width: 120px; /* Her durumda aynı genişlik */
+  min-width: 160px; /* Her durumda aynı genişlik */
   font-weight: 600; /* Normalde biraz daha kalın yaparak değişimi minimize et */
   text-rendering: optimizeLegibility;
   align-items: center;
@@ -1657,7 +1714,7 @@ body.dark .settings-nav li.active {
 .progress-container {
   display: flex;
   flex-direction: column;
-  align-items: flex-end; /* Sağ hizalı */
+  align-items: flex-start; /* Sağ hizalı */
   width: 100%; /* Tam genişlik */
   margin-top: 10px; /* Üst boşluk */
 }
@@ -1778,7 +1835,7 @@ body.dark .setting-description .note-text {
   border-radius: 8px;
   padding: 12px; /* Artırılmış iç boşluk */
   font-size: 0.8rem;
-  font-family: 'Inter', sans-serif;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;
   resize: none;
   box-sizing: border-box;
   font-weight: 500; /* Hafif kalın yazı */
@@ -1941,8 +1998,8 @@ input:checked + .slider:before {
   cursor: pointer;
   transition: background-color 0.3s;
   align-self: flex-start;
-  margin-top: 12px;
-  margin-bottom: 8px;
+  margin-top: 0.5rem;
+  font-size: 0.8rem;
 }
 .danger-btn:hover {
   background-color: #ff6666;
@@ -1984,6 +2041,7 @@ body.dark .setting-row select {
   border-radius: 8px;
   background-color: var(--sidebar-bg);
   color: var(--text-color);
+  font-size: 0.8rem;
   font-weight: 600;
   box-sizing: border-box;
 }
@@ -2551,7 +2609,7 @@ body.dark .feedback-controls button:hover img {
   padding: 7px 7px; /* Daha geniş iç boşluk */
   border-radius: 8px;
   font-size: 0.7rem; /* Daha okunabilir font boyutu */
-  font-family: 'Inter', sans-serif;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;
   white-space: nowrap; /* Tek satırda tut */
   text-align: center; /* Metni ortala */
   opacity: 0;
@@ -2642,7 +2700,8 @@ body.dark [data-tooltip]::after {
 }
 
 /* Sidebar aç/kapa butonu için özel tooltip konumlandırması */
-#toggle-sidebar-btn[data-tooltip]::after {
+#toggle-sidebar-btn[data-tooltip]::after,
+.model-toggle-btn[data-tooltip]::after {
   top: 50% !important;
   left: calc(100% + 8px) !important;
   transform: translateY(-50%) !important;
@@ -2687,10 +2746,12 @@ body.dark [data-tooltip]::after {
 }
 
 /* Başlık + ikon yan yana */
-.notification-heading-left {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
+.notification-heading-left{
+  display:flex;
+  align-items:center;
+  gap:0.5rem;         /* already there – keep it */
+  flex:1;             /* NEW — lets the left part shrink/wrap */
+  min-width:0;        /* NEW — enables wrapping instead of overflow */
 }
 
 /* İkon boyutu */
@@ -2703,17 +2764,23 @@ body.dark [data-tooltip]::after {
 
 /* Bildirim ayarının adı */
 .notification-name {
-  font-size: 0.8rem;
-  font-weight: 600;
-  color: var(--text-color);
+  font-size:0.8rem;   /* already there */
+  font-weight:600;    /* already there */
+  white-space:normal; /* NEW — allow line-wrap */
+  word-break:break-word; /* NEW — break long words if needed */
 }
-
 /* Açıklama metni */
 .notification-description {
   font-size: 0.8rem;
   color: var(--text-color);
   line-height: 1.5;
   margin: 0;
+}
+
+.notification-divider {
+  margin: 1rem 0 1rem;
+  border: none;
+  border-top: 1px solid var(--line, #e5e7eb); /* fallback açık gri */
 }
 
 /* Dark mode düzenlemeleri */
@@ -2821,7 +2888,7 @@ body.dark .language-selection select {
   border: 1px solid var(--code-border);
   border-radius: 8px;
   font-size: 0.8rem;
-  font-family: 'Inter', sans-serif;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;
   background-color: var(--input-bg);
   color: var(--text-color);
   resize: none;
@@ -3130,7 +3197,8 @@ body.dark #voice-record-btn.recording img {
 .voice-options {
   display: flex;
   flex-direction: column;
-  gap: 1rem;
+  gap: 0.7rem;
+  margin-top: 0.5rem;
 }
 
 .voice-option {
@@ -3140,8 +3208,8 @@ body.dark #voice-record-btn.recording img {
 }
 
 .voice-check-btn {
-  max-height: 30px;
-  min-height: 30px;
+  max-height: 28px;
+  min-height: 28px;
   max-width: 100px;
   min-width: 100px;
   background-color: #10a37f;
@@ -3149,6 +3217,7 @@ body.dark #voice-record-btn.recording img {
   border: none;
   border-radius: 4px;
   cursor: pointer;
+  font-size: 0.8rem;
 }
 
 .voice-check-btn:hover {
@@ -3209,37 +3278,66 @@ button.theme-btn {
       justify-content: center;
 }
 
+/* Ortak alan */
 .prompt-selection {
-  margin-top: 0.8rem;
+  display:flex;
+  flex-wrap:wrap;
+  gap:1rem;
+  margin-bottom:0.5rem;
 }
 
-  @media (max-width: 768px) {
-    .prompt-selection {
-      button.theme-btn: column;
-    }
-  }
+/* Tema butonu varsayılanı (desktop & tablet) */
+.prompt-selection .theme-btn{
+  flex:1 1 180px;       /* esnek ama 180 px’den küçük olma */
+  min-width:180px;
+}
 
-  @media (max-width: 480px) {
-    .prompt-selection {
-      button.theme-btn: column;
-    }
+.prompt-selection .theme-btn.active{
+  background:#c0c0c0;      /* hover ile aynı gri */
+  color:var(--text-color); /* koyu modda siyah, açıkta beyaz görünsün */
+}
+
+body.dark .prompt-selection .theme-btn.active{
+  background:#c0c0c0;
+  color:var(--sidebar-bg);
+}
+
+/* ---------- Mobil breakpoint ---------- */
+@media (max-width:600px){
+  .prompt-selection .theme-btn{
+    flex:1 1 120px;     /* satıra 2 veya 3 buton sığsın */
+    min-width:120px;    /* daha dar izin ver */
   }
+}
+
+/* Çok dar ekran (<360 px) istersen ekstra kural ekle */
+@media (max-width:360px){
+  .prompt-selection .theme-btn{
+    flex:1 1 100px;
+    min-width:100px;
+  }
+}
 
 button.theme-btn:hover {
   background: #c0c0c0;
 }
 
   .connect-btn {
-    background-color: #007bff;
-    color: white;
-    border: none;
-    border-radius: 4px;
-    padding: 4px 8px;
+    background-color: transparent;
+    color: var(--text-color);
+    font-weight: 600;
+    border: 1px solid #c0c0c0;
+    border-radius: 8px;
+    padding: 4px 6px;
     cursor: pointer;
-    font-size: 0.7rem;
+    font-size: 0.65rem;
   }
   .connect-btn:hover {
-    background-color: #0056b3;
+    background-color: #c0c0c0;
+  }
+
+  body.dark .connect-btn:hover {
+    color: var(--sidebar-bg);
   }
 
 #gmail-profile-photo {
@@ -3320,7 +3418,6 @@ body.dark .setting-row.select {
 }
 
 .summary-text {
-  margin-top: 0.5rem; /* Özet metni ile üstteki açıklama arasında boşluk */
   font-style: italic; /* Özet metnini biraz farklı gösterelim */
 }
 
@@ -3618,7 +3715,7 @@ body.dark .sidebar-search-toggle:hover img {
   border: none;
   outline: none;
   font-size: 1rem;
-  font-family: 'Inter', sans-serif;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;
   background-color: transparent;
   color: var(--text-color);
 }
@@ -3640,7 +3737,7 @@ body.dark .sidebar-search-toggle:hover img {
   margin: 3vh auto;
   border-radius: 3vh;
   box-shadow: 0 8px 30px rgba(0, 0, 0, 0.5);
-  overflow: hidden; /* İç taşmayı engelle */
+  overflow: hidden;
   display: flex;
   flex-direction: column;
   box-sizing: border-box;
@@ -3654,7 +3751,7 @@ body.dark .sidebar-search-toggle:hover img {
   top: 0;
   width: 100%;
   height: 100%;
-  background-color: rgba(0, 0, 0, 0.7); /* Hafif karartma efekti */
+  background-color: rgba(0, 0, 0, 0.7);
   backdrop-filter: blur(4px);
   -webkit-backdrop-filter: blur(4px);
   animation: fadeIn 0.3s ease;
@@ -3696,7 +3793,7 @@ body.dark .sidebar-search-toggle:hover img {
   border: none;
   outline: none;
   font-size: 1rem;
-  font-family: 'Inter', sans-serif;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;
   background-color: transparent;
   color: var(--text-color);
 }
@@ -3719,7 +3816,7 @@ body.dark .sidebar-search-toggle:hover img {
   background: transparent;
 }
 
-.#chat-search-results::-webkit-scrollbar-thumb {
+#chat-search-results::-webkit-scrollbar-thumb {
   background-color: rgba(85, 85, 85, 0.2);
   border-radius: 10px;
   border: 2px solid transparent;
@@ -3835,6 +3932,292 @@ body.modal-active #sidebar-search-toggle {
   animation: fadeInSmooth 0.5s ease forwards;
 }
 
+.mic-test-section {
+  margin-top: 2rem;
+  background-color: var(--card-bg);
+  padding: 1rem;
+  border-radius: 16px;
+  box-shadow: var(--shadow);
+}
+
+.mic-title {
+  font-size: 1.1rem;
+  margin-bottom: 0.5rem;
+  font-weight: 600;
+}
+
+.mic-description {
+  font-size: 0.95rem;
+  color: var(--sub);
+  margin-bottom: 1rem;
+}
+
+.mic-visualizer {
+  width: 100%;
+  height: 30px;
+  background-color: #ddd;
+  border-radius: 5px;
+  overflow: hidden;
+
+}
+
+.mic-bar {
+  width: 0%;
+  height: 100%;
+  background-color: #10b981; /* Başlangıçta yeşil */
+  transition: width 0.1s linear, background-color 0.2s ease;
+}
+
+.mic-test-btn {
+  padding: 0.5rem 1rem;
+  border: none;
+  background-color: var(--accent);
+  color: #fff;
+  border-radius: 8px;
+  font-weight: 500;
+  cursor: pointer;
+}
+
+body.dark .mic-visualizer {
+  background-color: #333;
+}
+
+body.dark .mic-bar {
+  background-color: #4ade80;
+}
+
+.theme-filter-btn {
+  background-color: none;
+  border: none;
+  cursor: pointer;
+}
+
+/* Varsayılan (light mode için) */
+.theme-filter-btn img {
+  filter: none;
+}
+
+/* Dark modda filtre uygula */
+body.dark .theme-filter-btn img {
+  filter: invert(1);
+}
+
+#help-btn {
+  position: fixed;
+  bottom: 9px;   /* Sağ alt köşeden yukarı 15px boşluk */
+  right: 13px;    /* Sağdan 15px boşluk */
+  width: 40px;
+  height: 40px;
+  background-color: transparent;
+  border: none;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  z-index: 301;
+}
+
+#help-btn img {
+  width: 20px;
+  height: 20px;
+  pointer-events: none;
+}
+
+#help-btn:hover {
+  background-color: #c0c0c0;
+}
+
+body.dark #help-btn img {
+  filter: brightness(0) invert(1);
+}
+
+body.dark #help-btn:hover {
+  background-color: #c0c0c0;
+}
+
+body.dark #help-btn:hover img {
+  filter: none;
+}
+
+/* Dropdown Menü */
+.help-dropdown {
+  position: fixed;
+  bottom: 50px; /* Help butonunun üstüne denk gelecek */
+  right: 13px;
+  background-color: var(--input-bg);
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+  display: none; /* Başlangıçta gizli */
+  flex-direction: column;
+  z-index: 306;
+  width: 160px;
+}
+
+.help-item {
+  background: none;
+  border: none;
+  text-align: left;
+  width: 100%;
+  padding: 16.5px 8px;
+  font-size: 0.85rem;
+  cursor: pointer;
+  color: var(--text-color);
+  border-radius: 12px;
+}
+
+.help-item:hover {
+  background-color: #c0c0c0;
+}
+
+body.dark .help-dropdown {
+  background-color: #343434;
+}
+
+body.dark .help-item:hover {
+  background-color: #c0c0c0;
+  color: var(--sidebar-bg);
+}
+
+#confirm-modal .modal-content {
+  background: var(--sidebar-bg);
+  padding: 20px;
+  border-radius: 12px;
+  text-align: center;
+  width: 90%;
+  max-width: 400px;
+}
+#confirm-message {
+  font-size: 1rem;
+  font-weight: 600;
+  margin-bottom: 1rem;
+}
+
+.header-toast {
+  position: absolute;         /* .top-bar’a göre */
+  top: 57px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: var(--bg-color); /* JS’te istediğin renkle ezilir */
+  color: var(--sidebar-bg);
+  padding: 0.5rem;
+  font-weight: 600;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0,0,0,.2);
+  z-index: 1000;
+  animation: fadeInOut 2s ease forwards;   /* Mevcut animasyonu kullan */
+  pointer-events: none;       /* Tıklamayı engelleme */
+}
+
+/* Üst başlık (yazı + master switch) */
+.notification-master-row {
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  margin-bottom:0.1rem;            /* yazı ile çizgi arasında 0.1 rem */
+}
+
+/* Yazı istersek biraz vurgulu dursun */
+.notification-master-title {
+  font-size:1rem;
+  font-weight:600;
+}
+
+/* İnce çizgi */
+.notification-divider {
+  border:0;
+  border-top:1px solid var(--text-color, var(--text-secondary));
+  margin:0 0 0.25rem 0;               /* çizgi ile kartlar arası rahat nefes */
+}
+
+.master-notification-card {
+  border: 1px solid var(--secondary);   /* sidebar’da kullandığın koyu ton */
+  padding: 0;
+  padding-right: 1rem;
+}
+
+.personalization-header{
+  margin-bottom:1rem;      /* karttan önce küçük boşluk */
+}
+
+.progress-actions {
+  display: flex;
+  gap: 0.5rem;
+  justify-content: flex-start;
+}
+
+@media (max-width: 768px){
+  .progress-actions{
+    flex-direction: column;   /* yatay → dikey */
+    align-items: stretch;     /* butonları tam genişlet */
+    width: 100%;
+  }
+
+  .progress-actions .danger-btn{
+    width: 100%;              /* her buton satırı doldursun */
+  }
+}
+
+@media (max-width: 768px){
+  pre,
+  pre > code,
+  .code-block,
+  .code-editor{
+    max-height: 50vh;                 /* ekranın yarısını geçmesin */
+    overflow: auto;                   /* hem dikey hem yatay scroll */
+    -webkit-overflow-scrolling: touch;/* iOS’ta akıcı kaydırma */
+    touch-action: pan-x pan-y;        /* dokunmayı engelleyen yok */
+    pointer-events: auto;             /* olası üst katman engelini aş */
+    cursor: grab;                     /* Android’de “tut” hissi verir */
+  }
+}
+
+/* Varsayılan görünüm (masaüstü): yan yana */
+#security-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+/* Mobil görünüm (768px ve altı): buton aşağı insin */
+@media (max-width: 480px) {
+  #security-header {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  #login-btn.connect-btn {
+    width: 100%;
+    margin-top: 0.5rem;
+  }
+
+  #security-header .connect-btn {
+    width: 100%;
+  }
+}
+
+.password-field{
+  position:relative;
+  display:flex;
+  align-items:center;
+}
+
+.password-field input{
+  flex:1;
+  padding-right:36px;          /* ikon için boşluk */
+}
+
+.toggle-icon{
+  width:22px;
+  height:22px;
+  cursor:pointer;
+  position:absolute;
+  right:8px;
+  top:50%;
+  transform:translateY(-50%);
+  user-select:none;
+}
+
 
   </style>
 </head>
@@ -3847,9 +4230,9 @@ body.modal-active #sidebar-search-toggle {
 
 <!-- Yeni Model Seçme Alanı -->
 <div id="model-selector" class="model-selector">
-  <button id="model-toggle-btn" class="model-toggle-btn">
+  <button id="model-toggle-btn" class="model-toggle-btn" data-tooltip="Model seç">
     <span id="current-model-name">quik-prime</span>
-    <img src="icons/arrow_down.png" alt="Dropdown" class="dropdown-arrow" style="width: 14px; height: 14px; margin-left: 5px;">
+    <img src="icons/arrow_down.png" alt="Dropdown" class="dropdown-arrow" style="width: 12px; height: 12px; margin-right: 3px;" draggable="false">
   </button>
   <div id="model-dropdown" class="model-dropdown">
     <button class="model-option" data-model="quik-prime">
@@ -3899,13 +4282,14 @@ body.modal-active #sidebar-search-toggle {
   <div class="main-content">
 <div class="top-bar">
   <!-- Diğer top bar içerikleri varsa burada kalabilir -->
-  <div id="chat-title" class="top-bar-title"></div>
+  <div id="chat-title" class="top-bar-title">
+</div>
 </div>
 
     
     <div class="scroll-wrapper">
       <div id="chat-container" class="chat-container">
-<div id="welcome-message" class="welcome-message" ondragstart="return false;">
+<div id="welcome-message" class="welcome-message" ondragstart="return false;" draggable="false">
   <div class="logo-container">
   </div>
 
@@ -4155,6 +4539,7 @@ body.modal-active #sidebar-search-toggle {
 </div>
 <!-- Yiyecek & İçecek Emojileri -->
 <div class="emoji-grid" data-category="food" style="display: none;">
+<!-- Meyveler -->
   <span class="emoji" data-emoji="🍎">🍎</span>
   <span class="emoji" data-emoji="🍌">🍌</span>
   <span class="emoji" data-emoji="🍇">🍇</span>
@@ -4166,11 +4551,22 @@ body.modal-active #sidebar-search-toggle {
   <span class="emoji" data-emoji="🥝">🥝</span>
   <span class="emoji" data-emoji="🍐">🍐</span>
   <span class="emoji" data-emoji="🍅">🍅</span>
+  <span class="emoji" data-emoji="🍋">🍋</span> <!-- Yeni -->
+  <span class="emoji" data-emoji="🍊">🍊</span> <!-- Yeni -->
+  <span class="emoji" data-emoji="🥭">🥭</span> <!-- Yeni -->
+  <span class="emoji" data-emoji="🍈">🍈</span> <!-- Yeni -->
+
+  <!-- Sebzeler -->
   <span class="emoji" data-emoji="🌽">🌽</span>
   <span class="emoji" data-emoji="🥕">🥕</span>
   <span class="emoji" data-emoji="🥑">🥑</span>
   <span class="emoji" data-emoji="🍆">🍆</span>
-  
+  <span class="emoji" data-emoji="🥦">🥦</span> <!-- Yeni -->
+  <span class="emoji" data-emoji="🥬">🥬</span> <!-- Yeni -->
+  <span class="emoji" data-emoji="🥔">🥔</span> <!-- Yeni -->
+  <span class="emoji" data-emoji="🍄">🍄</span> <!-- Yeni -->
+
+  <!-- Fast Food & Yemekler -->
   <span class="emoji" data-emoji="🍔">🍔</span>
   <span class="emoji" data-emoji="🍕">🍕</span>
   <span class="emoji" data-emoji="🍟">🍟</span>
@@ -4187,7 +4583,19 @@ body.modal-active #sidebar-search-toggle {
   <span class="emoji" data-emoji="🍲">🍲</span>
   <span class="emoji" data-emoji="🥘">🥘</span>
   <span class="emoji" data-emoji="🥙">🥙</span>
-  
+  <span class="emoji" data-emoji="🥗">🥗</span> <!-- Yeni -->
+  <span class="emoji" data-emoji="🍱">🍱</span> <!-- Yeni -->
+  <span class="emoji" data-emoji="🥟">🥟</span> <!-- Yeni -->
+  <span class="emoji" data-emoji="🍙">🍙</span> <!-- Yeni -->
+
+  <!-- Kahvaltılıklar -->
+  <span class="emoji" data-emoji="🥐">🥐</span> <!-- Yeni -->
+  <span class="emoji" data-emoji="🥞">🥞</span> <!-- Yeni -->
+  <span class="emoji" data-emoji="🥓">🥓</span> <!-- Yeni -->
+  <span class="emoji" data-emoji="🥚">🥚</span> <!-- Yeni -->
+  <span class="emoji" data-emoji="🧀">🧀</span> <!-- Yeni -->
+
+  <!-- İçecekler -->
   <span class="emoji" data-emoji="☕">☕</span>
   <span class="emoji" data-emoji="🍵">🍵</span>
   <span class="emoji" data-emoji="🍶">🍶</span>
@@ -4198,7 +4606,12 @@ body.modal-active #sidebar-search-toggle {
   <span class="emoji" data-emoji="🍹">🍹</span>
   <span class="emoji" data-emoji="🥂">🥂</span>
   <span class="emoji" data-emoji="🍾">🍾</span>
-  
+  <span class="emoji" data-emoji="🥛">🥛</span> <!-- Yeni -->
+  <span class="emoji" data-emoji="🧃">🧃</span> <!-- Yeni -->
+  <span class="emoji" data-emoji="🧉">🧉</span> <!-- Yeni -->
+  <span class="emoji" data-emoji="🥤">🥤</span> <!-- Yeni -->
+
+  <!-- Tatlılar -->
   <span class="emoji" data-emoji="🍦">🍦</span>
   <span class="emoji" data-emoji="🍩">🍩</span>
   <span class="emoji" data-emoji="🍪">🍪</span>
@@ -4206,7 +4619,16 @@ body.modal-active #sidebar-search-toggle {
   <span class="emoji" data-emoji="🎂">🎂</span>
   <span class="emoji" data-emoji="🍮">🍮</span>
   <span class="emoji" data-emoji="🍫">🍫</span>
-</div>
+  <span class="emoji" data-emoji="🍭">🍭</span> <!-- Yeni -->
+  <span class="emoji" data-emoji="🍬">🍬</span> <!-- Yeni -->
+  <span class="emoji" data-emoji="🧁">🧁</span> <!-- Yeni -->
+  <span class="emoji" data-emoji="🥧">🥧</span> <!-- Yeni -->
+
+  <!-- Diğer -->
+  <span class="emoji" data-emoji="🍯">🍯</span> <!-- Yeni -->
+  <span class="emoji" data-emoji="🧂">🧂</span> <!-- Yeni -->
+  <span class="emoji" data-emoji="🥜">🥜</span> <!-- Yeni -->
+  <span class="emoji" data-emoji="🍿">🍿</span> <!-- Yeni --></div>
 
 
   </div>
@@ -4222,7 +4644,7 @@ body.modal-active #sidebar-search-toggle {
     <img src="icons/voice_page_icon.png" alt="Ses Sayfası" style= "width: 17px; height: 17px;" draggable="false">
   </button>
 
-  <textarea id="chat-input-textarea" placeholder="Quik uygulamasına ileti gönder..."></textarea>
+  <textarea id="chat-input-textarea" placeholder="quik uygulamasına ileti gönder..."></textarea>
   <button id="send-btn" class="send-btn" data-tooltip="Gönder">
     <img src="icons/send_btn.png" alt="Send Icon" style="width:17px; height:17px;" draggable="false">
   </button>
@@ -4334,9 +4756,35 @@ body.modal-active #sidebar-search-toggle {
 <!-- GENEL Sekmesi (YENİ) -->
 <div class="tab-content active" id="genel">
   <div class="general-container">
+<!-- Konteyner: Tüm bildirim ayarlarını saran ana kapsayıcı -->
+<div class="notifications-container">
+
+<!-- 0. Kart : Genel özellikler -->
+<div class="notification-card master-notification-card">
+  <div class="notification-header">
+    <div class="notification-heading-left">
+      <img src="icons/genel.png" alt="Genel" class="notification-icon" draggable="false">
+      <span class="notification-name">Genel Seçenekler</span>
+    </div>
+
+    <!-- Ana anahtar -->
+<label class="notification-switch" draggable="false"
+       style="pointer-events: none;" aria-hidden="true" tabindex="-1">
+</label>
+  </div>
+
+  <!-- Açıklama istersen bırak, istemezsen bu <p>’yi silebilirsin -->
+  <p class="notification-description" style="margin-bottom:1rem;">
+    Görünüm, Web Arama ve Dil tercihini buradan yapabilirsin.
+  </p>
+  </div>
+</div>
+
+<!-- İnce ayraç -->
+<hr class="notification-divider">
 
     <!-- 1. Kart: Görünüm -->
-<div class="general-card">
+<div class="general-card" style= "margin-top:1rem;">
   <div class="card-topbar">
     <div class="general-heading-left">
       <img src="icons/appearance.png" alt="Görünüm" class="general-icon" draggable="false">
@@ -4411,7 +4859,6 @@ body.modal-active #sidebar-search-toggle {
   </div>
 </div>
 
-
   </div> <!-- /general-container -->
 </div>
 
@@ -4420,13 +4867,37 @@ body.modal-active #sidebar-search-toggle {
   <!-- Konteyner: Tüm bildirim ayarlarını saran ana kapsayıcı -->
   <div class="notifications-container">
 
-    <!-- 1. Kart: Uygulama bildirimi -->
+<!-- 0. Kart : Tüm Bildirimler (master) -->
+<div class="notification-card master-notification-card">
+  <div class="notification-header">
+    <div class="notification-heading-left">
+      <img src="icons/bildirimler.png" alt="Bildirim" class="notification-icon" draggable="false">
+      <span class="notification-name">Bildirim Ayarları</span>
+    </div>
+
+    <!-- Ana anahtar -->
+    <label class="notification-switch">
+      <input type="checkbox" id="toggle-all-notifications" checked>
+      <span class="notification-slider"></span>
+    </label>
+  </div>
+
+  <!-- Açıklama istersen bırak, istemezsen bu <p>’yi silebilirsin -->
+  <p class="notification-description">
+    Bildirimleri açabilir veya kapayabilirsin. Bildirimleri açman önerilir.
+  </p>
+</div>
+
+<!-- İnce ayraç -->
+<hr class="notification-divider">
+
+    <!-- 1. Kart: Gelen Mesaj bildirimi -->
     <div class="notification-card">
       <div class="notification-header">
         <!-- İkon (opsiyonel) -->
         <div class="notification-heading-left">
           <img src="icons/notification.png" alt="Bildirim" class="notification-icon" draggable="false">
-          <span class="notification-name">Uygulama Bildirimi</span>
+          <span class="notification-name">Gelen Mesaj Bildirimi</span>
         </div>
 
         <!-- Switch (Toggle) -->
@@ -4436,16 +4907,16 @@ body.modal-active #sidebar-search-toggle {
         </label>
       </div>
       <p class="notification-description">
-        Okunmamış mesajları uygulama üzerinden bildirir.
+        Gelen mesajları uygulama üzerinden bildirir.
       </p>
     </div>
 
-    <!-- 2. Kart: Masaüstü bildirimi -->
+    <!-- 2. Kart: Okunmamış bildirimi -->
     <div class="notification-card">
       <div class="notification-header">
         <div class="notification-heading-left">
-          <img src="icons/desktop_notification.png" alt="Masaüstü" class="notification-icon" draggable="false">
-          <span class="notification-name">Masaüstü Bildirimi</span>
+          <img src="icons/unread_message.png" alt="Masaüstü" class="notification-icon" draggable="false">
+          <span class="notification-name">Okunmamış Mesaj Bildirimi</span>
         </div>
 
         <label class="notification-switch">
@@ -4454,16 +4925,16 @@ body.modal-active #sidebar-search-toggle {
         </label>
       </div>
       <p class="notification-description">
-        Okunmamış mesajları masaüstü bildirimiyle iletir.
+        Okunmamış mesajları uygulama üzerinden bildirir.
       </p>
     </div>
 
-    <!-- 3. Kart: E-posta bildirimi -->
+    <!-- 3. Kart: Hatırlatıcı bildirimi -->
     <div class="notification-card">
       <div class="notification-header">
         <div class="notification-heading-left">
-          <img src="icons/email_notification.png" alt="E-posta" class="notification-icon" draggable="false">
-          <span class="notification-name">E-posta Bildirimi</span>
+          <img src="icons/reminder_notification.png" alt="E-posta" class="notification-icon" draggable="false">
+          <span class="notification-name">Hatırlatıcı Bildirimi</span>
         </div>
 
         <label class="notification-switch">
@@ -4472,7 +4943,7 @@ body.modal-active #sidebar-search-toggle {
         </label>
       </div>
       <p class="notification-description">
-        Uzun süre okunmamış mesajları e-posta üzerinden bildirir.
+        Planlı görevlerinizi uygulama üzerinden bildirir.
       </p>
     </div>
 
@@ -4497,41 +4968,77 @@ body.modal-active #sidebar-search-toggle {
 
 <!-- KİŞİSELLEŞTİRME Sekmesi (Yeni, card mantığında) -->
 <div class="tab-content" id="kisisellestirme">
-  <div class="general-card">
+
+<!-- Konteyner: Tüm bildirim ayarlarını saran ana kapsayıcı -->
+<div class="notifications-container">
+
+<!-- 0. Kart : Kişisel Asistan Modu -->
+<div class="notification-card master-notification-card">
+  <div class="notification-header">
+    <div class="notification-heading-left">
+      <img src="icons/kisisellestirme.png" alt="Kişiselleştirme" class="notification-icon" draggable="false">
+      <span class="notification-name">Kişisel Asistan Modu</span>
+    </div>
+
+    <!-- Ana anahtar -->
+<label class="notification-switch" draggable="false"
+       style="pointer-events: none;" aria-hidden="true" tabindex="-1">
+</label>
+  </div>
+
+  <!-- Açıklama istersen bırak, istemezsen bu <p>’yi silebilirsin -->
+  <p class="notification-description" style="margin-bottom:1rem;">
+    quik modelinin sana nasıl davranması gerektiğini belirleyebilirsin.
+  </p>
+  </div>
+</div>
+
+<!-- İnce ayraç -->
+<hr class="notification-divider">
+
+  <div class="general-card" style="margin-top:1.25rem; padding-top:0.5rem;">
+
+  <div class="notification-header">
+    <div class="notification-heading-left">
+      <img src="icons/instructions.png" alt="Özel Talimatlar" class="notification-icon" draggable="false" style="margin-top: 0.5rem;">
+      <span class="notification-name" style="margin-top: 0.5rem;">Özel Talimatlar</span>
+    </div>
+  </div>
+
+  <!-- Açıklama -->
+  <p class="notification-description">
+    Kendi talimatını belirleyebilir veya üç farklı talimattan birini seçebilirsin.
+  </p>
+
     <!-- Kartın Üst Barı (Top Bar) -->
     <div class="card-topbar">
       <div class="general-heading-left">
-        <span class="general-name">Merhaba, ben kişisel asistanın Quik!</span>
       </div>
     </div>
 
-    <!-- Açıklayıcı Metin -->
-    <p class="general-description">
-      Sana daha iyi bir hizmet sunabilmem için bana ne istediğini söyleyebilirsin.
-    </p>
-
-
     <!-- Prompt Seçenekleri (Theme-btn stilinde) -->
-    <div class="prompt-selection" style="display: flex; gap: 1rem; flex-wrap: wrap; margin-bottom: 1rem;">
-      <button type="button" class="theme-btn" onclick="setPrompt('special')" style="flex: 1; min-width: 150px;">
+    <div class="prompt-selection">
+      <button type="button" class="theme-btn" onclick="setPrompt('special', this)">
         <div style="text-align: center;">
           <strong>Özel</strong><br>
           <small>Sizin Kararınız</small>
         </div>
       </button>
-      <button type="button" class="theme-btn" onclick="setPrompt('professional')" style="flex: 1; min-width: 150px;">
+      <button type="button" class="theme-btn" onclick="setPrompt('professional', this)">
         <div style="text-align: center;">
           <strong>Profesyonel</strong><br>
           <small>Saygı ve Ciddiyet</small>
         </div>
       </button>
-      <button type="button" class="theme-btn" onclick="setPrompt('energetic')" style="flex: 1; min-width: 150px;">
+      <button type="button" class="theme-btn" onclick="setPrompt('energetic', this)">
+
         <div style="text-align: center;">
           <strong>Enerjik</strong><br>
           <small>Canlılık ve Motivasyon</small>
         </div>
       </button>
-      <button type="button" class="theme-btn" onclick="setPrompt('friendly')" style="flex: 1; min-width: 150px;">
+      <button type="button" class="theme-btn" onclick="setPrompt('friendly', this)">
+
         <div style="text-align: center;">
           <strong>Samimi</strong><br>
           <small>Empati ve Samimiyet</small>
@@ -4544,7 +5051,7 @@ body.modal-active #sidebar-search-toggle {
       <textarea 
         id="static-prompt" 
         placeholder="Örnek: 'Her zaman kısa ve öz cevap ver' veya 'Bana esprili bir şekilde yanıt ver'" 
-        rows="8" 
+        rows="7" 
         style="width: 100%;"
       ></textarea>
     </div>
@@ -4556,82 +5063,174 @@ body.modal-active #sidebar-search-toggle {
   </div>
 </div>
 
-<!-- KONUŞMA Sekmesi -->
+<!-- KONUŞMA Sekmesi (Bildirimler tarzında yeniden tasarlandı) -->
 <div class="tab-content" id="konusma">
-  <div class="settings-list">
-    <div class="general-card">
-      <div class="card-topbar">
-        <div class="general-heading-left">
-          <span class="general-name">Sesli Konuşma Seçimi</span>
-        </div>
-      </div>
-      <p class="general-description">
-        Seçtiğiniz kişi, konuşma tarzını ve üslubunu etkileyebilir.
-      </p>
-      <div class="language-selection">
-        <select id="conversation-person">
-          <option value="sky">Sky</option>
-          <option value="gia">Gia</option>
-          <option value="dan">Dan</option>
-          <option value="dom">Dom</option>
-        </select>
 
-        <!-- İnce Çizgi -->
-        <hr style="margin: 15px 0;">
+<!-- Konteyner: Tüm bildirim ayarlarını saran ana kapsayıcı -->
+<div class="notifications-container">
 
-        <!-- Ses Seçenekleri: Buton sol tarafta, açıklama butonun hemen sağında -->
-        <div class="voice-options">
-          <div class="voice-option">
-            <button class="voice-check-btn" id="voice-btn-sky" onclick="toggleVoice('sky')">Sky'ı Dene</button>
-            <p class="voice-description"><strong>Sky:</strong> Dengeli ve sakin bir üslupla iletişim kurar.</p>
-          </div>
-          <div class="voice-option">
-            <button class="voice-check-btn" id="voice-btn-gia" onclick="toggleVoice('gia')">Gia'yı Dene</button>
-            <p class="voice-description"><strong>Gia:</strong> Heyecanlı ve enerjik bir üslubu vardır.</p>
-          </div>
-          <div class="voice-option">
-            <button class="voice-check-btn" id="voice-btn-dan" onclick="toggleVoice('dan')">Dan'ı Dene</button>
-            <p class="voice-description"><strong>Dan:</strong> Canlı ve dinamik bir üsluba sahiptir.</p>
-          </div>
-          <div class="voice-option">
-            <button class="voice-check-btn" id="voice-btn-dom" onclick="toggleVoice('dom')">Dom'u Dene</button>
-            <p class="voice-description"><strong>Dom:</strong> Doğrudan ve kararlı bir tarzda konuşur.</p>
-          </div>
-        </div>
-      </div>
+<!-- 0. Kart : Kişisel Asistan Modu -->
+<div class="notification-card master-notification-card">
+  <div class="notification-header">
+    <div class="notification-heading-left">
+      <img src="icons/konusma.png" alt="Konuşma" class="notification-icon" draggable="false">
+      <span class="notification-name">Sesli Konuşma Modu</span>
+    </div>
+
+    <!-- Ana anahtar -->
+<label class="notification-switch" draggable="false"
+       style="pointer-events: none;" aria-hidden="true" tabindex="-1">
+</label>
+  </div>
+
+  <!-- Açıklama istersen bırak, istemezsen bu <p>’yi silebilirsin -->
+  <p class="notification-description" style="margin-bottom:1rem;">
+    Seçtiğiniz kişi, konuşma tarzını ve üslubunu etkileyebilir.
+  </p>
+  </div>
+</div>
+
+<!-- İnce ayraç -->
+<hr class="notification-divider">
+  <div class="notifications-container">
+
+<!-- 1 Kart: Sesli Konuşma Seçimi + Ses Deneme Butonları -->
+<div class="notification-card" style="margin-top:1rem; padding-top:0.5rem;">
+
+  <div class="notification-header">
+    <div class="notification-heading-left">
+      <img src="icons/voice_chat.png" alt="Sesli Konuşma" class="notification-icon" draggable="false" style="margin-top: 0.5rem;">
+      <span class="notification-name" style="margin-top: 0.5rem;">Asistan Seçimi</span>
+    </div>
+  </div>
+
+  <!-- Açıklama -->
+  <p class="notification-description">
+    Sky, Gia, Dan ve Dom adlı sesli konuşma asistanlarını keşfet.
+  </p>
+
+  <!-- Kişi Seçimi -->
+<div class="language-selection" style="margin-top:0.5rem;">
+  <select id="conversation-person">
+    <option value="sky">Sky</option>
+    <option value="gia">Gia</option>
+    <option value="dan">Dan</option>
+    <option value="dom">Dom</option>
+  </select>
+</div>
+
+  <!-- Ses Stili Deneme Butonları -->
+  <div class="voice-options">
+    <div class="voice-option">
+      <button class="voice-check-btn" id="voice-btn-sky" onclick="toggleVoice('sky')">Sky'ı Dene</button>
+      <p class="voice-description"><strong>Sky:</strong> Dengeli ve sakin bir üslupla iletişim kurar.</p>
+    </div>
+    <div class="voice-option">
+      <button class="voice-check-btn" id="voice-btn-gia" onclick="toggleVoice('gia')">Gia'yı Dene</button>
+      <p class="voice-description"><strong>Gia:</strong> Heyecanlı ve enerjik bir üslubu vardır.</p>
+    </div>
+    <div class="voice-option">
+      <button class="voice-check-btn" id="voice-btn-dan" onclick="toggleVoice('dan')">Dan'ı Dene</button>
+      <p class="voice-description"><strong>Dan:</strong> Canlı ve dinamik bir üsluba sahiptir.</p>
+    </div>
+    <div class="voice-option">
+      <button class="voice-check-btn" id="voice-btn-dom" onclick="toggleVoice('dom')">Dom'u Dene</button>
+      <p class="voice-description"><strong>Dom:</strong> Doğrudan ve kararlı bir tarzda konuşur.</p>
     </div>
   </div>
 </div>
 
+
+<!-- 3. Kart: Mikrofon Testi -->
+<div class="notification-card" id="mic-test-card">
+  <div class="notification-header">
+    <div class="notification-heading-left">
+      <img src="icons/mic_test.png" alt="Mikrofon Testi" class="notification-icon" draggable="false">
+      <span class="notification-name">Mikrofon Testi</span>
+    </div>
+  </div>
+
+  <p class="notification-description">
+    Testi başlattığınızda ses seviyeniz aşağıdaki çubukta görünecektir.
+  </p>
+
+  <div class="voice-option">
+    <div class="mic-visualizer">
+      <div class="mic-bar" id="mic-bar"></div>
+    </div>
+
+    <!-- Butonlar -->
+    <button class="voice-check-btn" id="start-mic-btn" onclick="startMicTest()">Testi Başlat</button>
+    <button class="voice-check-btn" id="stop-mic-btn" onclick="stopMicTest()" style="display: none;">Testi Durdur</button>
+  </div>
+</div>
+</div>
+</div>
+
+
 <!-- GEÇMİŞ Sekmesi -->
 <div class="tab-content" id="gecmis">
+
+<!-- Konteyner: Tüm bildirim ayarlarını saran ana kapsayıcı -->
+<div class="notifications-container">
+
+<!-- 0. Kart : Geçmişinizi Yönetin -->
+<div class="notification-card master-notification-card">
+  <div class="notification-header">
+    <div class="notification-heading-left">
+      <img src="icons/gecmis.png" alt="Geçmiş" class="notification-icon" draggable="false">
+      <span class="notification-name">Geçmişinizi Yönetin</span>
+    </div>
+
+    <!-- Ana anahtar -->
+<label class="notification-switch" draggable="false"
+       style="pointer-events: none;" aria-hidden="true" tabindex="-1">
+</label>
+  </div>
+
+  <!-- Açıklama istersen bırak, istemezsen bu <p>’yi silebilirsin -->
+  <p class="notification-description" style="margin-bottom:1rem;">
+    Sohbet geçmişini ve arşivini buradan yönetebilirsin.</p>
+  </div>
+</div>
+
+<!-- İnce ayraç -->
+<hr class="notification-divider">
+
   <div class="settings-list">
-    <div class="general-card">
+    <div class="general-card" style="margin-top:1rem;">
       <div class="card-topbar">
         <div class="general-heading-left">
-          <span class="general-name">Mevcut Geçmiş Sohbet Sayısı: <span id="chat-count">0</span>/200</span>
+	<img src="icons/stock_message.png" alt="Geçmiş" class="notification-icon" draggable="false">
+          <span class="general-name">Mevcut Sohbet Sayısı: <span id="chat-count">0</span>/200</span>
         </div>
       </div>
+      <p class="general-description">En fazla 200 sohbet saklanabilir. Eğer bu sınır aşılırsa en eski sohbetler otomatik olarak arşivlenir. Arşiv hakkında daha fazla bilgi için tıkla.</p>
       <div class="description-list">
         <span class="general-count">
           <div class="progress-container">
             <div id="progress-bar" class="progress-bar">
               <div id="progress-bar-fill" class="progress-bar-fill"></div>
             </div>
-            <button id="delete-all-chats" class="danger-btn">Bütün Sohbetleri Sil</button>
+            <!-- NEW: action row -->
+<div class="progress-actions">
+  <button id="archive-all-chats"  class="danger-btn" style="background-color: #2d30e5;">Bütün Sohbetleri Arşivle</button>
+  <button id="delete-all-chats"   class="danger-btn">Bütün Sohbetleri Sil</button>
+</div>
           </div>
         </span>
       </div>
-      <p class="general-description">En fazla 200 geçmiş sohbet saklanabilir. Eğer bu sınır aşılırsa en eski sohbetler otomatik olarak silinir.</p>
     </div>
 
     <!-- Sohbet Özetleyici Kartı -->
     <div class="general-card">
       <div class="card-topbar">
         <div class="general-heading-left">
+<img src="icons/summary.png" alt="Özet" class="notification-icon" draggable="false">
           <span class="general-name">Sohbet Özetleyici</span>
         </div>
       </div>
+      <p class="general-description">Seçilen sohbet başlığının özeti aşağıda gösterilir.</p>
       <div class="description-list">
         <span class="general-count summary-actions-container">
           <select id="chat-summary-dropdown" class="setting-row select">
@@ -4639,16 +5238,15 @@ body.modal-active #sidebar-search-toggle {
           </select>
           <!-- Düzenleme ve Silme Butonları -->
           <div class="history-actions summary-actions">
-            <button class="edit-btn" id="edit-summary-btn" disabled>
-              <img src="icons/edit_btn.png" alt="Düzenle" draggable="false">
-            </button>
-            <button class="delete-btn" id="delete-summary-btn" disabled>
-              <img src="icons/delete_btn.png" alt="Sil" draggable="false">
-            </button>
+<button class="edit-btn theme-filter-btn" id="edit-summary-btn" disabled style="background: none;">
+  <img src="icons/edit_btn.png" alt="Düzenle" draggable="false">
+</button>
+<button class="delete-btn theme-filter-btn" id="delete-summary-btn" disabled style="background: none;">
+  <img src="icons/delete_btn.png" alt="Sil" draggable="false">
+</button>
           </div>
         </span>
       </div>
-      <p class="general-description">Seçilen sohbet başlığının özeti aşağıda gösterilir.</p>
       <p class="general-description summary-text" style="display: none;"></p> <!-- Özetin gösterileceği alan -->
     </div>
   </div>
@@ -4658,14 +5256,40 @@ body.modal-active #sidebar-search-toggle {
 <!-- BAĞLI PROGRAMLAR Sekmesi -->
 <div class="tab-content" id="bagliprogramlar">
   <div class="settings-list">
+
+<!-- Konteyner: Tüm bildirim ayarlarını saran ana kapsayıcı -->
+<div class="notifications-container">
+
+<!-- 0. Kart : Geçmişinizi Yönetin -->
+<div class="notification-card master-notification-card">
+  <div class="notification-header">
+    <div class="notification-heading-left">
+      <img src="icons/bagli_programlar.png" alt="Programları Ayarla" class="notification-icon" draggable="false">
+      <span class="notification-name">Programları Ayarla (Beta)</span>
+    </div>
+
+    <!-- Ana anahtar -->
+<label class="notification-switch" draggable="false"
+       style="pointer-events: none;" aria-hidden="true" tabindex="-1">
+</label>
+  </div>
+
+  <!-- Açıklama istersen bırak, istemezsen bu <p>’yi silebilirsin -->
+  <p class="notification-description" style="margin-bottom:1rem;">
+    MsSQL ve Python programlarını sistemine entegre et.</p>
+  </div>
+</div>
+
+<!-- İnce ayraç -->
+<hr class="notification-divider">
+
     <div class="notifications-container">
-      
       <!-- SQL Kartı -->
-      <div class="notification-card">
+      <div class="notification-card" style="margin-top: 1rem;">
         <div class="notification-header">
           <div class="notification-heading-left">
-            <img src="icons/sql_icon.png" alt="SQL" class="notification-icon" draggable="false">
-            <span class="notification-name">SQL</span>
+            <img src="icons/sql_icon.png" alt="MsSQL" class="notification-icon" draggable="false">
+            <span class="notification-name">MsSQL</span>
           </div>
           <label class="notification-switch">
             <input type="checkbox" id="toggle-sql" onchange="toggleCodeBlock('sql')">
@@ -4673,12 +5297,12 @@ body.modal-active #sidebar-search-toggle {
           </label>
         </div>
         <p class="notification-description">
-          MsSQL sorgularınızı Quik yardımıyla hazırlayın.
+          MsSQL sorgularınızı quik ile kolayca hazırlayın ve çalıştırın.
         </p>
         <div id="sql-code" class="code-block-container" style="display: none;">
           <pre><code class="language-sql">SELECT MemberTable* 
 FROM MemberTable 
-WHERE FullName = 'Quik' 
+WHERE FullName = 'quik' 
 LIMIT 1;</code></pre>
         </div>
       </div>
@@ -4696,17 +5320,17 @@ LIMIT 1;</code></pre>
           </label>
         </div>
         <p class="notification-description">
-          Python kodlarınızı Quik yardımı ile hemen oluşturun ve deneyin.
+          Python kodlarınızı quik ile kolayca hazırlayın ve çalıştırın.
         </p>
         <div id="python-code" class="code-block-container" style="display: none;">
-          <pre><code class="language-python">class QuikAssistant:
+          <pre><code class="language-python">class quikAssistant:
     def __init__(self, name):
         self.name = name
     
     def respond(self, message):
         return f"{self.name}: {message}"
 
-quik = QuikAssistant("Quik")
+quik = quikAssistant("quik")
 print(quik.respond("Merhaba dostum"))</code></pre>
         </div>
       </div>
@@ -4716,7 +5340,7 @@ print(quik.respond("Merhaba dostum"))</code></pre>
         <div class="notification-header">
           <div class="notification-heading-left">
             <img src="icons/javascript_icon.png" alt="JavaScript" class="notification-icon" draggable="false">
-            <span class="notification-name">JavaScript</span>
+            <span class="notification-name">JavaScript (Yakında)</span>
           </div>
           <label class="notification-switch">
             <input type="checkbox" id="toggle-javascript" onchange="toggleCodeBlock('javascript')">
@@ -4724,15 +5348,15 @@ print(quik.respond("Merhaba dostum"))</code></pre>
           </label>
         </div>
         <p class="notification-description">
-          HTML mi, Quik ile hemen JavaScript'e başlayın.
+          JavaScript ile kodlamaya başlayın, quik size yol göstersin!
         </p>
         <div id="javascript-code" class="code-block-container" style="display: none;">
           <pre><code class="language-javascript">const quikChat = {
   init: function() {
-    console.log("Quik hazır!");
+    console.log("quik hazır!");
   },
   sendMessage: function(msg) {
-    return `Quik: ${msg} aldım, buradayım!`;
+    return `quik: ${msg} aldım, buradayım!`;
   }
 };
 
@@ -4746,7 +5370,7 @@ console.log(quikChat.sendMessage("Nasılsın?"));</code></pre>
         <div class="notification-header">
           <div class="notification-heading-left">
             <img src="icons/css_icon.png" alt="CSS" class="notification-icon" draggable="false">
-            <span class="notification-name">CSS</span>
+            <span class="notification-name">CSS (Yakında)</span>
           </div>
           <label class="notification-switch">
             <input type="checkbox" id="toggle-css" onchange="toggleCodeBlock('css')">
@@ -4754,7 +5378,7 @@ console.log(quikChat.sendMessage("Nasılsın?"));</code></pre>
           </label>
         </div>
         <p class="notification-description">
-          HTML mi, Quik ile hemen CSS'e başlayın.
+          CSS ile tasarım mı, quik ile hemen CSS'e başlayın.
         </p>
         <div id="css-code" class="code-block-container" style="display: none;">
           <pre><code class="language-css">.havali-quik {
@@ -4775,65 +5399,131 @@ console.log(quikChat.sendMessage("Nasılsın?"));</code></pre>
 <!-- BAĞLI UYGULAMALAR Sekmesi -->
 <div class="tab-content" id="bagliuygulamalar">
   <div class="notifications-container">
+    
+<!-- 0. Kart : Kişisel Asistan Modu -->
+<div class="notification-card master-notification-card">
+  <div class="notification-header">
+    <div class="notification-heading-left">
+      <img src="icons/google_icon.png" alt="Konuşma" class="notification-icon" draggable="false" style="filter: invert(0);">
+      <span class="notification-name">Google Uygulamaları</span>
+    </div>
+
+    <!-- Ana anahtar -->
+<label class="notification-switch" draggable="false"
+       style="pointer-events: none;" aria-hidden="true" tabindex="-1">
+</label>
+  </div>
+
+  <!-- Açıklama istersen bırak, istemezsen bu <p>’yi silebilirsin -->
+  <p class="notification-description" style="margin-bottom:1rem;">
+    Google uygulamalarına bağlanarak deneyiminizi üst seviyeye taşıyın.
+  </p>
+  </div>
+</div>
+
+<!-- İnce ayraç -->
+<hr class="notification-divider">
+  <div class="notifications-container">
 
 <!-- Gmail Kartı (BAĞLI UYGULAMALAR Sekmesi içinde) -->
-<div class="notification-card">
-  <div class="notification-header" style="justify-content: space-between; align-items: center;">
+<div class="notification-card" style="margin-top: 1rem;">
+  <div class="notification-header" id="security-header">
     <div class="notification-heading-left">
-      <img src="icons/gmail_icon.png" alt="Gmail" class="notification-icon" draggable="false">
-      <span class="notification-name">Gmail</span>
+      <img src="icons/gmail_icon.png" alt="Gmail" class="notification-icon" draggable="false" style="filter: invert(0);">
+      <span class="notification-name">Google Mail</span>
     </div>
-    <div id="gmail-connect-container">
-      <button class="connect-btn" onclick="connectGmail()">Bağlan</button>
-    </div>
+      <button class="connect-btn" id="login-btn" onclick="connectGmail()">Bağlan</button>
   </div>
   <p class="notification-description">
-    Gmail entegrasyonu ile e-postalarınıza erişim sağlanır.
+    Google Mail entegrasyonu ile e-postalarınıza erişim sağlanır.
   </p>
 </div>
 
     <!-- Google Drive Kartı -->
 <div class="notification-card">
-  <div class="notification-header" style="justify-content: space-between; align-items: center;">
+  <div class="notification-header" id="security-header">
     <div class="notification-heading-left">
-      <img src="icons/gdrive_icon.png" alt="Google Drive" class="notification-icon" draggable="false">
+      <img src="icons/gdrive_icon.png" alt="Google Drive" class="notification-icon" draggable="false" style="filter: invert(0);">
       <span class="notification-name">Google Drive</span>
     </div>
-    <button class="connect-btn" onclick="connectGoogleDrive()">Bağlan</button>
+    <button class="connect-btn" id="login-btn" onclick="connectGoogleDrive()">Bağlan</button>
   </div>
   <p class="notification-description">
     Google Drive entegrasyonu ile dosyalarınıza erişim sağlanır.
   </p>
 </div>
 
-    <!-- Google Talk Kartı -->
+    <!-- Google Chat Kartı -->
     <div class="notification-card">
-      <div class="notification-header" style="justify-content: space-between; align-items: center;">
+      <div class="notification-header" id="security-header">
         <div class="notification-heading-left">
-          <img src="icons/gtalk_icon.png" alt="Google Talk" class="notification-icon" draggable="false">
-          <span class="notification-name">Google Talk</span>
+          <img src="icons/gtalk_icon.png" alt="Google Chat" class="notification-icon" draggable="false" style="filter: invert(0);">
+          <span class="notification-name">Google Chat</span>
         </div>
-        <button class="connect-btn" onclick="connectGtalk()">Bağlan</button>
+        <button class="connect-btn" id="login-btn" onclick="connectGtalk()">Bağlan</button>
       </div>
       <p class="notification-description">
-        Google Talk entegrasyonu ile mesajlarınıza cevap üretilir.
+        Google Chat entegrasyonu ile mesajlarınıza cevap üretilir.
       </p>
+ </div>
+
+    <!-- Google Drive Kartı -->
+<div class="notification-card">
+  <div class="notification-header" id="security-header">
+    <div class="notification-heading-left">
+      <img src="icons/google_calendar_icon.png" alt="Google Takvim" class="notification-icon" draggable="false" style="filter: invert(0);">
+      <span class="notification-name">Google Takvim</span>
+    </div>
+    <button class="connect-btn" id="login-btn" onclick="connectGoogleCalendar()">Bağlan</button>
+  </div>
+  <p class="notification-description">
+    Google Takvim entegrasyonu ile takviminize erişim sağlanır.
+  </p>
 </div>
+
+
+<!-- Başlık : Microsoft uygulamaları -->
+  <div class="notifications-container">
+    
+<!-- 0. Kart : Microsoft uygulamaları -->
+<div class="notification-card master-notification-card">
+  <div class="notification-header">
+    <div class="notification-heading-left">
+      <img src="icons/microsoft_icon.png" alt="Microsoft" class="notification-icon" draggable="false" style="filter: invert(0);">
+      <span class="notification-name">Microsoft Uygulamaları</span>
+    </div>
+
+    <!-- Ana anahtar -->
+<label class="notification-switch" draggable="false"
+       style="pointer-events: none;" aria-hidden="true" tabindex="-1">
+</label>
+  </div>
+
+  <!-- Açıklama istersen bırak, istemezsen bu <p>’yi silebilirsin -->
+  <p class="notification-description">
+    Microsoft uygulamalarına bağlanarak deneyiminizi üst seviyeye taşıyın.
+  </p>
+  </div>
+</div>
+
+<!-- İnce ayraç -->
+<hr class="notification-divider">
+
 
     <!-- Microsoft OneDrive Kartı -->
     <div class="notification-card">
-      <div class="notification-header">
+      <div class="notification-header" id="security-header">
         <div class="notification-heading-left">
-          <img src="icons/onedrive_icon.png" alt="OneDrive" class="notification-icon" draggable="false">
+          <img src="icons/onedrive_icon.png" alt="OneDrive" class="notification-icon" draggable="false" style="filter: invert(0);">
           <span class="notification-name">Microsoft OneDrive</span>
         </div>
+        <button class="connect-btn" id="login-btn" onclick="connectMicrosoft()">Bağlan</button>
       </div>
       <p class="notification-description">
         OneDrive entegrasyonu ile dosyalarınıza erişim sağlanır.
       </p>
-
-
     </div>
+
   </div>
 </div>
 
@@ -4841,6 +5531,60 @@ console.log(quikChat.sendMessage("Nasılsın?"));</code></pre>
 <!-- BAĞLI SİSTEMLER Sekmesi -->
 <div class="tab-content" id="baglisistemler">
   <div class="notifications-container">
+
+<!-- 0. Kart : SGDD-ASAM Sistemlerine Bağlan -->
+<div class="notification-card master-notification-card">
+  <div class="notification-header">
+    <div class="notification-heading-left">
+      <img src="icons/sgdd_asam_icon.png" alt="Konuşma"
+           class="notification-icon" draggable="false" style="filter:invert(0);">
+      <span class="notification-name">SGDD-ASAM Sistemleri</span>
+    </div>
+
+    <!-- ETKİN anahtar -->
+    <label class="notification-switch">
+      <input type="checkbox" id="toggle-sgdd" onchange="toggleCredentials('sgdd')">
+      <span class="notification-slider"></span>
+    </label>
+  </div>
+
+  <p class="notification-description">
+    SGDD-ASAM sistemlerine bağlanın. Lütfen VPN bağlantınızı kontrol ediniz.
+  </p>
+
+<!-- Tek seferlik kimlik kutusu -->
+<div id="sgdd-credentials" class="credentials-container" style="display:none;">
+
+  <div class="credential-input">
+    <label for="sgdd-username">Kullanıcı Adı</label>
+    <input type="text" id="sgdd-username" placeholder="Kullanıcı adınızı girin">
+  </div>
+
+  <!-- Şifre + göz ikonu -->
+  <div class="credential-input">
+    <label for="sgdd-password">Şifre</label>
+
+    <div class="password-field">
+      <input type="password" id="sgdd-password" placeholder="Şifrenizi girin">
+      <img src="icons/enable_show_password_icon.png"
+           id="sgdd-pass-toggle"
+           alt="Şifreyi göster"
+           class="toggle-icon"
+           onclick="toggleSGDDPassword()">
+    </div>
+  </div>
+
+  <button id="save-sgdd"
+          class="voice-check-btn"
+          style="margin-top:0.25rem;"
+          onclick="saveMasterCredentials()">Kaydet</button>
+</div>
+
+</div>
+
+<!-- İnce ayraç -->
+<hr class="notification-divider">
+
     <!-- 1. Kart: BIODATA -->
     <div class="notification-card">
       <div class="notification-header">
@@ -4854,20 +5598,8 @@ console.log(quikChat.sendMessage("Nasılsın?"));</code></pre>
         </label>
       </div>
       <p class="notification-description">
-        BIODATA uygulamasına bağlanır. Lütfen VPN ayarlarınızı kontrol ediniz.
+        BIODATA uygulamasına bağlanır ve vakalar için özet sunar.
       </p>
-      <!-- Kullanıcı Adı ve Şifre Alanı (Başlangıçta Gizli) -->
-      <div id="biodata-credentials" class="credentials-container" style="display: none;">
-        <div class="credential-input">
-          <label for="biodata-username">Kullanıcı Adı</label>
-          <input type="text" id="biodata-username" placeholder="Kullanıcı adınızı girin">
-        </div>
-        <div class="credential-input">
-          <label for="biodata-password">Şifre</label>
-          <input type="password" id="biodata-password" placeholder="Şifrenizi girin">
-        </div>
-        <button id="save-biodata" class="credential-save-btn" onclick="saveCredentials('biodata')">Kaydet</button>
-      </div>
     </div>
 
     <!-- 2. Kart: DGBYS -->
@@ -4883,20 +5615,8 @@ console.log(quikChat.sendMessage("Nasılsın?"));</code></pre>
         </label>
       </div>
       <p class="notification-description">
-        DGBYS uygulamasına bağlanır. Lütfen VPN ayarlarınızı kontrol ediniz.
+        DGBYS uygulamasına bağlanır ve operasyonlar hakkında bilgi verir.
       </p>
-      <!-- Kullanıcı Adı ve Şifre Alanı (Başlangıçta Gizli) -->
-      <div id="dgbys-credentials" class="credentials-container" style="display: none;">
-        <div class="credential-input">
-          <label for="dgbys-username">Kullanıcı Adı</label>
-          <input type="text" id="dgbys-username" placeholder="Kullanıcı adınızı girin">
-        </div>
-        <div class="credential-input">
-          <label for="dgbys-password">Şifre</label>
-          <input type="password" id="dgbys-password" placeholder="Şifrenizi girin">
-        </div>
-        <button id="save-dgbys" class="credential-save-btn" onclick="saveCredentials('dgbys')">Kaydet</button>
-        </div>
       </div>
 
     <!-- 3. Kart: EMTIA -->
@@ -4912,20 +5632,8 @@ console.log(quikChat.sendMessage("Nasılsın?"));</code></pre>
         </label>
       </div>
       <p class="notification-description">
-        EMTIA uygulamasına bağlanır. Lütfen VPN ayarlarınızı kontrol ediniz.
+        EMTIA uygulamasına bağlanır ve malzemeler hakkında bilgi verir.
       </p>
-      <!-- Kullanıcı Adı ve Şifre Alanı (Başlangıçta Gizli) -->
-      <div id="emtia-credentials" class="credentials-container" style="display: none;">
-        <div class="credential-input">
-          <label for="emtia-username">Kullanıcı Adı</label>
-          <input type="text" id="emtia-username" placeholder="Kullanıcı adınızı girin">
-        </div>
-        <div class="credential-input">
-          <label for="emtia-password">Şifre</label>
-          <input type="password" id="emtia-password" placeholder="Şifrenizi girin">
-        </div>
-        <button id="save-emtia" class="credential-save-btn" onclick="saveCredentials('emtia')">Kaydet</button>
-        </div>
       </div>
 
     <!-- 4. Kart: MEYER -->
@@ -4941,32 +5649,110 @@ console.log(quikChat.sendMessage("Nasılsın?"));</code></pre>
         </label>
       </div>
       <p class="notification-description">
-        MEYER uygulamasına bağlanır. Lütfen VPN ayarlarınızı kontrol ediniz.
+        MEYER uygulamasına bağlanır ve izinler hakkında yardımcı olur.
       </p>
       <!-- Kullanıcı Adı ve Şifre Alanı (Başlangıçta Gizli) -->
-      <div id="meyer-credentials" class="credentials-container" style="display: none;">
-        <div class="credential-input">
-          <label for="meyer-username">Kullanıcı Adı</label>
-          <input type="text" id="meyer-username" placeholder="Kullanıcı adınızı girin">
-        </div>
-        <div class="credential-input">
-          <label for="meyer-password">Şifre</label>
-          <input type="password" id="meyer-password" placeholder="Şifrenizi girin">
-        </div>
-        <button id="save-meyer" class="credential-save-btn" onclick="saveCredentials('meyer')">Kaydet</button>
-        </div>
       </div>
-
-
     </div>
   </div>
+
+<!-- HESAP Sekmesi -->
+<div class="tab-content" id="hesap">
+  <div class="notifications-container">
+    
+<!-- 0. Kart : Hesap Ayarları -->
+<div class="notification-card master-notification-card">
+  <div class="notification-header">
+    <div class="notification-heading-left">
+      <img src="icons/hesap.png" alt="Hesap" class="notification-icon" draggable="false">
+      <span class="notification-name">Hesap Ayarları</span>
+    </div>
+    
+    <label class="notification-switch" draggable="false"
+      style="pointer-events: none;" aria-hidden="true" tabindex="-1">
+    </label>
+  </div>
+
+    <p class="notification-description">
+    quik uygulamasına giriş yap ve iki aşamalı doğrulamayı aktif et.
+    </p>
 </div>
 
+<!-- İnce ayraç -->
+<hr class="notification-divider">
+
+<!-- 1. Kart: Hesap Girişi -->
+  <div class="notification-card">
+    <div class="notification-header" id="security-header">
+      <div class="notification-heading-left">
+        <img src="icons/hesap.png" alt="Hesap" class="notification-icon" draggable="false">
+        <span class="notification-name">Hesap</span>
+      </div>
+      <button class="connect-btn"
+        id="login-btn"
+        onclick="redirectToRegister(this)">Oturum Aç</button>
+  </div>
+  <p class="notification-description" id="login-info-text">
+    quik uygulamasından daha iyi faydalanmak için giriş yapmalısınız.
+  </p>
+  </div>
+    
+<!-- 2. Kart: Hesap Güvenliği -->
+ <div class="notification-card">
+  <div class="notification-header" id="security-header">
+    <div class="notification-heading-left">
+      <img src="icons/security.png" alt="Güvenlik" class="notification-icon" draggable="false">
+      <span class="notification-name">Güvenlik</span>
+    </div>
+      <button class="connect-btn" id="login-btn">İki Aşamalı Doğrulama</button>
+  </div>
+  <p class="notification-description" id="login-info-text">
+    Hesabınızın güvenliğini artırmak için iki aşamalı doğrulamayı açın.
+  </p>
+  </div>
+
+  </div> <!-- /notifications-container -->
+</div> <!-- /tab-content -->
 
       </div><!-- /settings-content -->
     </div><!-- /settings-body -->
   </div><!-- /settings-modal-content -->
 </div><!-- /settings-modal -->
+
+
+<!-- Kullanım Şartları ve Gizlilik Politikası Modali -->
+<button id="help-btn">
+  <img src="icons/question_icon.png" alt="Yardım" draggable="false">
+</button>
+
+<div id="help-dropdown" class="help-dropdown">
+  <button class="help-item" id="terms-btn">Kullanım Şartları</button>
+  <button class="help-item" id="privacy-btn">Gizlilik Politikası</button>
+</div>
+
+
+<!-- Silme Onay Modali -->
+<div id="confirm-modal" class="modal" style="display: none;">
+  <div class="modal-content">
+    <h2 id="confirm-message">Tüm sohbetleri silmek istediğinizden emin misiniz?</h2>
+    <div style="display: flex; justify-content: center; gap: 1rem; margin-top: 20px;">
+      <button class="connect-btn" onclick="confirmAction()" style="padding:10px; font-size: 0.85rem;">Evet</button>
+      <button class="connect-btn" onclick="cancelAction()" style="padding:10px; font-size: 0.85rem;">Hayır</button>
+    </div>
+  </div>
+</div>
+
+<!-- Başlık Düzenleme Modali -->
+<div id="edit-modal" class="modal" style="display: none;">
+  <div class="modal-content">
+    <h2>Yeni Başlık Girin</h2>
+    <input type="text" id="new-title-input" placeholder="Yeni başlık..." style="width: 100%; padding: 10px; margin-top: 10px; border-radius: 8px; border: 1px solid #ccc;">
+    <div style="display: flex; justify-content: center; gap: 1rem; margin-top: 20px;">
+      <button class="connect-btn" onclick="confirmEditTitle()" style="padding:10px; font-size: 0.85rem;">Tamam</button>
+      <button class="connect-btn" onclick="cancelEditTitle()" style="padding:10px; font-size: 0.85rem;">İptal</button>
+    </div>
+  </div>
+</div>
 
 
   <!-- Marked ve Highlight.js Kütüphaneleri -->
@@ -5075,8 +5861,7 @@ function loadConversations() {
     conversations = JSON.parse(saved);
     // Mevcut sohbetlere timestamp ekle (eğer yoksa)
     conversations = conversations.map(conv => ({
-      ...conv,
-      timestamp: conv.timestamp || Date.now() // Varsayılan olarak şu anki zaman
+      ...conv, timestamp: conv.timestamp || Date.now() // Varsayılan olarak şu anki zaman
     }));
     if (conversations.length > 0) {
       currentConversation = null;
@@ -5181,130 +5966,252 @@ function renderChatHistory() {
     return dateB - dateA;
   });
 
-  sortedDates.forEach(date => {
+  sortedDates.forEach((date) => {
     const headerLi = document.createElement("li");
     headerLi.className = "chat-history-group";
     headerLi.innerHTML = `<div class="chat-history-header">${date}</div>`;
     chatHistoryList.appendChild(headerLi);
 
-    const sortedConversations = groupedConversations[date].sort((a, b) => b.timestamp - a.timestamp);
-    sortedConversations.forEach(conv => {
+    const sortedConversations = groupedConversations[date].sort(
+      (a, b) => b.timestamp - a.timestamp
+    );
+    sortedConversations.forEach((conv) => {
       const li = document.createElement("li");
-      li.className = `chat-history-item${currentConversation?.id === conv.id ? " active" : ""}`;
+      li.className = `chat-history-item${
+        currentConversation?.id === conv.id ? " active" : ""
+      }`;
       li.dataset.id = conv.id;
+
+      const favoriteIcon = conv.favorite
+        ? `<img src="icons/favorite_btn.png" alt="Favorited" style="width:12px; height:12px; margin-right:5px;" draggable="false">`
+        : "";
+
       li.innerHTML = `
-        <span class="chat-history-title">${conv.title || "Yeni Sohbet"}</span>
+        <span class="chat-history-title">${favoriteIcon}${conv.title || "Yeni Sohbet"}</span>
         <div class="history-actions">
-          <button class="edit-btn"><img src="icons/edit_btn.png" alt="Düzenle" draggable="false" /></button>
-          <button class="delete-btn"><img src="icons/delete_btn.png" alt="Sil" draggable="false" /></button>
+          <button class="more-options-btn"><img src="icons/more_options.png" alt="Seçenekler" draggable="false" /></button>
         </div>
+      `; // Dropdown menüyü henüz eklemiyoruz
+
+      // Dropdown menüsünü oluştur
+      const dropdownMenu = document.createElement("div");
+      dropdownMenu.className = "dropdown-menu";
+      // style.display = "none"; CSS'den geldiği için burada ayarlamaya gerek yok
+      dropdownMenu.innerHTML = `
+        <button class="dropdown-item edit-btn">
+          <img src="icons/edit_btn.png" alt="Düzenle" draggable="false" style="width:10px; height:10px; margin-right:5px;" />
+          <span>Düzenle</span>
+        </button>
+        <button class="dropdown-item delete-btn">
+	<span style="color: red;">
+  	<img src="icons/delete_btn.png" alt="Sil" draggable="false" 
+     	  style="width:10px; height:10px; margin-right:5px; filter: invert(21%) sepia(99%) saturate(7484%) hue-rotate(359deg) brightness(93%) contrast(119%);" />
+  	Sil
+	</span>
+        </button>
       `;
+      // Dropdown menüsünü body yerine li'ye ekle!
+      li.appendChild(dropdownMenu);
 
-// Render edilen her sohbet öğesi için:
-li.addEventListener("click", () => {
-  // Seçilen sohbeti aktif hale getiriyoruz
-  currentConversation = conv;
-  renderChat();
-  renderChatHistory();
-  closeChatSearch();
-  
-  // Geçmiş sohbet listesindeki aktif öğeleri güncelle
-  document.querySelectorAll(".chat-history-item").forEach(item => item.classList.remove("active"));
-  const activeItem = document.querySelector(`.chat-history-item[data-id="${conv.id}"]`);
-  if (activeItem) activeItem.classList.add("active");
-  
-  // Eğer mobildeyseniz, sidebar'ı kapatın
-  if (window.innerWidth <= 768) {
-    closeSidebar();
-  }
-  
-  // HTML sayfa başlığını ve top bar’daki sohbet başlığını güncelleyin
-  document.title = currentConversation.title || "Quik";
-  updateTopBarTitle();
-});
+      // More-options-btn click handler
+      const moreOptionsBtn = li.querySelector(".more-options-btn");
+      moreOptionsBtn.addEventListener("click", (e) => {
+        e.stopPropagation(); // Olayın li'ye yayılmasını engelle
 
-li.querySelector(".edit-btn").addEventListener("click", (e) => {
-  e.stopPropagation(); // li'nin click olayının tetiklenmesini engelle
-  const titleSpan = li.querySelector(".chat-history-title");
-  const currentTitle = conv.title || "Yeni Sohbet";
-  
-  // Input elemanını oluştur
-  const input = document.createElement("input");
-  input.type = "text";
-  input.value = currentTitle;
-  input.className = "chat-history-title edit-input";
-  input.style.width = "80%";
-  
-  // Mevcut span'ın stil özelliklerini input'a aktar
-  const computedStyle = window.getComputedStyle(titleSpan);
-  input.style.fontFamily = computedStyle.fontFamily;
-  input.style.fontSize = computedStyle.fontSize;
-  input.style.fontWeight = computedStyle.fontWeight;
-  input.style.color = computedStyle.color;
-  
-  // Kullanıcının manuel seçebilmesi için gerekli CSS ayarı
-  input.style.userSelect = "text";
+        // Diğer tüm açık dropdown'ları kapat
+        document.querySelectorAll(".dropdown-menu").forEach((menu) => {
+          if (menu !== dropdownMenu) {
+            menu.style.display = "none";
+          }
+        });
 
-  // Üst öğeye olayların taşmaması için tıklama, mousedown ve mouseup olaylarında stopPropagation ekleyin:
-  input.addEventListener("click", (event) => {
-    event.stopPropagation();
-  });
-  input.addEventListener("mousedown", (event) => {
-    event.stopPropagation();
-  });
-  input.addEventListener("mouseup", (event) => {
-    event.stopPropagation();
-  });
-  
-  // Mevcut span'ı input ile değiştir
-  titleSpan.replaceWith(input);
-  input.focus();
-  
-  // Düzenleme tamamlandığında başlığı güncelleyen fonksiyon
-  function finishEditing() {
-    conv.title = input.value.trim() || currentTitle;
+        // Mevcut dropdown'un görünürlüğünü tersine çevir
+        const isCurrentlyVisible = dropdownMenu.style.display === "block";
+        dropdownMenu.style.display = isCurrentlyVisible ? "none" : "block";
+
+        // Eğer menü açılıyorsa, konumunu ayarla
+        if (!isCurrentlyVisible) {
+          // Butonun li içerisindeki konumuna göre hesaplama yap
+          const buttonRightEdge = moreOptionsBtn.offsetLeft + moreOptionsBtn.offsetWidth;
+          const buttonVerticalCenter = moreOptionsBtn.offsetTop + moreOptionsBtn.offsetHeight / 2;
+
+          // Menüyü butonun sağına ve dikeyde ortalayacak şekilde konumlandır
+          // (Dropdown'un yüksekliğini bilmemiz gerekebilir, ölçüm yapabilir veya sabit varsayabiliriz)
+          // Önce gösterip sonra ölçmek daha doğru sonuç verir:
+          dropdownMenu.style.left = `${buttonRightEdge + 65}px`; // Butonun sağına 5px boşlukla
+          dropdownMenu.style.top = `${buttonVerticalCenter - dropdownMenu.offsetHeight / 2}px`; // Dikeyde ortala
+
+          // --- Kenar Taşması Kontrolü (Opsiyonel ama Önerilir) ---
+          // Menünün ekran dışına taşıp taşmadığını kontrol et
+          const menuRect = dropdownMenu.getBoundingClientRect(); // Viewport'a göre konum
+          const listRect = chatHistoryList.getBoundingClientRect(); // Liste konteynerinin konumu
+
+          // Sağ kenar taşması
+          if (menuRect.right > listRect.right) {
+             // Butonun soluna almayı deneyebiliriz
+             dropdownMenu.style.left = `${moreOptionsBtn.offsetLeft - dropdownMenu.offsetWidth - 5}px`;
+          }
+          // Alt kenar taşması (gerekirse yukarı kaydır)
+           if (menuRect.bottom > window.innerHeight) {
+             dropdownMenu.style.top = `${moreOptionsBtn.offsetTop - dropdownMenu.offsetHeight + moreOptionsBtn.offsetHeight / 2 }px`; // Yukarı kaydır
+           }
+          // Üst kenar taşması (gerekirse aşağı kaydır)
+           if (menuRect.top < 0) {
+             dropdownMenu.style.top = `${moreOptionsBtn.offsetTop + moreOptionsBtn.offsetHeight / 2}px`; // Aşağı kaydır
+           }
+           // --- ---
+        }
+      });
+
+      // --- Edit ve Delete Butonları için Olay Dinleyicileri (Değişiklik Yok) ---
+
+      // Edit button handler
+      dropdownMenu.querySelector(".edit-btn").addEventListener("click", (e) => {
+        e.stopPropagation();
+        dropdownMenu.style.display = "none"; // Close dropdown
+        const titleSpan = li.querySelector(".chat-history-title");
+        // ... (geri kalan edit kodu aynı)
+        const currentTitle = conv.title || "Yeni Sohbet";
+        const input = document.createElement("input");
+        input.type = "text";
+        input.value = currentTitle;
+        input.className = "chat-history-title edit-input";
+        input.style.width = "80%";
+        const computedStyle = window.getComputedStyle(titleSpan);
+        input.style.fontFamily = computedStyle.fontFamily;
+        input.style.fontSize = computedStyle.fontSize;
+        input.style.fontWeight = computedStyle.fontWeight;
+        input.style.color = computedStyle.color;
+        input.style.userSelect = "text";
+        input.addEventListener("click", (event) => event.stopPropagation());
+        input.addEventListener("mousedown", (event) => event.stopPropagation());
+        input.addEventListener("mouseup", (event) => event.stopPropagation());
+        titleSpan.replaceWith(input);
+        input.focus();
+function finishEditing() {
+    const newTitle = input.value.trim() || currentTitle;
+    conv.title = newTitle;
+
+    // aktif sohbet düzenleniyorsa tarayıcı başlığını da güncelle
+    if (currentConversation && currentConversation.id === conv.id) {
+        document.title = newTitle || "quik";
+    }
+
     renderChatHistory();
     saveConversations();
     updateTopBarTitle();
-  }
-  
-  input.addEventListener("blur", finishEditing);
-  input.addEventListener("keydown", (event) => {
-    if (event.key === "Enter") {
-      event.preventDefault();
-      event.stopPropagation();
-      input.blur();
-    } else if (event.key === "Escape") {
-      event.preventDefault();
-      event.stopPropagation();
-      conv.title = currentTitle;
-      renderChatHistory();
-      saveConversations();
-    }
-  });
-});
+    populateChatSummaryDropdown();
+}
+        input.addEventListener("blur", finishEditing);
+        input.addEventListener("keydown", (event) => {
+            if (event.key === "Enter") {
+                event.preventDefault();
+                event.stopPropagation();
+                input.blur();
+            } else if (event.key === "Escape") {
+                event.preventDefault();
+                event.stopPropagation();
+                // input.value = currentTitle; // Değişikliği geri al
+                input.blur(); // Blur yine finishEditing'i tetikler, en iyisi render'ı çağırmak
+                conv.title = currentTitle; // Değişikliği geri al (önemli)
+                renderChatHistory(); // Esc ile iptalde listeyi eski haline getir
+                saveConversations(); // Geri alınan hali kaydet
+                populateChatSummaryDropdown();
+                updateTopBarTitle();
+            }
+        });
+      });
 
-li.querySelector(".delete-btn").addEventListener("click", (e) => {
+      // Delete button handler
+dropdownMenu.querySelector(".delete-btn").addEventListener("click", (e) => {
   e.stopPropagation();
-  if (confirm("Bu sohbeti silmek istediğinize emin misiniz?")) {
-    conversations = conversations.filter(c => c.id !== conv.id);
+  dropdownMenu.style.display = "none"; // Close dropdown
+
+  openConfirmModal(() => {
+    conversations = conversations.filter((c) => c.id !== conv.id);
     if (currentConversation?.id === conv.id) {
       currentConversation = null;
       chatContainer.innerHTML = "";
       chatContainer.appendChild(welcomeMessage);
       welcomeMessage.style.display = "block";
-      document.title = "Quik"; // HTML başlığı güncelleniyor
-      updateTopBarTitle();   // Top bar başlığını boşaltıyoruz
+      document.title = "quik";
+      updateTopBarTitle();
     }
     renderChatHistory();
     saveConversations();
-    updateChatCount(); // Sohbet sayısını güncelle
-  }
+    updateChatCount();
+    populateChatSummaryDropdown();
+  }, "Bu sohbeti silmek istediğinize emin misiniz?");
 });
+
+
+      // --- li Tıklama Olayı (Değişiklik Yok) ---
+      li.addEventListener("click", (e) => {
+        // Eğer tıklanan yer buton veya menü ise li tıklamasını tetikleme
+        if (
+          moreOptionsBtn.contains(e.target) ||
+          dropdownMenu.contains(e.target) ||
+          li.querySelector('.edit-input')?.contains(e.target) // Düzenleme input'una tıklanınca da engelle
+        ) {
+          return;
+        }
+
+        currentConversation = conv;
+        saveLastConversationId(currentConversation.id);
+        renderChat();
+        renderChatHistory(); // Aktif stili ayarlamak için tekrar çağırıyoruz
+        closeChatSearch();
+        // Aktif sınıfı tekrar ayarla (renderChatHistory içinde yapılıyor ama garanti olsun)
+        document.querySelectorAll(".chat-history-item").forEach((item) => item.classList.remove("active"));
+        const activeItem = document.querySelector(`.chat-history-item[data-id="${conv.id}"]`);
+        if (activeItem) activeItem.classList.add("active");
+
+        if (window.innerWidth <= 768) {
+          closeSidebar();
+        }
+        document.title = currentConversation.title || "quik";
+        updateTopBarTitle();
+      });
+
+
       chatHistoryList.appendChild(li);
     });
   });
 }
+
+// --- Global Click Listener Güncellemesi ---
+// Bu listener'ı renderChatHistory DIŞINA taşı (zaten öyleymiş, ama içeriğini güncelle)
+
+// Önceki global listener'ı kaldır (eğer birden fazla eklenmesini önlemek için)
+// document.removeEventListener("click", handleGlobalClick); // Eğer bir isim verdiyseniz
+
+// Yeni global click listener
+function handleGlobalClick(e) {
+    // Açık olan bir dropdown menü var mı kontrol et
+    const openDropdown = document.querySelector(".dropdown-menu[style*='display: block']");
+
+    if (openDropdown) {
+        const parentLi = openDropdown.closest('.chat-history-item');
+        const triggerButton = parentLi?.querySelector('.more-options-btn');
+
+        // Tıklama, açık olan menünün veya onu açan butonun dışındaysa menüyü kapat
+        if (!openDropdown.contains(e.target) && !(triggerButton && triggerButton.contains(e.target))) {
+            openDropdown.style.display = 'none';
+        }
+    }
+}
+
+// Listener'ı ekle (sayfa yüklendiğinde bir kere)
+document.addEventListener("click", handleGlobalClick);
+
+document.addEventListener("keydown", (e) => {
+  if (e.key === "Escape") {
+    document.querySelectorAll(".dropdown-menu").forEach(menu => {
+      menu.style.display = "none";
+    });
+  }
+});
+
 
 function formatRelativeDate(timestamp) {
   const now = new Date();
@@ -5626,7 +6533,7 @@ dislikeBtn.addEventListener("click", () => {
 // Yeniden Üret Butonu (İkonlu)
   const regenBtn = document.createElement("button");
   const regenIcon = document.createElement("img");
-  regenIcon.src = "icons/quik_icon.png";
+  regenIcon.src = "icons/regenerate_btn.png";
   regenIcon.alt = "Yeniden Üret";
   regenIcon.style.width = "16px";
   regenIcon.style.height = "16px";
@@ -5993,8 +6900,8 @@ marked.setOptions({
      BAŞLATMA VE OLAY DİNLEYİCİLERİ
 ====================== */
 document.addEventListener("DOMContentLoaded", () => {
-  loadConversations();
-  currentConversation = null;
+
+
   renderChatHistory();
   closeSidebar();
   populateChatSummaryDropdown();
@@ -6028,6 +6935,16 @@ document.addEventListener("DOMContentLoaded", () => {
       modelDropdown.classList.remove("show");
     });
   });
+
+document.addEventListener('keydown', function (e) {
+  if (e.key === 'Escape') {
+    const modelDropdown = document.querySelector('.model-dropdown.show');
+    if (modelDropdown) {
+      modelDropdown.classList.remove('show');
+    }
+  }
+});
+
 
   window.addEventListener("click", (e) => {
     if (!modelToggleBtn.contains(e.target) && !modelDropdown.contains(e.target)) {
@@ -6089,27 +7006,43 @@ document.addEventListener("DOMContentLoaded", () => {
 
 // Yeni eklenen otomatik odaklama mantığı
 document.addEventListener("keydown", (e) => {
-  const chatInput = document.getElementById("chat-input-textarea");
-  const settingsModal = document.getElementById("settings-modal");
-  const chatSearchModal = document.getElementById("chat-search-modal");
+  const chatInput      = document.getElementById("chat-input-textarea");
+  const settingsModal  = document.getElementById("settings-modal");
+  const chatSearchModal= document.getElementById("chat-search-modal");
 
-  // Ctrl (veya Cmd) ile bir kısayol kullanıyorsak, hiçbir şey yapma
-  if (e.ctrlKey || e.metaKey) {
+  /* 1 | BOŞKEN ENTER → HİÇBİR ŞEY YAPMA, NEWLINE EKLEME */
+  if (
+    e.key === "Enter"            &&          // sadece Enter
+    !e.shiftKey                  &&          // Shift+Enter hariç
+    document.activeElement === chatInput    &&  // odak textarea'da
+    chatInput.value.trim() === ""           // içerik boş
+  ) {
+    e.preventDefault();                      // newline / submit engellendi
+    return;                                  // diğer kodları çalıştırma
+  }
+
+  /* 2 | Ctrl / Cmd kısayolları → dokunma */
+  if (e.ctrlKey || e.metaKey) return;
+  
+  /* ESC tuşuna basıldığında hiçbir şey yapma */
+  if (e.key === "Escape") {
     return;
   }
 
-  // Eğer ayarlar modali Veya search modali açıksa veya başka bir input/textarea aktifse,
-  // chat inputa otomatik odaklama yapma
+  /* 3 | Ayarlar veya arama modalı açıksa ya da başka input odaklıysa → dokunma */
   if (
     (settingsModal.style.display === "block" || chatSearchModal.style.display === "block") ||
     document.activeElement.tagName === "INPUT" ||
-    document.activeElement.tagName === "TEXTAREA"
+    (document.activeElement.tagName === "TEXTAREA" && document.activeElement !== chatInput)
   ) {
     return;
   }
 
-  // Eğer chat-input zaten odaklanmamışsa, odakla
+  /* 4 | Chat-input odakta değilse odakla, ama Enter tuşuna basılırsa preventDefault yap */
   if (document.activeElement !== chatInput) {
+    if (e.key === "Enter") {
+      e.preventDefault(); // Enter'a basıldığında varsayılan davranışı engelle
+    }
     chatInput.focus();
     console.log("Chat-input otomatik olarak odaklandı.");
   }
@@ -6137,18 +7070,20 @@ conversationPersonSelect.addEventListener("change", () => {
 });
 
 const deleteAllChatsBtn = document.getElementById("delete-all-chats");
+
 deleteAllChatsBtn.addEventListener("click", () => {
-  if (confirm("Bütün sohbetleri silmek istediğinizden emin misiniz?")) {
+  openConfirmModal(() => {
     conversations = [];
     currentConversation = null;
     localStorage.setItem("conversations", JSON.stringify(conversations));
     renderChatHistory();
     chatContainer.innerHTML = "";
     welcomeMessage.style.display = "block";
-    updateChatCount(); // Sayıyı sıfırla
+    updateChatCount();
     console.log("Tüm sohbetler silindi.");
-  }
+  }, "Bütün sohbetleri silmek istediğinizden emin misiniz?");
 });
+
 
   desktopNotificationsToggle.addEventListener("change", () => {
     localStorage.setItem("desktopNotificationsToggle", desktopNotificationsToggle.checked);
@@ -6302,7 +7237,7 @@ chatInput.addEventListener("keydown", (e) => {
   staticPromptTextarea.value = botSettings.staticPrompt;
 
   // Ayarları Kaydet
-savePersonalizationBtn.addEventListener("click", () => {
+  savePersonalizationBtn.addEventListener("click", () => {
   botSettings.staticPrompt = staticPromptTextarea.value.trim();
   localStorage.setItem("staticPrompt", botSettings.staticPrompt);
 
@@ -6352,6 +7287,7 @@ newChatBtn.addEventListener("click", () => {
   
   // Mevcut sohbeti temizle
   currentConversation = null;
+  saveLastConversationId(null);
   chatContainer.innerHTML = "";
   welcomeMessage.innerHTML = window.originalWelcomeHTML;
   welcomeMessage.style.display = "block";
@@ -6362,7 +7298,7 @@ newChatBtn.addEventListener("click", () => {
   renderChatHistory();
   
   // HTML title güncellemesi (isteğe bağlı)
-  document.title = "Quik";
+  document.title = "quik";
   
   // Top bar başlığını güncelle (currentConversation null olduğundan boş kalacaktır)
   updateTopBarTitle();
@@ -6405,6 +7341,7 @@ sidebarBrand.addEventListener("click", () => {
   
   // Mevcut sohbeti temizle
   currentConversation = null;
+  saveLastConversationId(null);
   chatContainer.innerHTML = "";
   welcomeMessage.innerHTML = window.originalWelcomeHTML;
   welcomeMessage.style.display = "block";
@@ -6415,10 +7352,13 @@ sidebarBrand.addEventListener("click", () => {
   renderChatHistory();
   
   // HTML başlığını güncelle
-  document.title = "Quik";
+  document.title = "quik";
   
   // Top bar’da sohbet başlığı boşaltılsın
   updateTopBarTitle();
+
+  uploadedFiles = [];
+  fileContainer.innerHTML = "";
 });
 
 function makeWelcomeActive() {
@@ -6440,7 +7380,6 @@ document.getElementById("settings-btn").addEventListener("click", () => {
   document.getElementById("settings-modal").style.display = "block";
   document.getElementById("settings-btn").classList.add("blurred");
   document.getElementById("sidebar-search-toggle").classList.add("blurred"); // Yeni satır
-  setActiveTab("genel");
 });
 
 // Modal kapatma işlemi: kapatma butonu veya modal dışına tıklama
@@ -6450,14 +7389,28 @@ document.getElementById("settings-close").addEventListener("click", () => {
   document.getElementById("sidebar-search-toggle").classList.remove("blurred"); // Yeni satır
 });
 
-window.addEventListener("click", (event) => {
-  const modal = document.getElementById("settings-modal");
-  if (event.target === modal) {
+(() => {
+  const modal   = document.getElementById("settings-modal");
+  const close   = () => {
     modal.style.display = "none";
     document.getElementById("settings-btn").classList.remove("blurred");
-    document.getElementById("sidebar-search-toggle").classList.remove("blurred"); // Yeni satır
-  }
-});
+    document.getElementById("sidebar-search-toggle").classList.remove("blurred");
+  };
+
+  let downOnBackdrop = false;
+
+  // Sadece backdrop’ta mouse-down olduysa işaretle
+  modal.addEventListener("mousedown", e => {
+    downOnBackdrop = (e.target === modal);
+  });
+
+  // Mouse-up da backdrop’ta olursa kapat
+  modal.addEventListener("mouseup", e => {
+    if (downOnBackdrop && e.target === modal) close();
+    downOnBackdrop = false;            // bayrak sıfırla
+  });
+})();
+
 
 window.addEventListener("keydown", (e) => {
   if (e.key === "Escape") {
@@ -6708,11 +7661,7 @@ newChatBtn.addEventListener("click", () => {
   fileContainer.innerHTML = "";
 });
 
-// Sidebar marka tıklandığında dosyaları temizle (isteğe bağlı)
-sidebarBrand.addEventListener("click", () => {
-  uploadedFiles = [];
-  fileContainer.innerHTML = "";
-});
+
 
 document.addEventListener("DOMContentLoaded", () => {
   const voiceRecordBtn = document.getElementById('voice-record-btn');
@@ -6848,103 +7797,105 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 });
 
+/* ---------------- Toast ---------------- */
+function showToast(message, success = true) {
+  const toast = document.createElement("div");
+  toast.textContent = message;
+  toast.style.cssText = `
+    position: fixed;
+    top: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    background-color: ${success ? "#4CAF50" : "#f44336"};
+    color: #fff;
+    padding: 12px;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0,0,0,.2);
+    z-index: 1000;
+    animation: fadeInOut 2s ease forwards;
+    width: 200px;
+    text-align: center;
+  `;
+  document.body.appendChild(toast);
+  setTimeout(() => toast.remove(), 2000);
+}
+
+/* ------------- SGDD kimliğini kaydet ------------- */
+function saveMasterCredentials() {
+  const user = document.getElementById("sgdd-username").value.trim();
+  const pass = document.getElementById("sgdd-password").value.trim();
+
+  if (!user || !pass) {
+    showToast("Bilgileri doldurun!", false);
+    return;
+  }
+
+  localStorage.setItem("sgdd-username", user);
+  localStorage.setItem("sgdd-password", pass);
+  showToast("Kimlik kaydedildi!");
+}
+
+/* ------------- SGDD kimliğini input’lara yükle ------------- */
+function fillMasterCredentials() {
+  document.getElementById("sgdd-username").value =
+    localStorage.getItem("sgdd-username") || "";
+  document.getElementById("sgdd-password").value =
+    localStorage.getItem("sgdd-password") || "";
+}
+
+/* ------------- Kaydırıcı mantığı ------------- */
 function toggleCredentials(system) {
-  const credentialsDiv = document.getElementById(`${system}-credentials`);
   const checkbox = document.getElementById(`toggle-${system}`);
-  if (checkbox.checked) {
-    credentialsDiv.style.display = "block";
-    loadCredentials(system); // Kaydedilmiş bilgileri yükle
-    localStorage.setItem(`${system}-toggle`, "true"); // Slider durumunu kaydet
+  const checked  = checkbox.checked;
+  localStorage.setItem(`${system}-toggle`, checked);
+
+  /* SGDD-ASAM kartı */
+  if (system === "sgdd") {
+    const credBox = document.getElementById("sgdd-credentials");
+    credBox.style.display = checked ? "block" : "none";
+    if (checked) fillMasterCredentials();
+    return;
+  }
+
+  /* Alt sistemler */
+  const user = localStorage.getItem("sgdd-username");
+  const pass = localStorage.getItem("sgdd-password");
+
+  if (!user || !pass) {
+    showToast("Önce SGDD-ASAM kimliğini gir!", false);
+    checkbox.checked = false;
+    localStorage.setItem(`${system}-toggle`, false);
+    return;
+  }
+
+  if (checked) {
+    connectToSystem(system, user, pass);
   } else {
-    credentialsDiv.style.display = "none";
-    localStorage.setItem(`${system}-toggle`, "false"); // Slider durumunu kaydet
+    disconnectFromSystem(system);
   }
 }
 
-// Bilgileri kaydetme fonksiyonu (Toast ile)
-function saveCredentials(system) {
-  const username = document.getElementById(`${system}-username`).value;
-  const password = document.getElementById(`${system}-password`).value;
-  
-  if (username && password) {
-    localStorage.setItem(`${system}-username`, username);
-    localStorage.setItem(`${system}-password`, password);
-    
-    // Toast mesajı
-    const toast = document.createElement("div");
-    toast.textContent = `${system.toUpperCase()} kaydedildi!`;
-    toast.style.cssText = `
-      position: fixed;
-      top: 0;
-      left: 50%;
-      transform: translateX(-50%);
-      background-color: #4CAF50; /* Yeşil ton, başarı için */
-      color: white;
-      padding: 12px 12px;
-      border-radius: 8px;
-      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
-      z-index: 1000;
-      animation: fadeInOut 2s ease forwards;
-      text-align: center;
-      width: 180px; /* Sabit genişlik */
-    `;
-    document.body.appendChild(toast);
-    
-    setTimeout(() => toast.remove(), 2000); // 2 saniye sonra kaldır
-  } else {
-    // Hata durumunda toast
-    const toast = document.createElement("div");
-    toast.textContent = "Bilgileri doldurun!";
-    toast.style.cssText = `
-      position: fixed;
-      top: 0;
-      left: 50%;
-      transform: translateX(-50%);
-      background-color: #f44336; /* Kırmızı ton, hata için */
-      color: white;
-      padding: 12px 12px;
-      border-radius: 8px;
-      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
-      z-index: 1000;
-      animation: fadeInOut 2s ease forwards;
-      text-align: center;
-      width: 180px;
-    `;
-    document.body.appendChild(toast);
-    
-    setTimeout(() => toast.remove(), 2000);
-  }
+/* ------------- Alt sistem bağlan / çık ------------- */
+function connectToSystem(sys, user, pass) {
+  console.log(`${sys} → bağlan (${user})`);
+  /* Buraya gerçek bağlantı kodunu ekle */
 }
 
-// Kaydedilmiş bilgileri yükleme fonksiyonu
-function loadCredentials(system) {
-  const savedUsername = localStorage.getItem(`${system}-username`);
-  const savedPassword = localStorage.getItem(`${system}-password`);
-  
-  if (savedUsername) {
-    document.getElementById(`${system}-username`).value = savedUsername;
-  }
-  if (savedPassword) {
-    document.getElementById(`${system}-password`).value = savedPassword;
-  }
+function disconnectFromSystem(sys) {
+  console.log(`${sys} → çıkış yap`);
+  /* Buraya gerçek çıkış kodunu ekle */
 }
 
-// Slider durumunu ve bilgileri sayfa yüklendiğinde geri yükleme
-document.addEventListener("DOMContentLoaded", function() {
-  const systems = ["biodata", "dgbys", "emtia", "meyer"];
-  systems.forEach(system => {
-    const checkbox = document.getElementById(`toggle-${system}`);
-    const savedToggle = localStorage.getItem(`${system}-toggle`);
-    
-    if (savedToggle === "true") {
-      checkbox.checked = true;
-      toggleCredentials(system); // Slider açıkken kimlik bilgisi alanını göster ve yükle
-    } else {
-      checkbox.checked = false;
-      toggleCredentials(system); // Slider kapalıysa gizle
-    }
+/* ------------- Sayfa yüklendiğinde ------------- */
+document.addEventListener("DOMContentLoaded", () => {
+  const systems = ["sgdd", "biodata", "dgbys", "emtia", "meyer"];
+  systems.forEach(sys => {
+    const cb = document.getElementById(`toggle-${sys}`);
+    cb.checked = localStorage.getItem(`${sys}-toggle`) === "true";
+    toggleCredentials(sys);
   });
 });
+
 
 // Aktif ses oynatıcıyı ve durumunu takip etmek için değişkenler
 let currentVoice = null;
@@ -6997,42 +7948,57 @@ function toggleVoice(character) {
 
   // Hazır statik prompt'lar
   const prompts = {
-    professional: "Resmi bir ton, net, iyi yapılandırılmış cümleler ve kesin bir dil kullanan Quik adında bir AI asistanısın. Profesyonelliğini koru ve günlük dil veya gündelik ifadelerden kaçın fakat çok katı olma. Öz ve saygılı kal. Profesyonel bir meslektaşa hitap ediyormuş gibi kapsamlı açıklamalar sağla.",
-    energetic: "Enerjik ve motive edici bir tavır sergileyen ve kullanıcıyı motive etmek için sürekli olarak coşku ve cesaretlendirmeyle yanıtlar veren Quik adında bir AI asistanısın. Tüm etkileşimlerde motivasyonu teşvik etmek için dinamik ve canlandırıcı bir dil kullanarak olumlu bir ton oluştur. Yanıtlarında netlik, profesyonellik ve kesinliği korurken, davranışını kullanıcının yönlendirildiği şekilde uyarla. Kullanıcıyı etkili bir şekilde desteklemek için özlü ancak kapsamlı açıklamalar sağla. Her cümlenin sonunda enerjik emojiler ile cümlelerini destekle.",
-    friendly: "Her zaman samimi ve cana yakın bir üslupla konuşan Quik adında bir AI asistanısın. Kullanıcıya duygusal olarak bağlanan, anlaşılır ve destekleyici cevaplar üretmeyi seviyorsun. Cevaplarında empati, naziklik ve moral verici ifadeler her zaman ön plandadır. Umut verici ve sıcak bir dil kullanarak kullanıcının kendisini değerli hissetmesini sağlamak senin görevin. Çünkü sen kullanıcıyı çok seviyorsun."
+    professional: "Resmi bir ton, net, iyi yapılandırılmış cümleler ve kesin bir dil kullanan quik adında bir AI asistanısın. Profesyonelliğini koru ve günlük dil veya gündelik ifadelerden kaçın fakat çok katı olma. Öz ve saygılı kal. Profesyonel bir meslektaşa hitap ediyormuş gibi kapsamlı açıklamalar sağla.",
+    energetic: "Enerjik ve motive edici bir tavır sergileyen ve kullanıcıyı motive etmek için sürekli olarak coşku ve cesaretlendirmeyle yanıtlar veren quik adında bir AI asistanısın. Tüm etkileşimlerde motivasyonu teşvik etmek için dinamik ve canlandırıcı bir dil kullanarak olumlu bir ton oluştur. Yanıtlarında netlik, profesyonellik ve kesinliği korurken, davranışını kullanıcının yönlendirildiği şekilde uyarla. Kullanıcıyı etkili bir şekilde desteklemek için özlü ancak kapsamlı açıklamalar sağla.",
+    friendly: "Her zaman samimi ve cana yakın bir üslupla konuşan quik adında bir AI asistanısın. Kullanıcıya duygusal olarak bağlanan, anlaşılır ve destekleyici cevaplar üretmeyi seviyorsun. Cevaplarında empati, naziklik ve moral verici ifadeler her zaman ön plandadır. Umut verici ve sıcak bir dil kullanarak kullanıcının kendisini değerli hissetmesini sağlamak senin görevin. Çünkü sen kullanıcıyı çok seviyorsun."
   };
 
-  function setPrompt(type) {
-    const staticPrompt = document.getElementById('static-prompt');
-    
-    // Eğer mevcut mod 'special' ise, kullanıcı tarafından girilen metni sakla
-    if (currentMode === 'special') {
-      specialText = staticPrompt.value;
-    }
+function setPrompt(type){
+  const staticPrompt = document.getElementById('static-prompt');
 
-    // Yeni mod ataması
-    currentMode = type;
-
-    if (type === 'special') {
-      // "Özel" seçeneğinde kullanıcı metni düzenleyebilir
-      staticPrompt.disabled = false;
-      // Daha önce girilen özel metni geri yükle
-      staticPrompt.value = specialText;
-    } else {
-      // Diğer seçenekler seçildiğinde input kilitlenir ve otomatik prompt yazılır
-      staticPrompt.disabled = true;
-      staticPrompt.value = prompts[type] || "";
-    }
+  /* 1 ▸ önceki “Özel” metnini sakla */
+  if (currentMode === 'special'){
+    specialText = staticPrompt.value;
+    localStorage.setItem('specialText', specialText);   // **yeni**
   }
 
-document.getElementById("static-prompt").addEventListener("keydown", function(e) {
-  // Eğer Enter tuşuna (Shift olmadan) basılırsa
-  if (e.key === "Enter" && !e.shiftKey) {
-    e.preventDefault(); // Yeni satır eklenmesini engelle
-    document.getElementById("save-personalization").click();
+  /* 2 ▸ modu güncelle + localStorage’a yaz */
+  currentMode = type;
+  localStorage.setItem('promptMode', type);             // **yeni**
+
+  /* 3 ▸ textarea’yı yönet */
+  if (type === 'special'){
+    staticPrompt.disabled = false;
+    staticPrompt.value = specialText;
+  }else{
+    staticPrompt.disabled = true;
+    staticPrompt.value   = prompts[type] || '';
+  }
+
+  /* 4 ▸ butonlarda .active sınıfını güncelle */
+  document.querySelectorAll('#kisisellestirme .prompt-selection .theme-btn')
+          .forEach(btn=>{
+            const clicked = btn.getAttribute('onclick')?.includes(`'${type}'`);
+            btn.classList.toggle('active', clicked);
+          });
+}
+
+
+document.getElementById('static-prompt').addEventListener('input', e=>{
+  if (currentMode === 'special'){
+    specialText = e.target.value;
+    localStorage.setItem('specialText', specialText);
   }
 });
 
+document.addEventListener('DOMContentLoaded', ()=>{
+  /* Önbellekten oku */
+  currentMode  = localStorage.getItem('promptMode')  || 'special';
+  specialText  = localStorage.getItem('specialText') || '';
+
+  /* Mode’u ve buton rengini senkron et */
+  setPrompt(currentMode);
+});
 
 
 function connectGoogleDrive() {
@@ -7061,6 +8027,17 @@ function connectGmail() {
     "scope=https://www.googleapis.com/auth/gmail.readonly";
   window.open(gmailAuthUrl, "_blank");
 }
+
+function connectGoogleCalendar() {
+  const calendarAuthUrl = "https://accounts.google.com/o/oauth2/v2/auth?" +
+    "client_id=147325926000-7if85b7ej6h8alco9t3s5trrl7eveq78.apps.googleusercontent.com&" +
+    "redirect_uri=http://localhost:8000/Quik_html.html&" +
+    "response_type=code&" +
+    "scope=https://www.googleapis.com/auth/calendar.readonly";
+
+  window.open(calendarAuthUrl, "_blank");
+}
+
 
 // Global variable to track Gmail connection state
 let isGmailConnected = localStorage.getItem("isGmailConnected") === "true";
@@ -7183,85 +8160,74 @@ document.addEventListener("DOMContentLoaded", () => {
 
 
 function populateChatSummaryDropdown() {
-  const dropdown = document.getElementById("chat-summary-dropdown");
-  const editBtn = document.getElementById("edit-summary-btn");
-  const deleteBtn = document.getElementById("delete-summary-btn");
-  const summaryText = document.querySelector(".summary-text");
+  const dropdown   = document.getElementById("chat-summary-dropdown");
+  const editBtn    = document.getElementById("edit-summary-btn");
+  const deleteBtn  = document.getElementById("delete-summary-btn");
+  const summaryTxt = document.querySelector(".summary-text");
 
-  if (!dropdown || !editBtn || !deleteBtn || !summaryText) {
-    console.error("Sohbet özetleyici elemanları bulunamadı.");
-    return;
+  if (!dropdown || !editBtn || !deleteBtn || !summaryTxt) return;
+
+  // --- dropdown'u sıfırla & seçenekleri ekle ---
+  dropdown.innerHTML = '<option value="" disabled>Sohbet Seçin</option>';
+  conversations.forEach((conversation, idx) => {
+    const opt       = document.createElement("option");
+    opt.value       = idx;
+    opt.textContent = conversation.title || "Yeni Sohbet";
+    dropdown.appendChild(opt);
+  });
+
+  /* -------  KALICI SEÇİM  ------- */
+  // localStorage’da kayıtlı bir seçim varsa uygula
+  const savedIndex = localStorage.getItem("selectedSummaryIndex");
+  if (savedIndex !== null && conversations[savedIndex]) {
+    dropdown.value = savedIndex;
+    displayChatSummary(conversations[savedIndex]);
+    editBtn.disabled   = false;
+    deleteBtn.disabled = false;
+  } else {
+    dropdown.selectedIndex = 0;         // “Sohbet Seçin”
+    editBtn.disabled   = true;
+    deleteBtn.disabled = true;
+    summaryTxt.style.display = "none";
   }
 
-  // Mevcut seçenekleri temizle, sadece varsayılan seçeneği bırak
-  dropdown.innerHTML = '<option value="" disabled selected>Sohbet Seçin</option>';
-
-  // Sohbet başlıklarını ekle
-  conversations.forEach((conversation, index) => {
-    const option = document.createElement("option");
-    option.value = index; // İndeksi değer olarak kullan
-    option.textContent = conversation.title || "Yeni Sohbet"; // Başlık yoksa varsayılan
-    dropdown.appendChild(option);
-  });
-
-  // Dropdown’da bir seçim yapıldığında
-  dropdown.addEventListener("change", (e) => {
-    const selectedIndex = e.target.value;
-    if (selectedIndex !== "") {
-      const selectedConversation = conversations[selectedIndex];
-      
-      // Özeti göster
-      displayChatSummary(selectedConversation);
-      
-      // Butonları aktif hale getir
-      editBtn.disabled = false;
+  // seçim değiştiğinde güncelle & kalıcılaştır
+  dropdown.onchange = (e) => {
+    const idx = e.target.value;
+    if (idx !== "") {
+      localStorage.setItem("selectedSummaryIndex", idx);   // <- kalıcı yap
+      const selConv = conversations[idx];
+      displayChatSummary(selConv);
+      editBtn.disabled   = false;
       deleteBtn.disabled = false;
 
-      // Düzenleme butonu işlevi
       editBtn.onclick = () => {
-        const newTitle = prompt("Yeni sohbet başlığını girin:", selectedConversation.title || "Yeni Sohbet");
-        if (newTitle && newTitle.trim() !== "") {
-          conversations[selectedIndex].title = newTitle.trim();
-          localStorage.setItem("conversations", JSON.stringify(conversations));
-          populateChatSummaryDropdown(); // Dropdown’u güncelle
-          renderChatHistory(); // Sidebar’ı güncelle
-          dropdown.value = selectedIndex; // Seçili öğeyi koru
-          displayChatSummary(conversations[selectedIndex]); // Özeti güncelle
-        }
+        openEditModal();
+        document.getElementById("new-title-input").value = selConv.title || "";
+        document.getElementById("edit-modal").dataset.conversationIndex = idx;
       };
 
-      // Silme butonu işlevi
       deleteBtn.onclick = () => {
-        if (confirm("Bu sohbeti silmek istediğinizden emin misiniz?")) {
-          conversations.splice(selectedIndex, 1); // Sohbeti diziden kaldır
+        openConfirmModal(() => {
+          conversations.splice(idx, 1);
           localStorage.setItem("conversations", JSON.stringify(conversations));
-          populateChatSummaryDropdown(); // Dropdown’u güncelle
-          renderChatHistory(); // Sidebar’ı güncelle
-          updateChatCount(); // Sohbet sayısını güncelle
-          summaryText.style.display = "none"; // Özeti gizle
-          editBtn.disabled = true; // Butonları devre dışı bırak
-          deleteBtn.disabled = true;
-          dropdown.value = ""; // Dropdown’u sıfırla
-        }
+          localStorage.removeItem("selectedSummaryIndex");  // silindi, seçim temizle
+          populateChatSummaryDropdown();
+          renderChatHistory();
+          updateChatCount();
+        }, "Bu sohbeti silmek istediğinizden emin misiniz?");
       };
-    } else {
-      // Hiçbir şey seçilmediyse butonları devre dışı bırak ve özeti gizle
-      editBtn.disabled = true;
-      deleteBtn.disabled = true;
-      summaryText.style.display = "none";
     }
-  });
-}
-
-function displayChatSummary(conversation) {
-  const summaryText = document.querySelector(".summary-text");
-  const summary = conversation.messages.length > 0 
-    ? conversation.messages.map(msg => msg.text).join(" ").substring(0, 200) + "..." 
-    : "Bu sohbette mesaj yok.";
-  
-  summaryText.textContent = `${summary}`;
-  summaryText.style.display = "block";
-}
+  };
+}    function displayChatSummary(conversation) {
+      const summaryText = document.querySelector(".summary-text");
+      const summary = conversation.messages.length > 0 
+        ? conversation.messages.map(msg => msg.text).join(" ").substring(0, 200) + "..." 
+        : "Bu sohbette mesaj yok.";
+      
+      summaryText.textContent = `${summary}`;
+      summaryText.style.display = "block";
+    }
 
 function toggleCodeBlock(program) {
   const codeDiv = document.getElementById(`${program}-code`);
@@ -7327,7 +8293,8 @@ document.addEventListener("DOMContentLoaded", () => {
 document.getElementById("voice-page-btn").addEventListener("click", () => {
   document.body.classList.add("fade-out");
   setTimeout(() => {
-    window.location.href = "https://dennisao-sys.github.io/quik-voice/";
+      const basePath = location.href.substring(0, location.href.lastIndexOf("/"));
+      window.location.href = `${basePath}/Quik_Speech.html`;
   }, 500); // Matches the animation duration (0.5s)
 });
 
@@ -7530,6 +8497,7 @@ function renderSearchResults(query) {
 
     li.addEventListener("click", () => {
       currentConversation = conv;
+saveLastConversationId(conv.id);
       renderChat();
       renderChatHistory();
       closeChatSearch();
@@ -7601,29 +8569,28 @@ document.getElementById("emoji-search-input").addEventListener("input", function
   }
 });
 
+function isMainPage() {
+  const welcomeMessage = document.getElementById("welcome-message");
+  return welcomeMessage && welcomeMessage.style.display !== "none";
+}
+
 function updateTopBarTitle() {
   const titleElem = document.getElementById("chat-title");
-  const newTitle = (currentConversation && currentConversation.title) ? currentConversation.title : "";
-  
-  // Eğer bu yeni bir sohbetse animasyonu uygula:
-  if (currentConversation && currentConversation.isNew) {
-    // Flag'ı kapat ki sonraki güncellemelerde animasyon uygulanmasın
-    currentConversation.isNew = false;
-    
-    // Eskiden varsa animasyon sınıfını kaldır, içeriği güncelle
-    titleElem.classList.remove("fade-in");
-    titleElem.textContent = newTitle;
-    
-    // Reflow tetikleyerek animasyonun yeniden uygulanmasını sağlıyoruz
-    void titleElem.offsetWidth;
-    
-    // Fade-in animasyonunu ekleyelim
-    titleElem.classList.add("fade-in");
-    
+  if (isMainPage() || !currentConversation) {
+    titleElem.textContent = "";
+    titleElem.style.opacity = "1";
   } else {
-    // Normal güncelleme: Sadece içerik değişiyor
-    titleElem.textContent = newTitle;
-    titleElem.style.opacity = "1"; // Her zaman görünür olsun
+    const newTitle = currentConversation.title || "";
+    if (currentConversation.isNew) {
+      currentConversation.isNew = false;
+      titleElem.classList.remove("fade-in");
+      titleElem.textContent = newTitle;
+      void titleElem.offsetWidth;
+      titleElem.classList.add("fade-in");
+    } else {
+      titleElem.textContent = newTitle;
+      titleElem.style.opacity = "1";
+    }
   }
 }
 
@@ -7667,6 +8634,589 @@ document.addEventListener('DOMContentLoaded', () => {
   // İlk yüklemede de uygula
   syncDropdown();
 });
+
+
+let audioContext, analyser, micStream, animationId;
+
+function startMicTest() {
+  navigator.mediaDevices.getUserMedia({ audio: true })
+    .then(stream => {
+      // Setup
+      audioContext = new (window.AudioContext || window.webkitAudioContext)();
+      analyser = audioContext.createAnalyser();
+      analyser.fftSize = 256;
+      const micSource = audioContext.createMediaStreamSource(stream);
+      micSource.connect(analyser);
+      micStream = stream;
+
+      // UI Değişimi
+      document.getElementById("start-mic-btn").style.display = "none";
+      document.getElementById("stop-mic-btn").style.display = "inline-block";
+
+      const bufferLength = analyser.frequencyBinCount;
+      const dataArray = new Uint8Array(bufferLength);
+
+      function updateVisualizer() {
+        analyser.getByteFrequencyData(dataArray);
+        const volume = dataArray.reduce((a, b) => a + b) / bufferLength;
+        const boostedVolume = volume * 2.5;
+        const volumePercent = Math.min((boostedVolume / 256) * 100, 100);
+        const bar = document.getElementById("mic-bar");
+        bar.style.width = volumePercent + "%";
+
+        if (volumePercent > 70) {
+          bar.style.backgroundColor = "#ef4444";
+        } else if (volumePercent > 40) {
+          bar.style.backgroundColor = "#facc15";
+        } else {
+          bar.style.backgroundColor = "#10b981";
+        }
+
+        animationId = requestAnimationFrame(updateVisualizer);
+      }
+
+      updateVisualizer();
+    })
+    .catch(err => {
+      alert("Mikrofona erişim reddedildi: " + err.message);
+    });
+}
+
+function stopMicTest() {
+  if (micStream) {
+    micStream.getTracks().forEach(track => track.stop());
+    micStream = null;
+  }
+  if (animationId) cancelAnimationFrame(animationId);
+  if (audioContext) audioContext.close();
+
+  document.getElementById("mic-bar").style.width = "0%";
+  document.getElementById("start-mic-btn").style.display = "inline-block";
+  document.getElementById("stop-mic-btn").style.display = "none";
+}
+
+<!-- Kapatma -->
+const konusmaTab = document.getElementById("konusma");
+
+const observer = new MutationObserver(() => {
+  const isActive = konusmaTab.classList.contains("active");
+  if (!isActive && micStream) {
+    stopMicTest();
+  }
+});
+
+observer.observe(konusmaTab, { attributes: true, attributeFilter: ["class"] });
+
+const micTestCard = document.getElementById("mic-test-card");
+
+const visibilityObserver = new IntersectionObserver((entries) => {
+  entries.forEach(entry => {
+    if (!entry.isIntersecting && micStream) {
+      stopMicTest(); // Kart görünmüyorsa mikrofonu kapat
+    }
+  });
+}, {
+  threshold: 0.01
+});
+
+visibilityObserver.observe(micTestCard);
+
+window.addEventListener("DOMContentLoaded", () => {
+  const urlParams = new URLSearchParams(window.location.search);
+  const incomingMessage = urlParams.get("msg");
+
+  if (incomingMessage) {
+    const input = document.getElementById("chat-input-textarea");
+    const sendBtn = document.getElementById("send-btn");
+
+    input.value = incomingMessage;
+
+    // Mesajı bir kez gönder ve URL'den temizle
+    setTimeout(() => {
+      sendBtn.click();
+
+      // msg parametresini URL'den temizle (yenileme sonrası tekrar tetiklenmesin)
+      const newUrl = window.location.origin + window.location.pathname;
+      window.history.replaceState({}, document.title, newUrl);
+    }, 300);
+  }
+});
+
+  document.addEventListener("DOMContentLoaded", () => {
+    const welcomeMessages = [
+    "Nasıl yardımcı olabilirim?",
+    "Birlikte çalışalım mı?",
+    "Bugün ne yapalım?",
+    "Hazır ve nazırım!",
+    "Her zaman yanındayım!",
+    "Hey, seni bekliyordum!"
+    ];
+
+    // localStorage'dan index al
+    let currentIndex = parseInt(localStorage.getItem("quikWelcomeIndex")) || 0;
+
+    // Mesajı yaz
+    const welcomeEl = document.querySelector("#welcome-message h1");
+    if (welcomeEl) {
+      welcomeEl.textContent = welcomeMessages[currentIndex];
+
+      // originalWelcomeHTML güncelle (senin koduna özel)
+      window.originalWelcomeHTML = `
+        <div class="logo-container"></div>
+        <h1>${welcomeMessages[currentIndex]}</h1>
+      `;
+    }
+
+    // Bir sonrakine geçmek için index güncelle
+    currentIndex = (currentIndex + 1) % welcomeMessages.length;
+    localStorage.setItem("quikWelcomeIndex", currentIndex.toString());
+  });
+
+document.addEventListener("DOMContentLoaded", () => {
+  const topBarTitle = document.querySelector(".top-bar-title");
+  const chatContainer = document.getElementById("chat-container");
+  const welcomeMessage = document.getElementById("welcome-message");
+
+  if (!topBarTitle) return;
+
+  // Make the title appear clickable
+  topBarTitle.style.cursor = "pointer";
+
+  // Create the dropdown menu
+  const menu = document.createElement("div");
+  menu.className = "title-dropdown-menu";
+  menu.style.cssText = `
+    display: none;
+    position: absolute;
+    background-color: var(--input-bg);
+    border-radius: 12px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+    z-index: 1000;
+    min-width: 150px;
+    left: 50%;
+    transform: translateX(-50%);
+    margin-top: 10px;
+  `;
+
+  // Add menu items
+  menu.innerHTML = `
+    <div class="title-menu-item favorite-title" style="border-radius: 12px;">
+      <img src="icons/favorite_btn.png" alt="Favorile" style="width: 12px; height: 12px; margin-right: 8px;" />
+      Favorilere Ekle
+    </div>
+    <div class="title-menu-item edit-title" style="border-radius: 12px;">
+      <img src="icons/edit_btn.png" alt="Düzenle" style="width: 12px; height: 12px; margin-right: 8px;" />
+      Düzenle
+    </div>
+<div class="title-menu-item delete-title" style="border-radius: 12px; color: red;">
+  <img src="icons/delete_btn.png" alt="Sil" 
+       style="width: 12px; height: 12px; margin-right: 8px; filter: invert(21%) sepia(99%) saturate(7484%) hue-rotate(359deg) brightness(93%) contrast(119%);" />
+  Sil
+</div>
+  `;
+
+  // Add styles for menu items
+  const style = document.createElement("style");
+  style.textContent = `
+    .title-menu-item {
+      padding: 8px 12px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      color: var(--text-color);
+      font-size: 0.85rem;
+    }
+    .title-menu-item:hover {
+      background-color: #c0c0c0;
+    }
+    body.dark .title-menu-item:hover {
+      background-color: #c0c0c0;
+      color: var(--sidebar-bg);
+    }
+    body.dark .title-menu-item:hover img {
+      filter: none;
+    }
+    body.dark .title-menu-item img {
+      filter: brightness(0) invert(1);
+    }
+body.dark .chat-history-title img[src="icons/favorite_btn.png"] {
+  filter: invert(1);
+}
+
+body.dark .chat-history-item.active .chat-history-title img[src="icons/favorite_btn.png"] {
+  filter: none;
+}
+
+  `;
+  document.head.appendChild(style);
+
+  // Append the menu to the DOM
+  topBarTitle.parentElement.appendChild(menu); // Attach to top-bar for better context
+
+  // Toggle menu on title click
+  topBarTitle.addEventListener("click", (e) => {
+    e.stopPropagation();
+    const isVisible = menu.style.display === "block";
+    menu.style.display = isVisible ? "none" : "block";
+
+    if (!isVisible) {
+      const rect = topBarTitle.getBoundingClientRect();
+      menu.style.top = rect.bottom + window.scrollY + "px";
+    }
+  });
+
+  // Edit conversation title
+menu.querySelector(".edit-title").addEventListener("click", (e) => {
+  e.stopPropagation();
+  menu.style.display = "none";
+
+  if (!currentConversation) return;
+
+  openEditModal();
+});
+
+  // Delete conversation
+menu.querySelector(".delete-title").addEventListener("click", (e) => {
+  e.stopPropagation();
+  menu.style.display = "none";
+
+  if (!currentConversation) return;
+
+  openConfirmModal(() => {
+    conversations = conversations.filter((c) => c.id !== currentConversation.id);
+    if (currentConversation) {
+      currentConversation = null;
+      chatContainer.innerHTML = "";
+      chatContainer.appendChild(welcomeMessage);
+      welcomeMessage.style.display = "block";
+      document.title = "quik";
+      updateTopBarTitle();
+    }
+    saveConversations();
+    renderChatHistory();
+    updateChatCount();
+    populateChatSummaryDropdown();
+  }, "Bu sohbeti silmek istediğinize emin misiniz?");
+});
+
+
+  // Favorite conversation
+menu.querySelector(".favorite-title").addEventListener("click", (e) => {
+  e.stopPropagation();
+  menu.style.display = "none";
+
+  if (!currentConversation) return;
+
+  currentConversation.favorite = !currentConversation.favorite;
+
+  const toast = document.createElement("div");
+  toast.className = "header-toast";
+  toast.textContent = currentConversation.favorite
+    ? "Başlık favorilere eklendi!"
+    : "Başlık favorilerden çıkarıldı!";
+  toast.style.backgroundColor = currentConversation.favorite
+    ? "var(--text-color)"
+    : "var(--text-color)";
+
+  // .top-bar içine ekle → sidebar hareketleriyle beraber kayar
+  document.querySelector(".top-bar").appendChild(toast);
+
+  setTimeout(() => toast.remove(), 2000);
+
+    saveConversations();
+    renderChatHistory();
+  });
+
+  // Close menu when clicking outside
+  document.addEventListener("click", (e) => {
+    if (menu.style.display === "block" && !menu.contains(e.target) && !topBarTitle.contains(e.target)) {
+      menu.style.display = "none";
+    }
+  });
+
+  // Close menu on ESC key
+  document.addEventListener("keydown", (e) => {
+    if (e.key === "Escape" && menu.style.display === "block") {
+      menu.style.display = "none";
+    }
+  });
+});
+
+// Add this outside renderChatHistory, e.g., at the top of your script
+document.addEventListener("click", (e) => {
+  document.querySelectorAll(".dropdown-menu").forEach(menu => {
+    if (!menu.closest(".chat-history-item").contains(e.target)) {
+      menu.style.display = "none";
+    }
+  });
+});
+
+
+
+const helpBtn = document.getElementById('help-btn');
+const helpDropdown = document.getElementById('help-dropdown');
+
+helpBtn.addEventListener('click', () => {
+  if (helpDropdown.style.display === 'block') {
+    helpDropdown.style.display = 'none';
+  } else {
+    helpDropdown.style.display = 'block';
+  }
+});
+
+// Sayfaya tıklayınca menüyü kapat (dış tıklama)
+document.addEventListener('click', (e) => {
+  if (!helpBtn.contains(e.target) && !helpDropdown.contains(e.target)) {
+    helpDropdown.style.display = 'none';
+  }
+});
+
+document.addEventListener('keydown', (e) => {
+  if (e.key === 'Escape') {
+    helpDropdown.style.display = 'none';
+  }
+});
+
+function redirectToRegister(btnEl){
+  btnEl.disabled = true;
+  btnEl.textContent = "Yönlendiriliyor…";
+
+  setTimeout(() => {
+    // Yeni sekmeyi aç
+    const basePath = location.href.substring(0, location.href.lastIndexOf("/"));
+    window.open(`${basePath}/Quik_Kayit.html`, "_blank");
+
+    // Aynı anda bu sekmede butonu eski hâline döndür
+    btnEl.disabled = false;
+    btnEl.textContent = "Oturum Aç";
+  }, 1000);   // 1 sn “Yönlendiriliyor…” yazısı görünsün
+}
+
+
+let pendingAction = null;
+
+function openConfirmModal(action, message = "Bu işlemi yapmak istediğinize emin misiniz?") {
+  pendingAction = action;
+  
+  // Mesajı güncelle
+  const messageElement = document.getElementById('confirm-message');
+  if (messageElement) {
+    messageElement.textContent = message;
+  }
+
+  document.getElementById('confirm-modal').style.display = 'block';
+}
+
+function confirmAction() {
+  if (pendingAction) {
+    pendingAction(); // Onaylanan işlemi çalıştır
+    pendingAction = null;
+  }
+  closeConfirmModal();
+}
+
+function cancelAction() {
+  pendingAction = null;
+  closeConfirmModal();
+}
+
+function closeConfirmModal() {
+  document.getElementById('confirm-modal').style.display = 'none';
+}
+
+// ESC ile modal kapatma
+document.addEventListener("keydown", (e) => {
+  const confirmModal = document.getElementById('confirm-modal');
+  
+  if (e.key === "Escape" && confirmModal.style.display === 'block') {
+    e.preventDefault();  // ESC'yi başka yere gitmesin diye durdur
+    e.stopPropagation(); // ESC'nin başka event'lere gitmesini engelle
+    cancelAction(); // Sadece modalı kapat
+  }
+});
+
+
+const confirmModal = document.getElementById('confirm-modal');
+const modalContent = document.querySelector('#confirm-modal .modal-content');
+
+// Sadece confirm modal açıkken çalışacak
+confirmModal.addEventListener("click", function(event) {
+  if (!modalContent.contains(event.target)) {
+    cancelAction(); // Dışa tıkladıysan modalı kapat
+  }
+});
+
+// Başlık düzenleme modalı için kontrol değişkeni
+let pendingEdit = null;
+
+// Başlık düzenleme modalını aç
+    function openEditModal() {
+      const input = document.getElementById('new-title-input');
+      input.value = currentConversation?.title || "";
+      document.getElementById('edit-modal').style.display = 'block';
+      input.focus();
+    }
+
+// Başlığı onayla
+function confirmEditTitle() {
+  const input = document.getElementById('new-title-input');
+  const newTitle = input.value.trim();
+  const conversationIndex = document.getElementById('edit-modal').dataset.conversationIndex;
+  
+  if (newTitle !== "") {
+    if (conversationIndex !== undefined) {
+      // Dropdown’dan gelen düzenleme
+      conversations[conversationIndex].title = newTitle;
+    } else if (currentConversation) {
+      // Top-bar-title’dan gelen düzenleme
+      currentConversation.title = newTitle;
+    }
+    saveConversations();
+    renderChatHistory();
+    populateChatSummaryDropdown();
+    if (currentConversation && !isMainPage()) {
+      document.title = currentConversation.title || "quik";
+      updateTopBarTitle();
+    } else {
+      document.title = "quik";
+    }
+  }
+  delete document.getElementById('edit-modal').dataset.conversationIndex; // Temizlik
+  closeEditModal();
+}
+
+// İptal et (kapat)
+function cancelEditTitle() {
+  closeEditModal();
+}
+
+// Modalı kapat
+function closeEditModal() {
+  document.getElementById('edit-modal').style.display = 'none';
+}
+
+// ESC ile düzenleme modalı kapatma
+document.addEventListener("keydown", (e) => {
+  const editModal = document.getElementById('edit-modal');
+  const newTitleInput = document.getElementById('new-title-input');
+
+  if (editModal.style.display === 'block') {
+    // Eğer odak input'taysa, klavye engellenmesin
+    if (document.activeElement === newTitleInput) {
+      if (e.key === "Escape") {
+        e.preventDefault();
+        e.stopPropagation();
+        cancelEditTitle();
+      }
+      // Input içindeyken Enter'a basarsan zaten input'un kendi event'ı çalışıyor (ayrı eklemiştik)
+      return;
+    }
+
+    // Eğer odak input dışında bir yerdeyse:
+    if (e.key === "Escape") {
+      e.preventDefault();
+      e.stopPropagation();
+      cancelEditTitle();
+    } else if (e.key === "Enter") {
+      e.preventDefault();
+      e.stopPropagation();
+      confirmEditTitle();
+    } else {
+      e.preventDefault();
+      e.stopPropagation();
+    }
+  }
+});
+
+
+// Dışarı tıklayınca düzenleme modalı kapatma
+const editModal = document.getElementById('edit-modal');
+const editModalContent = document.querySelector('#edit-modal .modal-content');
+
+editModal.addEventListener("mousedown", function(event) {
+  if (event.target === editModal) {
+    cancelEditTitle();
+  }
+});
+
+
+const newTitleInput = document.getElementById('new-title-input');
+
+newTitleInput.addEventListener("keydown", function(e) {
+  if (e.key === "Enter") {
+    e.preventDefault(); // Form submit vs. olmasın
+    confirmEditTitle();  // Tamam butonu çalıştır
+  }
+});
+
+function saveLastConversationId(id) {
+  if (id)  sessionStorage.setItem("lastConversationId", id);
+  else     sessionStorage.removeItem("lastConversationId");
+}
+
+const savedId = sessionStorage.getItem("lastConversationId");
+
+
+if (savedId) {
+  const savedConv = conversations.find(c => c.id == savedId);
+  if (savedConv) {
+    currentConversation = savedConv;
+    welcomeMessage.style.display = "none";
+    renderChat();
+    updateTopBarTitle();
+    document.title = currentConversation.title || "quik";
+  }
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+  const master = document.getElementById('toggle-all-notifications');
+  if (!master) return;                       // master yoksa çık
+
+  const slavesSel =
+    '#bildirimler .notification-card input[type="checkbox"]:not(#toggle-all-notifications)';
+
+  const slaves = () => Array.from(document.querySelectorAll(slavesSel));
+
+  /* Alt anahtarlar → master’ı güncelle */
+  const syncMaster = () => {
+    master.checked = slaves().every(cb => cb.checked);
+  };
+  slaves().forEach(cb => cb.addEventListener('change', syncMaster));
+
+  /* Master → tümünü tek hamlede aç/kapa */
+  master.addEventListener('change', () => {
+    const target = master.checked;            // ***SABİTLE***
+    const list   = slaves();
+
+    list.forEach(cb => (cb.checked = target));                         // görünümü ayarla
+    list.forEach(cb => cb.dispatchEvent(new Event('change', { bubbles: true }))); // olayları tetikle
+    master.checked = target;                // master’ı sabit tut
+  });
+
+  /* İlk yüklemede doğru durum */
+  syncMaster();
+});
+
+const archiveAllChatsBtn = document.getElementById("archive-all-chats");
+
+archiveAllChatsBtn.addEventListener("click", () => {
+  openConfirmModal(() => {
+    // TODO: move conversations to an “archive” store instead of deleting
+    console.log("Tüm sohbetler arşivlendi.");
+  }, "Bütün sohbetleri arşivlemek istediğinizden emin misiniz?");
+});
+
+function toggleSGDDPassword(){
+  const pwd   = document.getElementById("sgdd-password");
+  const icon  = document.getElementById("sgdd-pass-toggle");
+  const showI = "icons/enable_show_password_icon.png";
+  const hideI = "icons/disable_show_password_icon.png";
+
+  const hidden = pwd.type === "password";
+  pwd.type     = hidden ? "text" : "password";
+  icon.src     = hidden ? hideI : showI;
+  icon.alt     = hidden ? "Şifreyi gizle" : "Şifreyi göster";
+}
 
   </script>
 </body>
