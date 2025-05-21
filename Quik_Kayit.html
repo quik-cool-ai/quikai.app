@@ -1,0 +1,1501 @@
+<!DOCTYPE html>
+<html lang="tr" data-theme="light">
+<head>
+
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+  <title>quik - Oturum Aç</title>
+  <link rel="icon" href="icons/quik_icon.png" type="image/png">
+
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+  <style>
+    /* ---------- RENK DEĞİŞKENLERİ ---------- */
+    :root {
+      --bg: #eef2ff;
+      --card-bg: rgba(255, 255, 255, 0.75);
+      --text: #121417;
+      --sub: #404659;
+      --accent: #373737; /* fazla koyu, kontrastı zayıf */
+      --accent-sec: #121417; /* neredeyse siyah */
+      --accent-hover: #8c79ff;
+      --success: #10b981;
+      --error: #ef4444;
+      --line: #d1d5db;
+      --input: rgba(255, 255, 255, 0.8);
+      --shadow: 0 10px 30px rgba(0, 0, 0, 0.12);
+      --shadow-hover: 0 15px 35px rgba(0, 0, 0, 0.18);
+      --transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    [data-theme="dark"] {
+      --bg: #202020;
+      --card-bg: #171717;
+      --text: #e6e6e6;
+      --sub: #9ea5b5;
+      --accent: #575757;
+      --accent-sec: #e6e6e6;
+      --accent-hover: #6152ff;
+      --success: #059669;
+      --error: #dc2626;
+      --line: rgba(255, 255, 255, 0.08);
+      --input: rgba(255, 255, 255, 0.06);
+      --shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+      --shadow-hover: 0 15px 35px rgba(0, 0, 0, 0.6);
+    }
+
+    /* ---------- GENEL ---------- */
+    * {
+      box-sizing: border-box;
+      font-family: 'Inter', sans-serif;
+      user-select: none;
+      margin: 0;
+      padding: 0;
+    }
+
+body {
+  width: 100%;
+  min-height: 100vh;
+  height: auto;
+  overflow-x: hidden;
+  overflow-y: auto; /* Sayfa scroll edilebilir */
+  margin: 0 !important;
+  padding: 0 !important;
+  background: var(--bg);
+  color: var(--text);
+}
+
+/* Zoom ve mobil uyumluluk için medya sorgusu */
+@media screen and (max-width: 480px) {
+  body {
+    padding: 1rem;
+  }
+  .card {
+    width: 100%;
+    max-width: 100%;
+    padding: 2rem 1.5rem;
+  }
+}
+
+canvas#bg {
+  position: fixed;
+  inset: 0;
+  width: 100%;
+  height: 100vh; /* sabit ekran boyu */
+  overflow: hidden;
+}
+
+canvas#bg.right {
+  left: auto;
+  right: 0;
+}
+
+
+    /* ---------- LOGO ---------- */
+    .logo {
+      position: absolute;
+      top: 1.5rem;
+      left: 1.5rem;
+      font-size: 1.8rem;
+      font-weight: 700;
+      color: var(--text);
+      text-decoration: none;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      z-index: 10;
+    }
+
+    .logo-icon {
+      position: absolute;
+      top: 4%;
+      left: 20%;
+      width: 3rem;
+      height: 3rem;
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      font-weight: 700;
+    }
+
+
+
+    [data-theme="dark"] .card-logo[src$="quik_icon.png"] {
+      filter: invert(1);
+    }
+
+    /* ---------- KART ---------- */
+.card {
+  position: relative;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 400px;
+  top: 5px;
+  max-width: 100vw;
+  padding: 1.3rem 1rem;
+  background: transparent;
+  border-radius: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  opacity: 0;
+  animation: fadeInCard 0.4s ease 0.2s forwards;
+  will-change: transform, opacity;
+}
+
+.card-header {
+  display: flex;
+  align-items: center;
+  justify-content: center; /* Tüm yapı kartın ortasında */
+  margin-bottom: 1rem;
+  letter-spacing: 0.05rem; /* harfler arasını açar */
+}
+
+.card-logo {
+  width: 3.5rem;
+  height: 3.5rem;
+  object-fit: contain;
+}
+
+.card-title {
+  font-size: 2.5rem;
+  font-weight: 500;
+  background: var(--text);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  margin: 0;
+}
+
+
+
+@keyframes fadeInCard {
+  from {
+    opacity: 0;
+    transform: translateX(-50%) scale(0.98);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(-50%) scale(1);
+  }
+}
+
+
+
+    @keyframes pop {
+      0% {
+        transform: scale(0.9);
+        opacity: 0;
+      }
+      100% {
+        transform: scale(1);
+        opacity: 1;
+      }
+    }
+
+    h1 {
+      margin: 0;
+      margin-bottom: 37px;
+      font-size: 2.5rem;
+      font-weight: 500;
+      text-align: center;
+      background: linear-gradient(135deg, var(--accent) 0%, var(--accent-sec) 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    p.hint {
+      margin: -0.5rem 0 0;
+      font-size: 0.9rem;
+      color: var(--sub);
+      text-align: center;
+    }
+
+    /* ---------- BUTON & INPUT ---------- */
+    .btn, .oauth, a.oauth {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.7rem;
+      padding: 0.85rem 1.2rem;
+      border: none;
+      border-radius: 0.8rem;
+      font-weight: 600;
+      font-size: 0.95rem;
+      text-decoration: none;
+      cursor: pointer;
+      transition: var(--transition);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .btn {
+      background: var(--accent);
+      color: #fff;
+    }
+
+    .btn:hover {
+      background: var(--accent-hover);
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(99, 102, 241, 0.3);
+    }
+
+    .btn:active {
+      transform: translateY(0);
+    }
+
+    .oauth.ghost {
+      background: transparent;
+      color: var(--text);
+      border: 1px solid var(--line);
+    }
+
+    .oauth.ghost:hover {
+      background: var(--line);
+      transform: translateY(-2px);
+    }
+
+    .oauth.ghost:active {
+      transform: translateY(0);
+    }
+
+.input-group {
+  position: relative;
+  margin-bottom: 1.2rem;
+  display: flex;
+  flex-direction: column;
+}
+
+.input-group label {
+  font-size: 1rem;
+  color: var(--sub);
+  font-weight: 500;
+  margin-bottom: 0.35rem;
+  padding-left: 0.2rem;
+}
+
+
+    .input-group:last-of-type {
+      margin-bottom: 0.5rem;
+    }
+
+input {
+  width: 100%;
+  padding: 0.85rem 1.2rem 0.85rem 1.2rem; /* üst, sağ, alt, sol */
+  padding-right: 2.7rem; /* sağdan ekstra boşluk */
+  border: 2px solid var(--line);
+  border-radius: 0.8rem;
+  background: var(--input);
+  color: var(--text);
+
+  font-size: 0.95rem;
+}
+
+    input:focus {
+      outline: none;
+      border-color: var(--accent);
+      box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.15);
+    }
+
+    input.error {
+      border-color: var(--error);
+    }
+
+    input.success {
+      border-color: var(--success);
+    }
+
+.input-icon {
+  position: absolute;
+  right: 1rem;
+  top: 0.6rem;
+  color: var(--sub);
+  font-size: 1.2rem;
+  pointer-events: none;
+}
+
+.error-message {
+  color: var(--error);
+  font-size: 0.8rem;
+  margin-top: 0.4rem;
+  display: none;
+}
+
+.input-group.error .error-message {
+  display: block;
+}
+
+.input-group.error input {
+  border-color: var(--error);
+}
+
+.toggle-password {
+  background: none;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+  position: absolute;
+  top: 2.5rem;
+  right: 1rem;
+  z-index: 2;
+}
+
+.password-icon {
+  width: 1.2rem;
+  height: 1.2rem;
+  object-fit: contain;
+  pointer-events: none;
+  filter: brightness(0) saturate(100%) invert(46%) sepia(0%) saturate(0%) hue-rotate(176deg) brightness(92%) contrast(90%);
+}
+
+    [data-theme="dark"] .password-icon[src$="enable_show_password_icon.png"] {
+      filter: invert(1);
+    }
+
+    [data-theme="dark"] .password-icon[src$="disable_show_password_icon.png"] {
+      filter: invert(1);
+    }
+
+    label {
+      font-size: 0.85rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      color: var(--sub);
+    }
+
+    ::placeholder {
+      color: var(--sub);
+      opacity: 0.7;
+    }
+
+    .divider {
+      position: relative;
+      text-align: center;
+      font-size: 0.85rem;
+      color: var(--sub);
+      margin: 0.5rem 0;
+    }
+
+    .divider::before, .divider::after {
+      content: "";
+      position: absolute;
+      top: 50%;
+      width: 45%;
+      height: 1px;
+      background: var(--line);
+    }
+
+    .divider::before {
+      left: 0;
+    }
+
+    .divider::after {
+      right: 0;
+    }
+
+    .actions {
+      display: flex;
+      gap: 0.8rem;
+      margin-top: 0.5rem;
+    }
+
+    .actions .btn {
+      flex: 1;
+    }
+
+    .hidden {
+      display: none !important;
+    }
+
+    /* ---------- CHECKBOX ---------- */
+    .checkbox-wrapper {
+      display: flex;
+      align-items: flex-start;
+      gap: 0.5rem;
+      margin-bottom: 1rem;
+    }
+
+.checkbox-wrapper input[type="checkbox"] {
+  appearance: none;
+  -webkit-appearance: none;
+  width: 2.4rem;
+  aspect-ratio: 1 / 1; /* BU SATIR OLAYI BİTİRİR */
+  border: 2px solid var(--line);
+  border-radius: 0.25rem;
+  background: var(--input);
+  cursor: pointer;
+  display: inline-block;
+  vertical-align: middle;
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  position: relative;
+}
+
+    .checkbox-wrapper input[type="checkbox"]:checked {
+      background: var(--accent);
+      border-color: var(--accent);
+    }
+
+    .checkbox-wrapper input[type="checkbox"]:checked::after {
+      content: "✓";
+      position: absolute;
+      color: white;
+      font-size: 1rem;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+    }
+
+    .checkbox-wrapper label {
+      font-size: 0.85rem;
+      color: var(--sub);
+      cursor: pointer;
+    }
+
+    .checkbox-wrapper a {
+      color: var(--accent);
+      text-decoration: none;
+    }
+
+    .checkbox-wrapper a:hover {
+      text-decoration: underline;
+    }
+
+    /* ---------- TEMA ANAHTARI ---------- */
+    #toggle-theme {
+      position: fixed;
+      top: 1rem;
+      right: 1rem;
+      width: 2rem;
+      height: 2rem;
+      border: none;
+      background: transparent;
+      cursor: pointer;
+      font-size: 1.3rem;
+      z-index: 10;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    #toggle-theme:hover {
+      background: var(--shadow-hover);
+    }
+
+    #theme-icon {
+      width: 1.5rem; /* İkon boyutunu buton içinde uygun hale getir */
+      height: 1.5rem;
+      object-fit: contain; /* İkonun orantısını koru */
+    }
+
+    [data-theme="dark"] #theme-icon[src$="aydinlik.png"] {
+      filter: invert(1); /* Dark modda aydinlik.png için renkleri tersine çevir */
+    }
+
+    /* ---------- KVKK MODAL ---------- */
+#kvkk-modal,
+#gizlilik-modal {
+  position: fixed;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  visibility: hidden;
+  opacity: 0;
+  z-index: 50;
+  transition: all 0.3s ease;
+}
+
+#kvkk-modal.active,
+#gizlilik-modal.active {
+  visibility: visible;
+  opacity: 1;
+}
+
+    .kvkk-backdrop {
+      position: absolute;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.7);
+      backdrop-filter: blur(4px);
+    }
+
+    .kvkk-content {
+      position: relative;
+      max-width: 850px;
+      max-height: 82vh;
+      overflow: auto;
+      background: var(--card-bg);
+      backdrop-filter: blur(16px) saturate(180%);
+      padding: 2.2rem 2.5rem;
+      border-radius: 1.2rem;
+      color: var(--text);
+      box-shadow: var(--shadow);
+      transform: scale(0.95);
+      transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    #kvkk-modal.active .kvkk-content {
+      transform: scale(1);
+    }
+
+    #kvkk-close, #gizlilik-close {
+      position: absolute;
+      top: 1.6rem;
+      right: 1.2rem;
+      border: none;
+      background: none;
+      font-size: 2rem;
+      cursor: pointer;
+      color: var(--text);
+      transition: transform 0.2s ease;
+    }
+
+    #kvkk-close:hover, #gizlilik-close:hover {
+      transform: rotate(90deg);
+    }
+
+.kvkk-content h2 {
+  font-size: 1.3rem;
+  margin-bottom: 1.5rem;
+  font-weight: 600;
+  color: var(--accent);
+}
+
+.kvkk-content h3 {
+  font-size: 1.3rem;
+  margin-bottom: 1.5rem;
+  margin-top: 1.5rem;
+  font-weight: 600;
+  color: var(--accent);
+}
+
+.kvkk-content p {
+  margin: 0.8rem 0;
+  line-height: 1.65;
+  font-size: 0.95rem;
+  color: var(--text);
+}
+
+.kvkk-content ul {
+  padding-left: 1.2rem;
+  margin: 0.5rem 0 1rem;
+}
+
+.kvkk-content ul li {
+  margin-bottom: 0.4rem;
+  font-size: 0.95rem;
+  line-height: 1.55;
+  list-style-type: disc;
+  color: var(--text);
+}
+
+.kvkk-content a {
+  color: var(--accent-sec);
+  text-decoration: none;
+}
+
+.kvkk-content a:hover {
+  text-decoration: underline;
+}
+
+    /* ---------- NOTIFICATION ---------- */
+    .notification {
+      position: fixed;
+      top: 1.5rem;
+      right: 1.5rem;
+      padding: 1rem 1.5rem;
+      background: var(--card-bg);
+      backdrop-filter: blur(16px);
+      border-radius: 0.8rem;
+      box-shadow: var(--shadow);
+      display: flex;
+      align-items: center;
+      gap: 0.8rem;
+      transform: translateX(calc(100% + 1.5rem));
+      opacity: 0;
+      transition: all 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+      z-index: 100;
+      max-width: 350px;
+    }
+
+    .notification.show {
+      transform: translateX(0);
+      opacity: 1;
+    }
+
+    .notification-icon {
+      width: 2rem;
+      height: 2rem;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      font-size: 1.2rem;
+    }
+
+    .notification-icon.success {
+      background: rgba(16, 185, 129, 0.15);
+      color: var(--success);
+    }
+
+    .notification-icon.error {
+      background: rgba(239, 68, 68, 0.15);
+      color: var(--error);
+    }
+
+    .notification-content {
+      flex: 1;
+    }
+
+    .notification-title {
+      font-weight: 600;
+      font-size: 0.95rem;
+      margin-bottom: 0.2rem;
+    }
+
+    .notification-message {
+      font-size: 0.85rem;
+      color: var(--sub);
+    }
+
+    /* ---------- RESPONSIVE ---------- */
+    @media (max-width: 480px) {
+      .card {
+        padding: 2rem 1.5rem;
+      }
+
+      h1 {
+        font-size: 1.7rem;
+      }
+
+      .btn, .oauth, a.oauth, input {
+        font-size: 0.9rem;
+        padding: 0.8rem 1rem;
+      }
+
+      .logo {
+        top: 1rem;
+        left: 1rem;
+        font-size: 1.5rem;
+      }
+
+      .logo-icon {
+        width: 1.8rem;
+        height: 1.8rem;
+      }
+
+      #toggle-theme {
+        top: 2.75rem;
+        width: 2.5rem;
+        height: 2.5rem;
+        bottom: 1rem;
+        right: 1rem;
+      }
+    }
+
+    /* ---------- ANIMATIONS ---------- */
+    @keyframes pulse {
+      0% {
+        box-shadow: 0 0 0 0 rgba(99, 102, 241, 0.4);
+      }
+      70% {
+        box-shadow: 0 0 0 10px rgba(99, 102, 241, 0);
+      }
+      100% {
+        box-shadow: 0 0 0 0 rgba(99, 102, 241, 0);
+      }
+    }
+
+    .pulse {
+      animation: pulse 2s infinite;
+    }
+
+    /* ---------- LOADING SPINNER ---------- */
+    .spinner {
+      width: 1.2rem;
+      height: 1.2rem;
+      border: 2px solid rgba(255, 255, 255, 0.3);
+      border-radius: 50%;
+      border-top-color: white;
+      animation: spin 0.8s linear infinite;
+      display: none;
+    }
+
+    .btn.loading .spinner {
+      display: inline-block;
+    }
+
+    .btn.loading span {
+      display: none;
+    }
+
+    @keyframes spin {
+      to {
+        transform: rotate(360deg);
+      }
+    }
+
+.kvkk-label-wrap {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem; /* Increased gap for better separation */
+}
+
+.kvkk-label-wrap label {
+  font-size: 0.85rem;
+  color: var(--sub);
+  cursor: pointer;
+}
+
+.kvkk-links {
+  font-size: 0.8rem;
+  color: var(--accent);
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+  justify-content: center; /* Changed from flex-start to center */
+  margin-top: 1rem; /* Added to position 2rem below the <p> */
+}
+
+.kvkk-links a {
+  color: var(--accent);
+  text-decoration: none;
+}
+
+[data-theme="dark"] .kvkk-links a {
+  color: var(--accent-sec);
+}
+
+.kvkk-links a:hover {
+  text-decoration: underline;
+}
+#verify-form {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+#verify-code {
+  text-align: center;
+  letter-spacing: 0.2rem;
+  font-size: 1.1rem;
+}
+
+#resend-code {
+  text-decoration: none;
+}
+
+#resend-code:hover {
+  text-decoration: underline;
+}
+
+
+  </style>
+</head>
+<body>
+
+
+
+<main class="card">
+<div class="card-header">
+  <img src="icons/quik_icon.png" alt="quik Logo" class="card-logo" draggable="False">
+  <h1 class="card-title">quik</h1>
+</div>
+
+    <!-- OAuth -->
+    <button id="google-btn" class="oauth btn">
+      <svg width="18" height="18" viewBox="0 0 256 262" xmlns="http://www.w3.org/2000/svg">
+        <path fill="#4285F4" d="M255.36 133.5c0-10.88-.96-21.44-2.88-31.68H130.56v59.2h70.08c-3.04 16.32-12.16 30.08-25.92 39.36v32.64h41.92c24.32-22.4 38.72-55.68 38.72-99.52z"/>
+        <path fill="#34A853" d="M130.56 259.3c35.04 0 64.64-11.52 86.08-31.36l-41.92-32.64c-11.52 7.68-26.56 12.16-44.16 12.16-34.08 0-63.04-23.04-73.44-54.08H12.32v34.56c21.44 41.92 65.28 71.36 118.24 71.36z"/>
+        <path fill="#FBBC05" d="M57.12 152.06c-4.8-14.08-4.8-29.44 0-43.52v-34.56H12.32c-19.2 38.4-19.2 84.48 0 122.88l44.8-34.56z"/>
+        <path fill="#EA4335" d="M130.56 50.18c18.88 0 35.84 6.56 49.12 19.52l36.8-36.8C195.2 9.62 165.6-.7 130.56-.7 77.6-.7 33.76 28.74 12.32 70.66l44.8 34.56c10.4-31.04 39.36-54.08 73.44-54.08z"/>
+      </svg>
+      <span>Google ile devam et</span>
+    </button>
+
+    <button id="microsoft-btn" class="oauth btn">
+      <svg width="18" height="18" viewBox="0 0 24 24">
+        <path fill="#f25022" d="M1 1h10v10H1z"/>
+        <path fill="#7fba00" d="M13 1h10v10H13z"/>
+        <path fill="#00a4ef" d="M1 13h10v10H1z"/>
+        <path fill="#ffb900" d="M13 13h10v10H13z"/>
+      </svg>
+      <span>Microsoft ile devam et</span>
+    </button>
+
+    <button id="sgdd-asam-btn" class="oauth btn">
+      <img src="icons/sgdd_asam_icon.png" alt="SGDD-ASAM ikonu" width="18" height="18">
+      <span>SGDD‑ASAM ile devam et</span>
+    </button>
+
+    <p class="divider">veya</p>
+
+    <!-- Form -->
+<form id="auth-form" autocomplete="off">
+  <div class="input-group">
+    <label for="email">E‑posta</label>
+    <input id="email" type="email" placeholder="E‑posta adresinizi giriniz" required>
+    <div class="input-icon"></div>
+    <div class="error-message">Geçerli bir e-posta adresi giriniz</div>
+  </div>
+
+  <div class="input-group">
+    <label for="password">Şifre</label>
+    <input id="password" type="password" placeholder="Şifrenizi giriniz" required minlength="6">
+    <button type="button" class="toggle-password" aria-label="Şifreyi göster/gizle" tabindex="-1">
+      <img src="icons/enable_show_password_icon.png" alt="Şifreyi göster" class="password-icon">
+    </button>
+    <div class="error-message">Şifre en az 6 karakter olmalıdır</div>
+  </div>
+
+  <div class="input-group reg-only">
+    <label for="confirm">Şifre Tekrar</label>
+    <input id="confirm" type="password" placeholder="Şifrenizi tekrar giriniz" required minlength="6">
+    <button type="button" class="toggle-password" aria-label="Şifreyi göster/gizle" tabindex="-1">
+      <img src="icons/enable_show_password_icon.png" alt="Şifreyi göster" class="password-icon">
+    </button>
+    <div class="error-message">Şifreler eşleşmiyor</div>
+  </div>
+
+
+<div class="checkbox-wrapper reg-only">
+    <input type="checkbox" id="kvkk" required>
+    <div class="kvkk-label-wrap">
+      <label for="kvkk">Kişisel verilerimin işlenmesini ve saklanmasını kabul ediyorum</label>
+      <!-- .kvkk-links div removed from here -->
+    </div>
+  </div>
+
+<div class="actions">
+    <button type="submit" id="login-btn" class="btn log-only">
+      <div class="spinner"></div>
+      <span>Oturum Aç</span>
+    </button>
+    <button type="submit" id="register-btn" class="btn reg-only">
+      <div class="spinner"></div>
+      <span>Kayıt Ol</span>
+    </button>
+  </div>
+</form>
+
+<p style="font-size: 0.85rem; text-align: center; margin: 0.5rem 0 0;">
+  <span class="log-only">Hesabın yok mu? <a href="#" id="go-reg" style="color: var(--text);">Kayıt ol</a></span>
+  <span class="reg-only hidden">Zaten hesabın var mı? <a href="#" id="go-log" style="color: var(--text);">Giriş yap</a></span>
+</p>
+
+<!-- Moved .kvkk-links here -->
+<div class="kvkk-links">
+  <a href="#" id="kvkk-link">Kullanım Şartları</a> | 
+  <a href="#" id="gizlilik-link">Gizlilik Politikası</a>
+</div>
+
+<!-- Doğrulama Formu -->
+<div id="verify-form" class="hidden">
+  <!-- Kullanıcının e‑postasını burada saklayacağız -->
+  <input type="hidden" id="verify-email">
+
+  <h1>Doğrulama Kodu</h1>
+  <p class="hint">E-posta adresinize gönderilen 6 haneli kodu girin.</p>
+  <form id="verify-code-form">
+    <div class="input-group">
+      <label for="verify-code">Doğrulama Kodu</label>
+      <input id="verify-code" type="text" placeholder="123456" required maxlength="6">
+      <div class="error-message">Geçersiz veya yanlış kod.</div>
+    </div>
+    <div class="actions">
+      <button type="submit" class="btn" id="verify-btn">
+        <div class="spinner"></div>
+        <span>Kodu Doğrula</span>
+      </button>
+    </div>
+  </form>
+  <p style="font-size: 0.85rem; text-align: center; margin: 0.5rem 0 0;">
+    Kod gelmedi mi? <a href="#" id="resend-code" style="color: var(--text);">Tekrar gönder</a>
+  </p>
+</div>
+
+  </main>
+
+<!-- KVKK Modal -->
+<div id="kvkk-modal">
+  <div class="kvkk-backdrop"></div>
+  <div class="kvkk-content">
+    <button id="kvkk-close" aria-label="Kapat">&times;</button>
+    <h2>Kullanım Şartları</h2>
+
+    <p>
+      İşbu Kullanım Şartları, <strong>Sosyal Gelişim ve Dayanışma Derneği (SGDD‑ASAM)</strong> tarafından geliştirilen ve işletilen <strong>quik</strong> adlı dijital hizmet platformunun (web sitesi, mobil uygulama ve diğer çevrimiçi servisler dâhil) kullanımına ilişkin hükümleri içermektedir. Hizmeti kullanarak, bu şartları okuduğunuzu, anladığınızı ve kabul ettiğinizi beyan etmiş olursunuz.
+    </p>
+
+    <h3>1. Hizmetin Kapsamı</h3>
+    <p>
+      Quik, kullanıcılarına yapay zekâ tabanlı asistan hizmetleri sunar. Bu hizmetler; metin tabanlı bilgi alma, öneri üretme, sohbet etkileşimi, dosya yükleme ve çeşitli entegrasyonlar aracılığıyla bilgi akışı sağlamayı kapsar. SGDD‑ASAM, hizmet içeriğinde değişiklik yapma, geçici veya kalıcı olarak durdurma hakkını saklı tutar.
+    </p>
+
+    <h3>2. Kullanıcı Yükümlülükleri</h3>
+    <ul>
+      <li>Kullanıcı, Quik hizmetlerini sadece yasal ve etik kurallar çerçevesinde kullanmalıdır.</li>
+      <li>Yanıltıcı, yasa dışı, müstehcen, ayrımcı veya nefret içeren içerikler paylaşmak yasaktır.</li>
+      <li>Hesap bilgilerinizin gizliliğinden siz sorumlusunuz; şifre paylaşımı yapılmamalıdır.</li>
+      <li>Yazılımsal veya teknik yollarla hizmetin aksatılmasına neden olacak eylemler yasaktır (ör. bot saldırıları, tersine mühendislik, kaynak kod müdahalesi).</li>
+    </ul>
+
+    <h3>3. Fikri Mülkiyet Hakları</h3>
+    <p>
+      Quik'e ait tüm içerikler (metin, grafik, ikonlar, yazılım kodları, algoritmalar ve model çıktıları) <strong>SGDD‑ASAM’a</strong> veya lisans alınmış üçüncü taraflara aittir. Kullanıcı, bu içerikleri izinsiz şekilde çoğaltamaz, dağıtamaz veya ticari amaçla kullanamaz.
+    </p>
+
+    <h3>4. Hizmette Değişiklik ve Erişim</h3>
+    <p>
+      SGDD‑ASAM, Quik hizmetine dair içerik, kullanıcı arayüzü, algoritmalar ve fonksiyonellikler üzerinde dilediği zaman değişiklik yapabilir. Bu kapsamda, kullanıcı deneyimini optimize etmek amacıyla sistemsel güncellemeler önceden bildirilmeksizin devreye alınabilir.
+    </p>
+
+    <h3>5. Sorumluluğun Sınırlandırılması</h3>
+    <p>
+      Quik tarafından sunulan bilgiler ve çıktılar, yalnızca öneri niteliğindedir. SGDD‑ASAM, hizmetin %100 doğrulukta çalışacağını taahhüt etmez. Kullanıcı, üretilen çıktılara dayanarak aldığı kararlarda kendi sorumluluğunu taşır. Hizmetin geçici olarak kullanılamaması, veri kaybı veya hatalı bilgi aktarımı gibi durumlardan SGDD‑ASAM sorumlu tutulamaz.
+    </p>
+
+    <h3>6. Hizmetin Sonlandırılması</h3>
+    <p>
+      SGDD‑ASAM, kullanıcıların bu kullanım şartlarına aykırı davrandığını tespit ettiğinde, ilgili kullanıcıların hizmete erişimini geçici veya kalıcı olarak durdurabilir. Ayrıca, güvenlik veya bakım amaçlı olarak hizmet geçici süreyle durdurulabilir.
+    </p>
+
+    <h3>7. Üçüncü Taraf Bağlantıları</h3>
+    <p>
+      Quik platformunda bazı entegrasyonlar veya yönlendirmeler üçüncü taraf web sitelerine yapılabilir. Bu sitelerin içerikleri SGDD‑ASAM’ın sorumluluğunda değildir. Kullanıcı, bu sitelere eriştiğinde kendi gizlilik politikalarını ve kullanım şartlarını ayrıca değerlendirmelidir.
+    </p>
+
+    <h3>8. Güncellemeler</h3>
+    <p>
+      SGDD‑ASAM, Kullanım Şartları üzerinde dilediği zaman değişiklik yapabilir. Güncel metin her zaman uygulama içinden veya <strong>quik.sgdd-asam.org</strong> üzerinden erişilebilir olacaktır. Kullanıcılar, değişiklikleri takip etmekle yükümlüdür. Güncel şartların yayımlanmasının ardından hizmeti kullanmaya devam etmek, yeni şartların kabul edildiği anlamına gelir.
+    </p>
+
+    <h3>9. Uygulanacak Hukuk ve Yetki</h3>
+    <p>
+      İşbu şartlar, <strong>T.C. yasalarına</strong> tabidir. Taraflar arasında çıkabilecek uyuşmazlıklar öncelikle uzlaşma yoluyla çözülmeye çalışılır. Çözülemediği takdirde <strong>Ankara Mahkemeleri ve İcra Daireleri</strong> yetkilidir.
+    </p>
+
+    <h3>10. İletişim</h3>
+    <ul>
+      <li><strong>E-posta:</strong> <a href="mailto:destek@sgdd-asam.org">destek@sgdd-asam.org</a></li>
+      <li><strong>Adres:</strong> SGDD-ASAM Genel Merkezi – “Birlik Mah., Katar Cad. No:11, Çankaya / ANKARA”</li>
+    </ul>
+
+    <p><i>Bu şartların son güncellenme tarihi: 21 Nisan 2025</i></p>
+  </div>
+</div>
+
+
+<!-- Gizlilik Politikası Modal -->
+<div id="gizlilik-modal">
+  <div class="kvkk-backdrop"></div>
+  <div class="kvkk-content">
+    <button id="gizlilik-close" aria-label="Kapat">&times;</button>
+    <h2>Gizlilik Politikası</h2>
+
+<p>
+  Bu Gizlilik Politikası, <strong>Quik</strong> adlı dijital ürün ve hizmetlerin kullanımı sırasında elde edilen verilerin işlenmesi ve korunmasına ilişkin ilkeleri tanımlar. <strong>Quik</strong> markası, <strong>Sosyal Gelişim ve Dayanışma Derneği İktisadi İşletmesi (SGDD‑ASAM)</strong> tarafından geliştirilmiş ve işletilmektedir. SGDD‑ASAM, kullanıcı mahremiyetine yüksek düzeyde önem verir ve kişisel verilerin güvenliğini mevzuatlara uygun biçimde sağlamayı taahhüt eder.
+</p>
+
+<h3>1. Kapsam</h3>
+<p>
+  Bu politika, Quik’e ait mobil uygulama, web sitesi ve entegre hizmetler aracılığıyla elde edilen kişisel verileri kapsar. Politika, sadece Quik tarafından toplanan verileri içerir; üçüncü taraf hizmet sağlayıcıların politikaları ayrıca geçerlidir.
+</p>
+
+<h3>2. Toplanan Bilgi Türleri</h3>
+<ul>
+  <li><strong>Kimlik Bilgileri:</strong> Ad, soyad, kullanıcı adı</li>
+  <li><strong>İletişim Bilgileri:</strong> E-posta adresi, IP adresi</li>
+  <li><strong>Oturum Bilgileri:</strong> Giriş-çıkış saatleri, cihaz tipi, tarayıcı bilgisi</li>
+  <li><strong>Davranış Verileri:</strong> Uygulama içi gezinti, tıklama, buton etkileşimleri</li>
+  <li><strong>Tanımlama Bilgileri (Çerezler):</strong> Kullanıcı tercihlerinin takibi</li>
+</ul>
+
+<h3>3. Verilerin Toplanma Yöntemleri</h3>
+<p>
+  Veriler doğrudan kullanıcıdan (kayıt formu, giriş işlemi vb.) ya da otomatik sistemler aracılığıyla (çerezler, oturum kaydı, cihaz tespiti) toplanır.
+</p>
+
+<h3>4. Verilerin Kullanım Amaçları</h3>
+<ul>
+  <li>Kullanıcı hesabı oluşturmak ve yönetmek</li>
+  <li>Kimlik doğrulama ve yetkilendirme yapmak</li>
+  <li>Teknik destek ve müşteri hizmetleri sunmak</li>
+  <li>Sistem güvenliğini sağlamak</li>
+  <li>Kullanıcı deneyimini kişiselleştirmek</li>
+  <li>Mevzuat gerekliliklerini yerine getirmek</li>
+</ul>
+
+<h3>5. Hukuki Dayanak</h3>
+<p>
+  Veriler, 6698 sayılı KVKK, Avrupa Birliği Genel Veri Koruma Tüzüğü (GDPR) gibi ulusal ve uluslararası düzenlemelere uygun olarak; <strong>açık rıza</strong>, <strong>sözleşmenin ifası</strong>, <strong>hukuki yükümlülük</strong> ve <strong>meşru menfaat</strong> gerekçeleriyle işlenir.
+</p>
+
+<h3>6. Çerezler ve Takip Teknolojileri</h3>
+<p>
+  Çerezler (cookies), kullanıcı tercihlerini hatırlamak ve analitik toplamak amacıyla kullanılır. Kullanıcı, çerez kullanımına ilişkin tercihlerini tarayıcı ayarlarından değiştirebilir.
+</p>
+
+<h3>7. Üçüncü Taraflara Aktarım</h3>
+<p>
+  Kişisel veriler, yalnızca aşağıdaki durumlarda sınırlı ve güvenli şekilde aktarılır:
+</p>
+<ul>
+  <li>Sunucu barındırma ve teknik altyapı hizmet sağlayıcıları</li>
+  <li>Yetkili kamu kurumları (mahkeme kararları veya kanun gereği)</li>
+  <li>Analitik ve istatistik hizmetleri (anonimleştirilmiş veri)</li>
+</ul>
+<p>
+  Hiçbir koşulda kullanıcı verileri ticari amaçla satılmaz veya paylaşılmaz.
+</p>
+
+<h3>8. Veri Güvenliği</h3>
+<p>
+  SGDD‑ASAM, teknik ve idari tedbirler ile veri güvenliğini sağlamak amacıyla aşağıdaki yöntemleri kullanır:
+</p>
+<ul>
+  <li>Şifreleme (AES, TLS, HTTPS)</li>
+  <li>Erişim kontrol sistemleri</li>
+  <li>Yetkisiz işlem tespiti</li>
+  <li>Düzenli güvenlik denetimleri</li>
+</ul>
+
+<h3>9. Saklama Süresi</h3>
+<p>
+  Veriler, yasal zorunluluklar ve işleme amacı gereğince saklanır; süresi sona erdiğinde güvenli biçimde silinir, yok edilir veya anonimleştirilir. Örnek:
+</p>
+<ul>
+  <li>Oturum kayıtları – 2 yıl</li>
+  <li>Kullanıcı hesapları – aktiflik süresince</li>
+  <li>Muhasebe kayıtları – 10 yıl (VUK kapsamında)</li>
+</ul>
+
+<h3>10. Kullanıcı Hakları</h3>
+<p>
+  Kullanıcılar, aşağıdaki haklara sahiptir:
+</p>
+<ul>
+  <li>İşlenen verileri öğrenme</li>
+  <li>Düzeltme veya silme talep etme</li>
+  <li>İşleme itiraz etme</li>
+  <li>Aktarılan kişileri öğrenme</li>
+  <li>Şikayet başvurusunda bulunma</li>
+</ul>
+<p>
+  Talepler <strong>kvkk@sgdd-asam.org</strong> adresinden veya <strong>“Birlik Mah. Katar Cad. No:11, Çankaya / ANKARA”</strong> adresine yazılı şekilde iletilebilir.
+</p>
+
+<h3>11. Güncellemeler</h3>
+<p>
+  Bu politika düzenli olarak gözden geçirilir ve gerektiğinde güncellenir. Son güncellenme tarihi: <strong>21 Nisan 2025</strong>. En güncel sürüm <strong>Quik uygulaması içerisinde</strong> yayınlanacaktır.
+</p>
+
+<p><i>
+  SGDD‑ASAM, kullanıcı verilerinin güvenliği ve gizliliği konusunda yasal sorumluluklarını titizlikle yerine getirir. Bu politika, SGDD‑ASAM’ın etik değerleriyle uyumlu olarak hazırlanmıştır.
+</i></p>
+  </div>
+</div>
+
+
+
+
+  <!-- Notification -->
+  <div class="notification" id="notification">
+    <div class="notification-icon success">✓</div>
+    <div class="notification-content">
+      <div class="notification-title">Başarılı</div>
+      <div class="notification-message">İşlem başarıyla tamamlandı.</div>
+    </div>
+  </div>
+
+  <button id="toggle-theme" aria-label="Tema">
+  <img id="theme-icon" img src="icons/aydinlik.png alt="Tema ikonu" draggable="False">
+</button>
+
+  <script>
+
+/* ---------- THEME TOGGLE ---------- */
+const html = document.documentElement;
+const toggleBtn = document.getElementById('toggle-theme');
+const themeIcon = document.getElementById('theme-icon');
+
+const savedTheme = localStorage.getItem('theme');
+if (savedTheme) {
+  html.dataset.theme = savedTheme;
+  themeIcon.src = savedTheme === 'dark' ? 'icons/aydinlik.png' : 'icons/karanlik.png';
+  themeIcon.alt = savedTheme === 'dark' ? 'Aydınlık mod' : 'Karanlık mod';
+} else {
+  const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+  html.dataset.theme = prefersDark ? 'dark' : 'light';
+  themeIcon.src = prefersDark ? 'icons/aydinlik.png' : 'icons/karanlik.png';
+  themeIcon.alt = prefersDark ? 'Aydınlık mod' : 'Karanlık mod';
+}
+
+toggleBtn.onclick = () => {
+  const dark = html.dataset.theme === 'dark';
+  const newTheme = dark ? 'light' : 'dark';
+  html.dataset.theme = newTheme;
+  themeIcon.src = dark ? 'icons/karanlik.png' : 'icons/aydinlik.png';
+  themeIcon.alt = dark ? 'Karanlık mod' : 'Aydınlık mod';
+  localStorage.setItem('theme', newTheme);
+};
+
+/* ---------- VIEW SWITCH ---------- */
+const swap = toView => {
+  const views = {
+    login: ['.log-only', '#auth-form'],
+    register: ['.reg-only', '#auth-form'],
+    verify: ['#verify-form'],
+  };
+
+  // Tüm görünümleri gizle
+  document.querySelectorAll('.log-only, .reg-only, #auth-form, #verify-form')
+    .forEach(e => e.classList.add('hidden'));
+
+  // Seçilen görünümü göster
+  views[toView].forEach(selector => {
+    document.querySelectorAll(selector).forEach(e => e.classList.remove('hidden'));
+  });
+
+  // Kart başlığını güncelle
+  const titles = { login: 'quik', register: 'quik', verify: 'quik' };
+  document.querySelector('.card-title').textContent = titles[toView];
+
+  // Formları reset etme:
+  if (toView === 'verify') {
+    document.getElementById('verify-code-form').reset();
+  } else {
+    document.getElementById('auth-form').reset();
+    document.getElementById('verify-code-form').reset();
+  }
+
+  // Hata sınıflarını temizle
+  document.querySelectorAll('.input-group').forEach(group => {
+    group.classList.remove('error');
+  });
+};
+
+document.getElementById('go-reg').onclick = e => {
+  e.preventDefault();
+  swap('register');
+};
+
+document.getElementById('go-log').onclick = e => {
+  e.preventDefault();
+  swap('login');
+};
+
+swap('login');
+
+/* ---------- FORM VALIDATION ---------- */
+const form = document.getElementById('auth-form');
+const emailInput = document.getElementById('email');
+const passwordInput = document.getElementById('password');
+const confirmInput = document.getElementById('confirm');
+
+emailInput.addEventListener('input', () => {
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  const isValid = emailRegex.test(emailInput.value.trim());
+  
+  if (emailInput.value.trim() === '') {
+    emailInput.parentElement.classList.remove('error');
+  } else {
+    emailInput.parentElement.classList.toggle('error', !isValid);
+  }
+});
+
+passwordInput.addEventListener('input', () => {
+  const isValid = passwordInput.value.length >= 6;
+  
+  if (passwordInput.value === '') {
+    passwordInput.parentElement.classList.remove('error');
+  } else {
+    passwordInput.parentElement.classList.toggle('error', !isValid);
+  }
+  
+  if (!confirmInput.classList.contains('hidden') && confirmInput.value !== '') {
+    const passwordsMatch = confirmInput.value === passwordInput.value;
+    confirmInput.parentElement.classList.toggle('error', !passwordsMatch);
+  }
+});
+
+confirmInput.addEventListener('input', () => {
+  const passwordsMatch = confirmInput.value === passwordInput.value;
+  
+  if (confirmInput.value === '') {
+    confirmInput.parentElement.classList.remove('error');
+  } else {
+    confirmInput.parentElement.classList.toggle('error', !passwordsMatch);
+  }
+});
+
+document.querySelectorAll('.toggle-password').forEach(button => {
+  button.addEventListener('click', () => {
+    const input = button.previousElementSibling;
+    const icon = button.querySelector('img');
+    const isHidden = input.getAttribute('type') === 'password';
+    input.setAttribute('type', isHidden ? 'text' : 'password');
+
+    icon.src = isHidden
+      ? 'icons/disable_show_password_icon.png'
+      : 'icons/enable_show_password_icon.png';
+
+    icon.alt = isHidden ? 'Şifreyi gizle' : 'Şifreyi göster';
+  });
+});
+
+/* ---------- FORM SUBMIT ---------- */
+form.onsubmit = async e => {
+  e.preventDefault();
+  
+  const isReg = !form.querySelector('#confirm').classList.contains('hidden');
+  const email = emailInput.value.trim();
+  const password = passwordInput.value;
+  
+  let isValid = true;
+  
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  if (!emailRegex.test(email)) {
+    emailInput.parentElement.classList.add('error');
+    isValid = false;
+  }
+  
+  if (password.length < 6) {
+    passwordInput.parentElement.classList.add('error');
+    isValid = false;
+  }
+  
+  if (isReg) {
+    if (password !== confirmInput.value) {
+      confirmInput.parentElement.classList.add('error');
+      isValid = false;
+    }
+    
+    if (!document.getElementById('kvkk').checked) {
+      showNotification('Hata', 'KVKK aydınlatma metnini kabul etmelisiniz.', 'error');
+      isValid = false;
+    }
+  }
+  
+  if (!isValid) return;
+  
+  const submitBtn = isReg ? document.getElementById('register-btn') : document.getElementById('login-btn');
+  submitBtn.classList.add('loading');
+  
+  try {
+    if (isReg) {
+      const response = await fetch('http://localhost:8080/api/register', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email, password }),
+      });
+      
+      const data = await response.json();
+      if (!response.ok) throw new Error(data.error || 'Kayıt başarısız.');
+
+      // Kayıt başarılıysa e‑postayı gizli alana aktarıyoruz:
+      document.getElementById('verify-email').value = email;
+      
+      showNotification('Başarılı', data.message, 'success');
+      swap('verify');
+    } else {
+      const response = await fetch('http://localhost:8080/api/login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email, password }),
+      });
+      
+      const data = await response.json();
+      if (!response.ok) throw new Error(data.error || 'Giriş başarısız.');
+      
+      showNotification('Başarılı', 'Giriş başarılı. Yönlendiriliyorsunuz...', 'success');
+      // window.location.href = '/dashboard';
+    }
+  } catch (error) {
+    showNotification('Hata', error.message || 'Bir hata oluştu. Lütfen tekrar deneyin.', 'error');
+  } finally {
+    submitBtn.classList.remove('loading');
+  }
+};
+
+/* ---------- NOTIFICATION SYSTEM ---------- */
+const notification = document.getElementById('notification');
+const notificationIcon = notification.querySelector('.notification-icon');
+const notificationTitle = notification.querySelector('.notification-title');
+const notificationMessage = notification.querySelector('.notification-message');
+
+function showNotification(title, message, type = 'success') {
+  notificationTitle.textContent = title;
+  notificationMessage.textContent = message;
+  notificationIcon.className = `notification-icon ${type}`;
+  notificationIcon.textContent = type === 'success' ? '✓' : '✕';
+  notification.classList.add('show');
+  setTimeout(() => {
+    notification.classList.remove('show');
+  }, 5000);
+}
+
+/* ---------- DOĞRULAMA FORM SUBMIT ---------- */
+const verifyForm = document.getElementById('verify-code-form');
+const verifyCodeInput = document.getElementById('verify-code');
+
+verifyForm.onsubmit = async e => {
+  e.preventDefault();
+  
+  const code = verifyCodeInput.value.trim();
+  // gizli alandaki e‑posta
+  const email = document.getElementById('verify-email').value;
+
+  if (code.length !== 6 || !/^\d+$/.test(code)) {
+    verifyCodeInput.parentElement.classList.add('error');
+    return;
+  }
+  
+  const verifyBtn = document.getElementById('verify-btn');
+  verifyBtn.classList.add('loading');
+  
+  try {
+    const response = await fetch('http://localhost:8080/api/verify-code', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email, code }),
+    });
+    
+    const data = await response.text();
+    if (!response.ok) throw new Error(data);
+    
+    showNotification('Başarılı', data, 'success');
+    
+    // 👉 Doğrulama başarılı → doğrudan giriş yap veya dashboard’a yönlendir
+    setTimeout(() => {
+      window.location.href = '/dashboard'; 
+    }, 800);
+    
+  } catch (error) {
+    showNotification('Hata', error.message || 'Geçersiz veya yanlış doğrulama kodu.', 'error');
+    verifyCodeInput.parentElement.classList.add('error');
+  } finally {
+    verifyBtn.classList.remove('loading');
+  }
+};
+
+/* ---------- KODU TEKRAR GÖNDER ---------- */
+document.getElementById('resend-code').onclick = async e => {
+  e.preventDefault();
+  
+  const email = emailInput.value.trim();
+  showNotification('Bilgi', 'Kod tekrar gönderiliyor...', 'success');
+  
+  try {
+    const response = await fetch('http://localhost:8080/api/register', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email, password: 'resend' }),
+    });
+    
+    const data = await response.json();
+    if (!response.ok) throw new Error(data.error || 'Kod gönderilemedi.');
+    
+    showNotification('Başarılı', data.message, 'success');
+  } catch (error) {
+    showNotification('Hata', error.message || 'Kod gönderilemedi. Lütfen tekrar deneyin.', 'error');
+  }
+};
+
+/* ---------- OAUTH REDIRECTS ---------- */
+const redirect = url => {
+  const btn = event.currentTarget;
+  btn.style.pointerEvents = 'none';
+  btn.style.opacity = '0.7';
+  const span = btn.querySelector('span');
+  const originalText = span.textContent;
+  span.textContent = 'Yönlendiriliyor...';
+  setTimeout(() => {
+    location.href = url;
+  }, 800);
+};
+
+const base = encodeURIComponent(`${location.origin}/oauth`);
+
+document.getElementById('google-btn').onclick = () => redirect(
+  `https://accounts.google.com/o/oauth2/v2/auth?client_id=GOOGLE_CLIENT_ID`
+  + `&redirect_uri=${base}-google&response_type=code&scope=profile email&prompt=select_account`
+);
+
+document.getElementById('microsoft-btn').onclick = () => redirect(
+  `https://login.microsoftonline.com/common/oauth2/v2.0/authorize?client_id=MICROSOFT_CLIENT_ID`
+  + `&redirect_uri=${base}-ms&response_type=code&scope=User.Read openid email profile&prompt=select_account`
+);
+
+/* ---------- KVKK MODAL ---------- */
+const kvkkModal = document.getElementById('kvkk-modal');
+const kvkkLink = document.getElementById('kvkk-link');
+const kvkkClose = document.getElementById('kvkk-close');
+
+kvkkLink.onclick = e => {
+  e.preventDefault();
+  kvkkModal.classList.add('active');
+  document.body.style.overflow = 'hidden';
+};
+
+kvkkClose.onclick = () => {
+  kvkkModal.classList.remove('active');
+  document.body.style.overflow = '';
+};
+
+kvkkModal.querySelector('.kvkk-backdrop').onclick = () => {
+  kvkkModal.classList.remove('active');
+  document.body.style.overflow = '';
+};
+
+/* ---------- GİZLİLİK MODAL ---------- */
+const gizlilikModal = document.getElementById('gizlilik-modal');
+const gizlilikLink = document.getElementById('gizlilik-link');
+const gizlilikClose = document.getElementById('gizlilik-close');
+
+gizlilikLink.onclick = e => {
+  e.preventDefault();
+  gizlilikModal.classList.add('active');
+  document.body.style.overflow = 'hidden';
+};
+
+gizlilikClose.onclick = () => {
+  gizlilikModal.classList.remove('active');
+  document.body.style.overflow = '';
+};
+
+gizlilikModal.querySelector('.kvkk-backdrop').onclick = () => {
+  gizlilikModal.classList.remove('active');
+  document.body.style.overflow = '';
+};
+
+/* ---------- ESC TUŞUYLA KAPAMA (HER İKİSİ İÇİN) ---------- */
+document.addEventListener('keydown', e => {
+  if (e.key === 'Escape') {
+    if (kvkkModal.classList.contains('active')) {
+      kvkkModal.classList.remove('active');
+    }
+    if (gizlilikModal.classList.contains('active')) {
+      gizlilikModal.classList.remove('active');
+    }
+    document.body.style.overflow = '';
+  }
+});
+
+
+
+
+
+  </script>
+</body>
+</html>

@@ -1,0 +1,735 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8">
+  <title>quik - Konuşma</title>
+  <link rel="icon" href="icons/quik_icon.png" type="image/png">
+  <style>
+    body {
+      margin: 0;
+      background: #202020;
+      overflow: hidden;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      font-family: sans-serif;
+    opacity: 0; /* Başlangıçta görünmez */
+    animation: fadeIn 1s ease forwards; /* 0.5 saniyede animasyon */
+  }
+
+  /* Fade-in ve hafif kayma animasyonu */
+  @keyframes fadeIn {
+    from {
+      opacity: 0;
+
+    }
+    to {
+      opacity: 1;
+
+    }
+  }
+
+    canvas {
+      position: fixed;
+      top: 0;
+      left: 0;
+      z-index: 0;
+      pointer-events: none;
+    }
+
+    #circle-container {
+      position: relative;
+      width: 120px;
+      height: 120px;
+      z-index: 1;
+    }
+
+    #circle {
+      width: 100%;
+      height: 100%;
+      border-radius: 50%;
+      background-color: #7f8c8d;
+      box-shadow: 0 0 20px rgba(0, 0, 0, 0.3);
+      position: absolute;
+      overflow: hidden;
+      transition: transform 0.3s ease, background-color 0.3s ease;
+    }
+
+    #circle.recording {
+      background-color: #DDD6B8 !important;
+    }
+
+    #circle.bot-speaking {
+      background-color: #FFA200 !important;
+      animation: gentle-pulse 3s infinite ease-in-out;
+    }
+
+    @keyframes gentle-pulse {
+      0% { transform: scale(1); }
+      50% { transform: scale(1.05); }
+      100% { transform: scale(1); }
+    }
+
+    .pulse-ring {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      width: 120%;
+      height: 120%;
+      border-radius: 50%;
+      background: transparent;
+      border: 2px solid rgba(255, 255, 255, 0.5);
+      transform: translate(-50%, -50%) scale(0.8);
+      opacity: 0;
+      pointer-events: none;
+    }
+
+    #wave-canvas {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      border-radius: 50%;
+      z-index: 2;
+      pointer-events: none;
+    }
+
+    @keyframes gentle-inner-pulse {
+      0% { transform: translate(-50%, -50%) scale(0.9); }
+      50% { transform: translate(-50%, -50%) scale(1); }
+      100% { transform: translate(-50%, -50%) scale(0.9); }
+    }
+
+    /* Style for the close button */
+    #close-btn {
+      position: fixed;
+      top: 9px;
+      right: 13px;
+      width: 30px;
+      height: 30px;
+      background-color: transparent;
+      border: none;
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      z-index: 10;
+      transition: background-color 0.3s ease;
+      position: relative;
+    }
+
+    #close-btn img:hover {
+      filter: brightness(1) invert(0);
+      background-color: #c0c0c0;
+      border-radius: 24px;
+    }
+
+    #close-btn img {
+      width: 30px;
+      height: 30px;
+      filter: brightness(0) invert(1);
+    }
+
+    /* Fade-out animation */
+    @keyframes fadeOut {
+      0% { opacity: 1; }
+      100% { opacity: 0; }
+    }
+
+    .fade-out {
+      animation: fadeOut 0.5s ease forwards;
+    }
+
+    .close-btn-wrapper {
+      position: fixed;
+      top: 5px;
+      right: 5px;
+    }
+
+    /* Tooltip kutusu */
+    #close-btn[data-tooltip]::after {
+      content: attr(data-tooltip);
+      position: absolute;
+      right: -20px;
+      transform: translateX(-50%);
+      background-color: #e0e0e0;
+      color: #212121;
+      padding: 8px 12px;
+      border-radius: 8px;
+      white-space: nowrap;
+      font-size: 0.8rem;
+      font-weight: 500;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.3s ease;
+    }
+
+    /* Tooltip oku */
+    #close-btn[data-tooltip]::before {
+      content: "";
+      position: absolute;
+      right: 0;
+      transform: translateX(-50%);
+      border-width: 5px;
+      border-style: solid;
+      border-color: transparent transparent rgba(0, 0, 0, 0.75) transparent;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.3s ease;
+    }
+
+    /* Hover durumunda tooltip'i göster */
+    #close-btn[data-tooltip]:hover::after,
+    #close-btn[data-tooltip]:hover::before {
+      opacity: 1;
+    }
+
+    @media (max-width: 768px) {
+      #close-btn {
+        width: 30px;
+        height: 30px;
+      }
+      
+      #close-btn img {
+        width: 30px;
+        height: 30px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <canvas id="bg"></canvas>
+  <div id="circle-container">
+    <div id="circle"></div>
+    <canvas id="wave-canvas"></canvas>
+  </div>
+  <div class="close-btn-wrapper">
+    <button id="close-btn" data-tooltip="Sesli modu kapat">
+      <img src="icons/close_btn.png" alt="Kapat" draggable="false">
+    </button>
+  </div>
+
+ <script>
+    // --- Global Değişkenler ---
+    // Ses ve UI elementleri
+    const startSound = new Audio("start-sound.mp3"); // Opsiyonel: Kayıt başlangıç sesi
+    const endSound = new Audio("end-sound.mp3");     // Bot konuşması bitiş sesi
+    const circleContainer = document.getElementById("circle-container");
+    const circle = document.getElementById("circle");
+    const canvas = document.getElementById("bg"); // Arka plan canvas
+    const ctx = canvas.getContext("2d");
+    const waveCanvas = document.getElementById("wave-canvas"); // Dalga animasyonu canvas
+    const waveCtx = waveCanvas.getContext("2d");
+
+    // Ses kayıt ve durum değişkenleri
+    let recorder = null;
+    let audioChunks = [];
+    let botSpeaking = false;      // Botun konuşup konuşmadığı
+    let isRecording = false;      // Kullanıcının konuşup konuşmadığı (kayıt aktif mi?)
+    let currentBotAudio = null;   // O an çalan bot sesini tutacak değişken (Interrupt için)
+    let audioCtx = null;          // AudioContext nesnesi
+    let analyser = null;          // AnalyserNode nesnesi
+    let bufferLength = 0;         // Analiz için buffer boyutu
+    let buffer = null;            // Ses verisi buffer'ı
+    let stream = null;            // Mikrofon akışı
+
+    // Animasyon ve Zamanlama Değişkenleri
+    let lastPulseTime = 0;        // Son pulse halkası zamanı
+    let lastSpokenTime = 0;       // Kullanıcının son konuştuğu zaman
+    let currentScale = 1;         // Dairenin anlık ölçeği (yumuşak geçiş için)
+    let audioLevelSmoothed = 0;   // Yumuşatılmış ses seviyesi
+
+    // Renk Paleti ve Stiller
+    const baseColor = '#7f8c8d'; // Gri - Idle
+    const recordingBaseColor = { h: 45, s: 30, l: 65 }; // Açık Kahve/Bej tonu (HSL)
+    const botSpeakingGradient = 'linear-gradient(145deg, #FFA200, #FFC04D)'; // Bot konuşma gradient'ı
+    const errorColor = "#e74c3c"; // Hata durumu rengi
+
+    // Dalga Renkleri
+    let baseWaveColor = "rgba(127, 140, 141, 0.6)"; // Gri dalga
+    let recordingWaveColor = "rgba(221, 214, 184, 0.7)"; // Kayıt dalgası (Bej tonu)
+    let botWaveColor = "rgba(255, 162, 0, 0.7)"; // Bot dalgası (Turuncu tonu)
+    let currentWaveColor = baseWaveColor; // Başlangıçta baseWaveColor
+
+    // Dalga Canvas Boyutları ve Merkez
+    const size = 120;
+    const centerX = size / 2;
+    const centerY = size / 2;
+    const radius = size / 2;
+
+    // Sıvı Simülasyonu Değişkenleri
+    let waterLevel = 0.5;
+    let waterAngle = 0;
+    let waterVelocity = 0;
+
+    // Session ID
+    const sessionId = "sess_" + Date.now() + "_" + Math.floor(Math.random() * 10000);
+
+
+    // --- Çizim ve Animasyon Fonksiyonları ---
+
+    // Dalga Animasyonu Çizimi
+    function drawWaves(intensity) {
+        waveCtx.clearRect(0, 0, size, size);
+        let speed, waveIntensityMultiplier, targetWaterLevel, waveColor;
+        let currentBaseRadius = radius;
+
+        if (botSpeaking) {
+            waveColor = botWaveColor;
+            speed = 0.03;
+            waveIntensityMultiplier = 8;
+            targetWaterLevel = 0.5 + Math.sin(Date.now() / 1500) * 0.05;
+            waterVelocity += (Math.sin(Date.now() / 700) * 0.004);
+            currentBaseRadius = radius * (1 + Math.sin(Date.now() / 1500) * 0.03);
+        } else if (intensity > 0.05) {
+            waveColor = recordingWaveColor;
+            speed = 0.05 + intensity * 0.05;
+            waveIntensityMultiplier = 5 + intensity * 15;
+            targetWaterLevel = 0.5 + intensity * 0.15;
+            waterVelocity += (Math.random() - 0.5) * intensity * 0.025;
+        } else {
+            waveColor = baseWaveColor;
+            speed = 0.02;
+            waveIntensityMultiplier = 4;
+            targetWaterLevel = 0.5;
+            waterVelocity *= 0.92;
+             waterAngle *= 0.96;
+        }
+
+        waterLevel += (targetWaterLevel - waterLevel) * 0.1;
+        waterAngle += waterVelocity;
+        waterVelocity *= 0.99;
+        waterAngle *= 0.99;
+
+        const maxAngle = botSpeaking ? 0.15 : (intensity > 0.05 ? Math.min(intensity * 0.5, 0.4) : 0.05);
+        if (Math.abs(waterAngle) > maxAngle) {
+            waterAngle = Math.sign(waterAngle) * maxAngle;
+            waterVelocity *= -0.6;
+        }
+
+        const colorParts = waveColor.substring(waveColor.indexOf('(') + 1, waveColor.indexOf(')')).split(',');
+        const r = parseInt(colorParts[0].trim());
+        const g = parseInt(colorParts[1].trim());
+        const b = parseInt(colorParts[2].trim());
+        const baseAlpha = parseFloat(colorParts[3] ? colorParts[3].trim() : '1');
+
+        waveCtx.save();
+        waveCtx.beginPath();
+        waveCtx.arc(centerX, centerY, currentBaseRadius, 0, Math.PI * 2);
+        waveCtx.clip();
+
+        const waterHeight = centerY + (0.5 - waterLevel) * size;
+        const waterOffset = Math.tan(waterAngle) * currentBaseRadius * 0.7;
+
+        const waterGradient = waveCtx.createLinearGradient(0, waterHeight - 10, 0, size);
+        const gradR1 = Math.max(0, Math.min(255, r)); const gradG1 = Math.max(0, Math.min(255, g)); const gradB1 = Math.max(0, Math.min(255, b));
+        const gradR2 = Math.max(0, Math.min(255, r - 20)); const gradG2 = Math.max(0, Math.min(255, g - 20)); const gradB2 = Math.max(0, Math.min(255, b + 10));
+        const gradR3 = Math.max(0, Math.min(255, r - 30)); const gradG3 = Math.max(0, Math.min(255, g - 30)); const gradB3 = Math.max(0, Math.min(255, b));
+        waterGradient.addColorStop(0, `rgba(${gradR1}, ${gradG1}, ${gradB1}, ${baseAlpha * 0.8})`);
+        waterGradient.addColorStop(0.5, `rgba(${gradR2}, ${gradG2}, ${gradB2}, ${baseAlpha * 1.0})`);
+        waterGradient.addColorStop(1, `rgba(${gradR3}, ${gradG3}, ${gradB3}, ${baseAlpha * 1.2})`);
+
+        const time = Date.now() / 1000;
+        const waveHeightFactor = botSpeaking ? 2.5 : (intensity > 0.05 ? 1 + intensity * 4 : 1);
+        const leftX = centerX - currentBaseRadius;
+        const rightX = centerX + currentBaseRadius;
+        const wavePoints = 25;
+
+        waveCtx.beginPath();
+        waveCtx.moveTo(leftX, size);
+        for (let i = 0; i <= wavePoints; i++) {
+            const x = leftX + (rightX - leftX) * (i / wavePoints);
+            let y = waterHeight + waterOffset * ((x - centerX) / (currentBaseRadius || 1)); // Sıfıra bölmeyi engelle
+            const wave1 = Math.sin(time * speed * 20 + i * 0.5 + Math.sin(time * 0.5)) * waveHeightFactor * 0.6;
+            const wave2 = Math.cos(time * speed * 15 + i * 0.3 + Math.cos(time * 0.7)) * waveHeightFactor * 0.4;
+            let currentY = y + (wave1 + wave2);
+            if (currentBaseRadius > 0) {
+                const edgeFactor = 1 - Math.pow(Math.abs(x - centerX) / currentBaseRadius, 2);
+                currentY += (wave1 + wave2) * (1 - edgeFactor) * 0.5;
+            }
+            waveCtx.lineTo(x, currentY);
+        }
+        waveCtx.lineTo(rightX, size);
+        waveCtx.closePath();
+
+        waveCtx.shadowColor = `rgba(0, 0, 0, 0.3)`;
+        waveCtx.shadowBlur = 15;
+        waveCtx.shadowOffsetY = 5;
+        waveCtx.fillStyle = waterGradient;
+        waveCtx.fill();
+
+        waveCtx.shadowColor = 'transparent';
+        waveCtx.shadowBlur = 0;
+        waveCtx.shadowOffsetY = 0;
+
+        waveCtx.beginPath();
+         for (let i = 0; i <= wavePoints; i++) {
+             const x = leftX + (rightX - leftX) * (i / wavePoints);
+             let y = waterHeight + waterOffset * ((x - centerX) / (currentBaseRadius || 1));
+             const wave1 = Math.sin(time * speed * 20 + i * 0.5 + Math.sin(time * 0.5)) * waveHeightFactor * 0.6;
+             const wave2 = Math.cos(time * speed * 15 + i * 0.3 + Math.cos(time * 0.7)) * waveHeightFactor * 0.4;
+             let currentY = y + (wave1 + wave2);
+             if (currentBaseRadius > 0) {
+                 const edgeFactor = 1 - Math.pow(Math.abs(x - centerX) / currentBaseRadius, 2);
+                 currentY += (wave1 + wave2) * (1 - edgeFactor) * 0.5;
+             }
+             if (i === 0) waveCtx.moveTo(x, currentY - 1);
+             else waveCtx.lineTo(x, currentY - 1);
+         }
+        const sparkleGradient = waveCtx.createLinearGradient(leftX, 0, rightX, 0);
+        sparkleGradient.addColorStop(0.2, 'rgba(255, 255, 255, 0)');
+        sparkleGradient.addColorStop(0.5, `rgba(255, 255, 255, ${botSpeaking ? 0.6 : (intensity > 0.05 ? Math.min(1, 0.2 + intensity * 0.8) : 0.2)})`);
+        sparkleGradient.addColorStop(0.8, 'rgba(255, 255, 255, 0)');
+        waveCtx.strokeStyle = sparkleGradient;
+        waveCtx.lineWidth = 2;
+        waveCtx.stroke();
+        waveCtx.restore();
+    }
+
+    // Pulse Halkası Oluşturma
+    function createPulseRing(isBot = false) {
+        const pulseRing = document.createElement('div');
+        pulseRing.className = 'pulse-ring';
+        const duration = isBot ? 3000 : 1500;
+        const startScale = 1.0;
+        const endScale = isBot ? 1.8 : 1.6;
+        const startOpacity = isBot ? 0.4 : 0.7;
+        const midOpacity = isBot ? 0.1 : 0.2;
+        const endOpacity = 0;
+        const startBorderColor = isBot ? 'rgba(255, 162, 0, 0.5)' : 'rgba(221, 214, 184, 0.8)';
+        const endBorderColor = isBot ? 'rgba(255, 162, 0, 0)' : 'rgba(221, 214, 184, 0)';
+        pulseRing.style.borderColor = startBorderColor;
+        if (circle) { circleContainer.insertBefore(pulseRing, circle); }
+        else { circleContainer.appendChild(pulseRing); }
+        pulseRing.animate(
+            [ { transform: `translate(-50%, -50%) scale(${startScale})`, opacity: startOpacity, borderColor: startBorderColor },
+              { opacity: midOpacity, offset: 0.7 },
+              { transform: `translate(-50%, -50%) scale(${endScale})`, opacity: endOpacity, borderColor: endBorderColor } ],
+            { duration: duration, easing: 'cubic-bezier(0.1, 0.7, 0.3, 1)', fill: 'forwards' }
+        );
+        setTimeout(() => { pulseRing.remove(); }, duration);
+    }
+
+    // Arka Plan Parçacık Animasyonu
+    let particles = Array.from({ length: 60 }, () => ({ x: Math.random() * window.innerWidth, y: Math.random() * window.innerHeight, r: Math.random() * 2 + 1, dx: (Math.random() - 0.5) * 0.5, dy: (Math.random() - 0.5) * 0.5 }));
+    function animateParticles() {
+        if (!ctx) return; // Context yoksa çizim yapma
+        canvas.width = window.innerWidth; // Her frame'de boyut kontrolü (resize'a ek olarak)
+        canvas.height = window.innerHeight;
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        ctx.fillStyle = "#ffffff22";
+        for (let p of particles) {
+            ctx.beginPath();
+            ctx.arc(p.x, p.y, p.r, 0, 2 * Math.PI);
+            ctx.fill();
+            p.x += p.dx; p.y += p.dy;
+            if (p.x - p.r < 0 || p.x + p.r > canvas.width) p.dx *= -1;
+            if (p.y - p.r < 0 || p.y + p.r > canvas.height) p.dy *= -1;
+        }
+        requestAnimationFrame(animateParticles);
+    }
+
+    // Ana Animasyon Döngüsü (Idle durumu için)
+    function animateLoop() {
+        if (!isRecording && !botSpeaking) { // Sadece Idle durumunda dalgaları çiz
+            drawWaves(0);
+        }
+         requestAnimationFrame(animateLoop);
+    }
+
+
+    // --- Durum Yönetimi Fonksiyonları (Bot/Kullanıcı Konuşması) ---
+
+    // Bot Konuşma Durumunu Başlatma
+    function startBotSpeaking() {
+        if (botSpeaking) return; // Zaten konuşuyorsa tekrar başlatma
+        botSpeaking = true;
+        circle.className = "bot-speaking";
+        circle.style.background = botSpeakingGradient;
+        currentWaveColor = botWaveColor;
+        createPulseRing(true);
+        if (window.botPulseInterval) clearInterval(window.botPulseInterval);
+        window.botPulseInterval = setInterval(() => {
+            if (!botSpeaking) { clearInterval(window.botPulseInterval); return; }
+            createPulseRing(true);
+        }, 4000);
+        console.log("Bot konuşma durumu BAŞLADI.");
+    }
+
+    // Bot Konuşma Durumunu Durdurma (Interrupt destekli)
+    function stopBotSpeaking(interrupted = false) {
+        if (!botSpeaking && !interrupted) return; // Zaten konuşmuyorsa ve interrupt yoksa çık
+        console.log(`Bot konuşma durumu DURDURULUYOR. Araya girildi mi: ${interrupted}`);
+        botSpeaking = false;
+        if (window.botPulseInterval) clearInterval(window.botPulseInterval);
+        if (currentBotAudio) {
+            if (!currentBotAudio.paused) { currentBotAudio.pause(); console.log("Bot sesi duraklatıldı."); }
+            currentBotAudio.onended = null; currentBotAudio.onerror = null;
+            if (currentBotAudio.src && currentBotAudio.src.startsWith('blob:')) { URL.revokeObjectURL(currentBotAudio.src); console.log("Bot sesinin Object URL'i iptal edildi."); }
+            currentBotAudio = null;
+        }
+        circle.className = "";
+        circle.style.background = baseColor;
+        circle.style.filter = 'brightness(1)';
+        circle.style.transform = 'scale(1)';
+        circle.style.boxShadow = '0 0 15px rgba(0, 0, 0, 0.2), inset 0 0 5px rgba(255, 255, 255, 0.1)';
+        currentWaveColor = baseWaveColor;
+        if (!interrupted) { endSound.play().catch(e => console.warn("Bitiş sesi çalma hatası:", e)); }
+        else { console.log("Araya girildiği için bitiş sesi çalınmadı."); }
+        document.querySelectorAll('.pulse-ring').forEach(ring => { if (ring.parentElement) { ring.remove(); } });
+    }
+
+
+// ————————————————
+// Mikrofon Başlatma ve Ses Algılama Döngüsü
+// ————————————————
+function initializeAudio() {
+  if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+    console.error("Tarayıcı mediaDevices API'sini desteklemiyor.");
+    alert("Üzgünüz, tarayıcınız mikrofon erişimini desteklemiyor.");
+    circle.style.backgroundColor = errorColor;
+    return;
+  }
+
+  navigator.mediaDevices.getUserMedia({
+    audio: {
+      noiseSuppression: true,
+      echoCancellation: true
+    }
+  })
+  .then(micStream => {
+    stream = micStream;
+    lastSpokenTime = Date.now();
+
+    // MediaRecorder kurulumu
+    let options = { mimeType: 'audio/webm;codecs=opus' };
+    if (!MediaRecorder.isTypeSupported(options.mimeType)) {
+      console.warn(`${options.mimeType} desteklenmiyor, audio/webm deneniyor.`);
+      options = { mimeType: 'audio/webm' };
+      if (!MediaRecorder.isTypeSupported(options.mimeType)) {
+        console.warn(`${options.mimeType} desteklenmiyor, varsayılan deneniyor.`);
+        options = {};
+      }
+    }
+    try {
+      recorder = new MediaRecorder(stream, options);
+    } catch (e) {
+      console.error("MediaRecorder oluşturulamadı:", e);
+      alert("Ses kayıt aracı başlatılamadı. Tarayıcınız desteklemiyor olabilir.");
+      circle.style.backgroundColor = errorColor;
+      return;
+    }
+
+    recorder.ondataavailable = e => {
+      if (e.data.size > 0) audioChunks.push(e.data);
+    };
+    recorder.onstop = () => {
+      if (audioChunks.length === 0) {
+        console.log("Kaydedilecek ses verisi yok (onstop).");
+        isRecording = false;
+        return;
+      }
+      const blob = new Blob(audioChunks, { type: recorder.mimeType });
+      audioChunks = [];
+      sendToServer(blob);
+    };
+    recorder.onerror = event => {
+      console.error("MediaRecorder hatası:", event.error);
+      isRecording = false;
+    };
+
+    // AudioContext + high‑pass filtre + Analyser
+    audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+    const sourceNode = audioCtx.createMediaStreamSource(stream);
+    const highpass = audioCtx.createBiquadFilter();
+    highpass.type = 'highpass';
+    highpass.frequency.value = 80;       // 80 Hz altındaki gürültüyü kes
+    sourceNode.connect(highpass);
+
+    analyser = audioCtx.createAnalyser();
+    analyser.fftSize = 2048;
+    analyser.smoothingTimeConstant = 0.8; // daha fazla yumuşatma
+    highpass.connect(analyser);
+
+    bufferLength = analyser.fftSize;
+    buffer = new Uint8Array(bufferLength);
+
+    // Animasyonları başlat
+    animateParticles();
+    animateLoop();
+    detectVoice();
+  })
+  .catch(err => {
+    console.error("Mikrofon erişimi hatası:", err);
+    if (err.name === 'NotAllowedError' || err.name === 'PermissionDeniedError') {
+      alert("Mikrofon erişim izni reddedildi. Lütfen izinleri kontrol edip sayfayı yenileyin.");
+    } else {
+      alert("Mikrofon erişiminde bir hata oluştu.");
+    }
+    circle.style.backgroundColor = errorColor;
+  });
+}
+
+// ————————————————
+// Ses Algılama ve Kayıt Mantığı
+// ————————————————
+function detectVoice() {
+  if (!recorder || !analyser || audioCtx.state === 'closed') {
+    requestAnimationFrame(detectVoice);
+    return;
+  }
+
+  // 1) Time‑domain RMS hesapla
+  analyser.getByteTimeDomainData(buffer);
+  let sum = 0;
+  for (let i = 0; i < bufferLength; i++) {
+    const v = (buffer[i] - 128) / 128; // normalize [-1..1]
+    sum += v * v;
+  }
+  const rms = Math.sqrt(sum / bufferLength);
+
+  // 2) Offset ve multiplier ile ölçekle
+  let sesSeviyesi = (rms - 0.01) * 5;
+  sesSeviyesi = Math.max(0, Math.min(1, sesSeviyesi));
+  audioLevelSmoothed += (sesSeviyesi - audioLevelSmoothed) * 0.2;
+
+  const sessiz = audioLevelSmoothed < 0.12; 
+  const simdi = Date.now();
+  const sonKonusmaFarki = simdi - lastSpokenTime;
+
+  // 3) Interrupt: kullanıcı konuştuysa botu durdur
+  if (botSpeaking && !sessiz) {
+    stopBotSpeaking(true);
+  }
+
+  // 4) Kayıt/idle mantığı
+  if (!botSpeaking) {
+    if (!sessiz) {
+      // Konuşma başladıysa kaydı başlat
+      if (!isRecording && recorder.state === 'inactive' && audioLevelSmoothed > 0.2) {
+        audioChunks = [];
+        recorder.start(100);
+        isRecording = true;
+        createPulseRing(false);
+        lastPulseTime = simdi;
+      }
+      // Kayıt devam ediyorsa animasyonları güncelle
+      if (isRecording) {
+        const hedefOlcek = 1 + Math.min(audioLevelSmoothed * 0.25, 0.25);
+        currentScale += (hedefOlcek - currentScale) * 0.3;
+        circle.style.transform = `scale(${currentScale})`;
+        const sat = recordingBaseColor.s + Math.min(audioLevelSmoothed * 70, 60);
+        const light = recordingBaseColor.l - Math.min(audioLevelSmoothed * 20, 15);
+        circle.style.backgroundColor = `hsl(${recordingBaseColor.h}, ${sat}%, ${light}%)`;
+        circle.style.boxShadow = `0 0 ${15 + audioLevelSmoothed * 30}px hsla(${recordingBaseColor.h}, ${sat}%, ${light}%, 0.6), inset 0 0 ${5 + audioLevelSmoothed * 15}px rgba(255,255,255,0.4)`;
+        currentWaveColor = recordingWaveColor;
+        drawWaves(audioLevelSmoothed);
+        if (audioLevelSmoothed > 0.3 && simdi - lastPulseTime > 400) {
+          createPulseRing(false);
+          lastPulseTime = simdi;
+        }
+      }
+      lastSpokenTime = simdi;
+    }
+    // Sessizlik uzadıysa kaydı kapat
+    else if (isRecording && sonKonusmaFarki > 1200) {
+      if (recorder.state === 'recording') {
+        recorder.stop();
+        console.log("Kayıt durdu (sessizlik).");
+      }
+      isRecording = false;
+    }
+
+    // Idle durumuna dön
+    if (!isRecording) {
+      currentScale += (1 - currentScale) * 0.15;
+      circle.style.transform = `scale(${currentScale})`;
+      if (Math.abs(currentScale - 1) < 0.01) {
+        circle.style.backgroundColor = baseColor;
+        circle.style.boxShadow = '0 0 15px rgba(0,0,0,0.2), inset 0 0 5px rgba(255,255,255,0.1)';
+        currentWaveColor = baseWaveColor;
+      }
+    }
+  }
+
+  requestAnimationFrame(detectVoice);
+}
+
+
+    // --- Sunucu İletişimi ---
+
+    function sendToServer(blob) {
+        if (blob.size < 100) { console.warn("Gönderilecek kadar ses verisi yok:", blob.size); isRecording = false; return; }
+        console.log(`Sunucuya gönderiliyor: ${sessionId}, boyut: ${blob.size}`);
+        const formData = new FormData();
+        formData.append("audio", blob, `audio_${sessionId}.webm`);
+        formData.append("session_id", sessionId);
+        isRecording = false; // Gönderim başladığında kayıt bitti
+
+        // Geçici olarak 'gönderiliyor' stili eklenebilir
+        // circle.style.opacity = 0.7;
+
+        fetch("http://127.0.0.1:6006/quik-audio", { method: "POST", body: formData })
+            .then(res => {
+                // circle.style.opacity = 1; // Stili geri al
+                if (!res.ok) { return res.text().then(text => { throw new Error(`Sunucu Hatası: ${res.status} - ${text || res.statusText}`) }); }
+                if (res.headers.get("Content-Type")?.includes("audio/mpeg")) { return res.blob(); }
+                else { return res.text().then(text => { throw new Error(`Beklenmedik Yanıt: ${text}`) }); }
+            })
+            .then(mp3Blob => {
+                if (!mp3Blob || mp3Blob.size === 0) { console.warn("Boş MP3 yanıtı alındı."); return; }
+                const audioUrl = URL.createObjectURL(mp3Blob);
+                const audio = new Audio(audioUrl);
+                currentBotAudio = audio; // Çalan sesi global değişkene ata
+                startBotSpeaking(); // Görsel durumu başlat
+                audio.play().catch(e => { console.error("Ses çalma hatası:", e); stopBotSpeaking(true); }); // Hata olursa durumu temizle
+                audio.onended = () => { if (currentBotAudio === audio) { console.log("Bot konuşması normal bitti (onended)."); stopBotSpeaking(false); } };
+                audio.onerror = (e) => { if (currentBotAudio === audio) { console.error("Audio elementi hatası:", e); stopBotSpeaking(true); } };
+            })
+            .catch(error => {
+                // circle.style.opacity = 1; // Stili geri al
+                console.error("Fetch hatası veya sunucu yanıtı işleme hatası:", error);
+                stopBotSpeaking(true); // Hata durumunda bot konuşma durumunu temizle
+                isRecording = false;
+            });
+    }
+
+
+    // --- Olay Dinleyicileri ve Başlatma ---
+
+    // Sağ Tık Engelleme
+    canvas.addEventListener("contextmenu", (e) => { e.preventDefault(); });
+
+    // Kapat Butonu
+    document.getElementById("close-btn").addEventListener("click", () => {
+        document.body.classList.add("fade-out");
+        // Ses kaynaklarını temizle
+        if (stream) { stream.getTracks().forEach(track => track.stop()); console.log("Mikrofon izleri durduruldu."); }
+        if (audioCtx && audioCtx.state !== 'closed') { audioCtx.close().then(() => console.log("AudioContext kapatıldı.")); }
+        if (recorder && recorder.state !== 'inactive') { try {recorder.stop()} catch(e){} } // Kaydı durdurmaya çalış
+        stopBotSpeaking(true); // Bot konuşuyorsa durdur
+
+        setTimeout(() => {
+            const basePath = location.href.substring(0, location.href.lastIndexOf("/"));
+            window.location.href = `${basePath}/Quik_Chatbot.html`;
+        }, 500);
+    });
+
+    // Pencere Boyutlandırma
+    window.addEventListener("resize", () => {
+        // Canvas boyutlarını güncelle (animateParticles içinde de yapılıyor ama burada da olabilir)
+         canvas.width = window.innerWidth;
+         canvas.height = window.innerHeight;
+         // Parçacıkları yeniden dağıtmaya gerek yok.
+    });
+
+    // Başlangıç
+    waveCanvas.width = size; // Wave canvas boyutunu ayarla
+    waveCanvas.height = size;
+    initializeAudio(); // Mikrofonu ve ses işlemeyi başlat
+
+</script>
+</body>
+</html>

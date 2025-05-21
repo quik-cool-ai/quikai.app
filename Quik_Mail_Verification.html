@@ -1,0 +1,348 @@
+<script type="text/javascript">
+        var gk_isXlsx = false;
+        var gk_xlsxFileLookup = {};
+        var gk_fileData = {};
+        function filledCell(cell) {
+          return cell !== '' && cell != null;
+        }
+        function loadFileData(filename) {
+        if (gk_isXlsx && gk_xlsxFileLookup[filename]) {
+            try {
+                var workbook = XLSX.read(gk_fileData[filename], { type: 'base64' });
+                var firstSheetName = workbook.SheetNames[0];
+                var worksheet = workbook.Sheets[firstSheetName];
+
+                // Convert sheet to JSON to filter blank rows
+                var jsonData = XLSX.utils.sheet_to_json(worksheet, { header: 1, blankrows: false, defval: '' });
+                // Filter out blank rows (rows where all cells are empty, null, or undefined)
+                var filteredData = jsonData.filter(row => row.some(filledCell));
+
+                // Heuristic to find the header row by ignoring rows with fewer filled cells than the next row
+                var headerRowIndex = filteredData.findIndex((row, index) =>
+                  row.filter(filledCell).length >= filteredData[index + 1]?.filter(filledCell).length
+                );
+                // Fallback
+                if (headerRowIndex === -1 || headerRowIndex > 25) {
+                  headerRowIndex = 0;
+                }
+
+                // Convert filtered JSON back to CSV
+                var csv = XLSX.utils.aoa_to_sheet(filteredData.slice(headerRowIndex)); // Create a new sheet from filtered array of arrays
+                csv = XLSX.utils.sheet_to_csv(csv, { header: 1 });
+                return csv;
+            } catch (e) {
+                console.error(e);
+                return "";
+            }
+        }
+        return gk_fileData[filename] || "";
+        }
+        </script><!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Quik E-posta Doğrulama</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap');
+    
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      background-color: #f0f2f5;
+      font-family: 'Poppins', Arial, sans-serif;
+      line-height: 1;
+    }
+
+    .container {
+      max-width: 680px;
+      margin: 40px auto;
+      background: linear-gradient(145deg, #ffffff, #f8fafc);
+      border-radius: 16px;
+      overflow: hidden;
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+    }
+
+    .header {
+      background: #171717;
+      padding: 2rem 1.5rem;
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+
+    }
+
+    .header::before {
+      content: '';
+      position: absolute;
+      top: -50%;
+      left: -50%;
+      width: 200%;
+      height: 200%;
+      background: radial-gradient(circle, rgba(255, 255, 255, 0.2) 0%, transparent 70%);
+      transform: rotate(45deg);
+    }
+
+    .header img {
+      max-width: 100px;
+      margin-bottom: 15px;
+      position: relative;
+      z-index: 1;
+    }
+
+    .header h1 {
+      color: #ffffff;
+      font-size: 2rem;
+      font-weight: 700;
+      margin-bottom: 12px;
+      position: relative;
+      z-index: 1;
+    }
+
+    .header p {
+      color: rgba(255, 255, 255, 0.9);
+      font-size: 1rem;
+      position: relative;
+      z-index: 1;
+    }
+
+    .content {
+      padding: 48px;
+      color: #171717;
+      font-size: 16px;
+      line-height: 1.7;
+    }
+
+    .content p {
+      margin-bottom: 24px;
+    }
+
+    .code-container {
+      text-align: center;
+      margin: 32px 0;
+    }
+
+    .code-box {
+      display: inline-block;
+      padding: 20px 40px;
+      background: #F7FAFC;
+      border: 2px dashed #272727;
+      border-radius: 12px;
+      font-size: 32px;
+      font-weight: 600;
+      color: #272727;
+      letter-spacing: 4px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+      transition: transform 0.3s ease;
+    }
+
+    .code-box:hover {
+      transform: scale(1.05);
+    }
+
+    .button-container {
+      text-align: center;
+      margin: 32px 0;
+    }
+
+    .button {
+      display: inline-block;
+      padding: 16px 40px;
+      background: #272727;
+      color: #ffffff;
+      text-decoration: none;
+      border-radius: 50px;
+      font-size: 16px;
+      font-weight: 600;
+      transition: all 0.3s ease;
+      box-shadow: 0 4px 12px rgba(107, 70, 193, 0.3);
+    }
+
+    .button:hover {
+      background: #474747;
+      box-shadow: 0 6px 16px rgba(107, 70, 193, 0.4);
+      transform: translateY(-2px);
+    }
+
+    .security-note {
+      background: #EDF2F7;
+
+      border-radius: 8px;
+      font-size: 14px;
+      color: #4A5568;
+      margin-top: 24px;
+      text-align: center;
+    }
+
+    .security-note p {
+      margin: 0;
+    }
+
+/* ─── FOOTER: header ile birebir görünüm ─── */
+.footer {
+  background: #171717;                 /* aynı zemin   */
+  padding: 2rem 1.5rem;
+  text-align: center;
+  color: #ffffff;                      /* beyaz metin  */
+  font-size: 0.85rem;
+  line-height: 1.6;
+  position: relative;                  /* glow efekti için  */
+  overflow: hidden;                    /* taşmaları gizle   */
+  border-top: none;                    /* üst çizgiyi kaldır */
+}
+
+/* header’daki ışık efektiyle aynısı */
+.footer::before {
+  content: '';
+  position: absolute;
+  top: -50%;
+  left: -50%;
+  width: 200%;
+  height: 200%;
+  background: radial-gradient(circle,
+              rgba(255, 255, 255, 0.15) 0%,
+              transparent 70%);
+  transform: rotate(45deg);
+  pointer-events: none;
+}
+
+.footer a          { color: #ffffff; text-decoration: none; font-weight: 600; }
+.footer a:hover    { text-decoration: underline; }
+
+.footer p:second-child {
+  margin-bottom: 4rem;
+}
+
+    .social-links {
+      margin: 16px 0;
+    }
+
+    .social-links a {
+      margin: 0 12px;
+      display: inline-block;
+      transition: transform 0.05s ease;
+    }
+
+    .social-links a:hover {
+      transform: translateY(-3px);
+    }
+
+    .social-links img {
+      width: 28px;
+      height: 28px;
+      transition: opacity 0.3s ease;
+    }
+
+    @media (max-width: 600px) {
+      .container {
+        margin: 16px;
+        border-radius: 12px;
+      }
+
+      .header {
+        padding: 24px;
+      }
+
+      .header h1 {
+        font-size: 24px;
+      }
+
+      .content {
+        padding: 32px;
+      }
+
+      .code-box {
+        font-size: 24px;
+        padding: 16px 32px;
+      }
+
+      .button {
+        padding: 14px 32px;
+      }
+
+      .social-links a {
+        margin: 0 8px;
+      }
+
+      .social-links img {
+        width: 24px;
+        height: 24px;
+      }
+    }
+
+.no-drag {
+  user-select: none; /* Metin seçimini engeller */
+  pointer-events: none; /* Tıklama ve sürükleme olaylarını engeller */
+}
+
+  </style>
+</head>
+<body>
+  <table width="100%" cellpadding="0" cellspacing="0" style="background-color: #f0f2f5;">
+    <tr>
+      <td align="center">
+        <table class="container" cellpadding="0" cellspacing="0">
+          <!-- HEADER -->
+          <tr>
+            <td class="header">
+              <img src="https://github.com/DennisAo-sys/quikai.app/blob/main/icons/quik_icon_white.png?raw=true" alt="Quik Logo" class="no-drag" draggable="False">
+              <h1 class="no-drag" draggable="false">Quik</h1>
+              <p class="no-drag" draggable="false">Hızlı, pratik ve güvenilir yapay zeka asistanınız</p>
+            </td>
+          </tr>
+
+          <!-- BODY -->
+          <tr>
+            <td class="content" >
+              <p class="no-drag" draggable="false">Quik ailesine hoşgeldiniz!</p>
+              <p class="no-drag" draggable="false">Hesabınızı aktifleştirmek için aşağıdaki doğrulama kodunu kullanın:</p>
+              <div class="code-container">
+                <span class="code-box" draggable="False">{code}</span>
+              </div>
+              <p class="no-drag" draggable="false">Tek tıkla hesabınızı aktifleştirmek için aşağıdaki butona tıklayabilirsiniz:</p>
+              <div class="button-container">
+                <a href="https://example.com/activate" class="button" draggable="False">Hesabı Şimdi Aktifleştir</a>
+              </div>
+              <div class="security-note">
+              <p class="no-drag" draggable="false" style="line-height:1.75rem;"><i>Bu e-posta, Quik hesabınız için otomatik olarak gönderilmiştir. Eğer bu işlemi siz gerçekleştirmediyseniz, lütfen bu e-postayı dikkate almayın.</i></p>
+              </div>
+            </td>
+          </tr>
+
+          <!-- FOOTER -->
+          <tr>
+            <td class="footer">
+              <p class="no-drag" draggable="false" style="margin-bottom:0.25rem;">Quik • Sosyal Gelişim ve Dayanışma Derneği</p>
+              <p class="no-drag" draggable="false" style="margin-bottom:1.25rem;">(SGDD-ASAM) ürünüdür</p>
+              <div class="social-links">
+                <a href="https://linkedin.com/quik" target="_blank" rel="noopener">
+                  <img src="https://cdn-icons-png.flaticon.com/512/2504/2504923.png" width="28" height="28" alt="LinkedIn" draggable="false">
+                </a>
+                <a href="https://twitter.com/quik" target="_blank" rel="noopener">
+                  <img src="https://abs.twimg.com/favicons/twitter.3.ico" alt="Twitter" draggable="False">
+                </a>
+                <a href="https://instagram.com/quik" target="_blank" rel="noopener">
+                  <img src="https://cdn-icons-png.flaticon.com/512/733/733558.png" width="28" height="28" alt="Instagram" draggable="False">
+                </a>
+                <a href="https://facebook.com/quik" target="_blank" rel="noopener">
+                  <img src="https://cdn-icons-png.flaticon.com/512/2504/2504903.png" width="28" height="28" alt="Facebook" draggable="false">
+                </a>
+              </div>
+              <p>
+                <a href="https://example.com/privacy">Kullanım Şartları</a> | 
+                <a href="https://example.com/terms">Gizlilik Politikası</a>
+              </p>
+
+            </td>
+          </tr>
+        </table>
+      </td>
+    </tr>
+  </table>
+</body>
+</html>

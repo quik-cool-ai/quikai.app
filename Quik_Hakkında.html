@@ -1,0 +1,2194 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>quik - Yapay Zeka Asistanı</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Montserrat:wght@500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+
+    :root {
+      --primary: #171717;
+      --secondary: #0f0f0f;
+      --accent: #474747;
+      --accent-light: #8b5cf6;
+      --accent-dark: #5b21b6;
+      --text-primary: #f9fafb;
+      --text-secondary: #d1d5db;
+      --text-muted: #9ca3af;
+      --bg-card: rgba(30, 30, 30, 0.6);
+      --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      --nav-h: 64px;
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;
+      background-color: var(--primary);
+      color: var(--text-primary);
+      line-height: 1.6;
+      overflow-x: hidden;
+    }
+
+    /* Scrollbar styling */
+    ::-webkit-scrollbar {
+      width: 8px;
+    }
+
+    ::-webkit-scrollbar-track {
+      background: var(--secondary);
+    }
+
+    ::-webkit-scrollbar-thumb {
+      background: var(--accent);
+      border-radius: 4px;
+    }
+
+    ::-webkit-scrollbar-thumb:hover {
+      background: var(--accent-light);
+    }
+
+html {
+  scroll-behavior: smooth;          /* zaten vardı */
+  scroll-padding-top: var(--nav-h); /*  ← asıl sihir bu  */
+}
+
+    /* Navbar */
+    .navbar {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 1rem 1rem;
+      z-index: 1000;
+      transition: var(--transition);
+      backdrop-filter: blur(10px);
+      background: rgba(15, 15, 15, 0.8);
+      border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+    }
+
+    .navbar.scrolled {
+      background: rgba(15, 15, 15, 0.95);
+    }
+
+    .logo {
+      display: flex;
+      align-items: center;
+      text-decoration: none;
+    }
+
+    .logo-icon {
+      width: 2.5rem;
+      height: 2.5rem;
+      background: transparent;
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 800;
+      font-size: 1.5rem;
+      color: white;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;
+      filter: invert(1);
+    }
+
+    .logo-text {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;
+      font-weight: 700;
+      font-size: 1.5rem;
+      margin-left: -0.4rem;
+      margin-top: 0.25rem;
+      color: var(--text-primary);
+    }
+
+    .nav-links {
+      display: flex;
+      gap: 2rem;
+      list-style: none;
+    }
+
+    .nav-link {
+      color: var(--text-secondary);
+      text-decoration: none;
+      font-weight: 500;
+      font-size: 1rem;
+      transition: var(--transition);
+      position: relative;
+      padding: 0.5rem 0;
+    }
+
+    .nav-link:hover, .nav-link.active {
+      color: var(--text-primary);
+    }
+
+    .nav-link::after {
+      content: '';
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      width: 0;
+      height: 2px;
+      background: var(--accent);
+      transition: var(--transition);
+    }
+
+    .nav-link:hover::after, .nav-link.active::after {
+      width: 100%;
+    }
+
+    .menu-toggle {
+      display: none;
+      background: none;
+      border: none;
+      color: var(--text-primary);
+      font-size: 1.5rem;
+      cursor: pointer;
+    }
+
+    /* Sections */
+    section {
+      height: 100vh;                /* min-height değil, tam 1 ekran */
+      padding: 0 2rem;              /* yatay boşluğu koru */
+  
+      display: flex;                /* dikey ortalama */
+      align-items: center;
+      justify-content: center;
+  
+      scroll-snap-align: start;     /* ekranın başına yapış */
+      position: relative;
+      overflow: hidden;
+    }
+
+    .container {
+      max-width: 1200px;
+      width: 100%;
+      margin: 0 auto;
+      z-index: 2;
+    }
+
+    /* Hero Section */
+    #home {
+      background: url('icons/project_quik.png') no-repeat center center/cover;
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      text-align: center;
+      padding-top: 0;
+    }
+
+    .hero-content {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 2rem;
+      max-width: 800px;
+    }
+
+    .hero-title {
+      font-size: 7rem;
+      font-weight: 800;
+      line-height: 1.1;
+      margin-bottom: 1rem;
+      background: white;
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;
+      position: relative;
+      z-index: 2;
+      user-select: none;
+      pointer-events: none;
+    }
+
+    .hero-subtitle {
+      font-size: 1.25rem;
+      color: var(--text-secondary);
+      max-width: 600px;
+      margin-bottom: 2rem;
+      user-select: none;
+      pointer-events: none;
+    }
+
+    .glow-btn {
+      position: fixed;
+      top: -2.5vh;
+      left: 50%;
+      transform: translateX(-50%);
+      padding: 2.5vh 1.5vw;
+      font-size: 2.4vh;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;
+      background: #323232;
+      color: white;
+      font-weight: 600;
+      text-decoration: none;
+      border: none;
+      border-radius: 3.5vh;
+      cursor: pointer;
+      z-index: 9999;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+
+      transition: box-shadow 0.3s ease;
+    }
+
+    .glow-btn:hover {
+      background: #575757;
+    }
+
+    #about {
+      background: var(--secondary);
+    }
+
+    .section-title {
+      font-size: 2.5rem;
+      font-weight: 700;
+      margin-bottom: 2rem;
+      text-align: center;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;
+      position: relative;
+      display: inline-block;
+      user-select: none;
+      pointer-events: none;
+    }
+
+    .section-title::after {
+      content: '';
+      position: absolute;
+      bottom: -10px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 60px;
+      height: 4px;
+      background: var(--accent);
+      border-radius: 2px;
+    }
+
+    .timeline {
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+      position: relative;
+      max-width: 800px;
+      margin: 0 auto;
+    }
+
+    .timeline::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      bottom: 0;
+      left: 50%;
+      width: 2px;
+      background: var(--accent);
+      transform: translateX(-50%);
+    }
+
+    .timeline-item {
+      display: flex;
+      width: 100%;
+      justify-content: center;
+      position: relative;
+    }
+
+    .timeline-item:nth-child(odd) .timeline-content {
+      margin-right: auto;
+      margin-left: 0;
+      text-align: right;
+    }
+
+    .timeline-item:nth-child(even) .timeline-content {
+      margin-left: auto;
+      margin-right: 0;
+      text-align: left;
+    }
+
+    .timeline-content {
+      width: 45%;
+      padding: 1rem;
+      background: var(--bg-card);
+      border-radius: 12px;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+      backdrop-filter: blur(10px);
+      border: 2px solid rgba(255, 255, 255, 0.05);
+      transition: var(--transition);
+      position: relative;
+    }
+
+    .timeline-content:hover {
+      box-shadow: 0 4px 20px rgba(192, 192, 192, 0.6);
+    }
+
+    .timeline-content::before {
+      content: '';
+      position: absolute;
+      top: 50%;
+      width: 36px;
+      height: 10px;
+      background: var(--accent);
+
+      transform: translateY(-50%);
+    }
+
+    .timeline-item:nth-child(odd) .timeline-content::before {
+      right: -60px;
+    }
+
+    .timeline-item:nth-child(even) .timeline-content::before {
+      left: -60px;
+    }
+
+    .timeline-title {
+      font-size: 1.25rem;
+      margin-bottom: 0.5rem;
+      font-weight: 600;
+      user-select: none;
+      pointer-events: none;
+    }
+
+    .timeline-text {
+      color: var(--text-secondary);
+      user-select: none;
+      pointer-events: none;
+    }
+
+    /* Models Section */
+    #meet {
+      background: var(--primary);
+    }
+
+    .models-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 2rem;
+      margin-top: 2rem;
+    }
+
+    .model-card {
+      background: var(--bg-card);
+      border-radius: 16px;
+      padding: 1.5rem;
+      transition: var(--transition);
+      border: 2px solid rgba(255, 255, 255, 0.05);
+      backdrop-filter: blur(10px);
+      display: flex;
+      flex-direction: column;
+      height: 100%;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+    }
+
+    .model-card:hover {
+      box-shadow: 0 4px 20px rgba(192, 192, 192, 0.6);
+    }
+
+    .model-title {
+      font-size: 1.5rem;
+      font-weight: 700;
+      margin-bottom: 1rem;
+      user-select: none;
+      pointer-events: none;
+    }
+
+    .model-description {
+      color: var(--text-secondary);
+      margin-bottom: 1.5rem;
+      flex-grow: 1;
+      user-select: none;
+      pointer-events: none;
+    }
+
+    .model-features {
+      list-style: none;
+      margin-top: auto;
+      user-select: none;
+      pointer-events: none;
+    }
+
+    .model-feature {
+      display: flex;
+      align-items: center;
+      margin-bottom: 0.75rem;
+      color: var(--text-muted);
+      user-select: none;
+      pointer-events: none;
+    }
+
+    .model-feature::before {
+      content: '✓';
+      color: var(--accent);
+      margin-right: 0.5rem;
+      font-weight: bold;
+    }
+
+    /* Feature Sections */
+    #prime, #think {
+      background: var(--secondary);
+    }
+
+    .feature-container {
+      display: flex;
+      align-items: center;
+      gap: 4rem;
+    }
+
+    .feature-image {
+      flex: 1;
+      height: 380px;
+      border-radius: 16px;
+      overflow: hidden;
+      position: relative;
+      user-select: none;
+      pointer-events: none;
+    }
+
+    .feature-img {
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+      display: block;
+      border-radius: 16px; /* Matches the feature-image border-radius */
+      user-select: none;
+      pointer-events: none;
+      filter: invert(1) brightness(0.75);
+    }
+
+    .feature-content {
+      flex: 1;
+    }
+
+    .feature-title {
+      font-size: 2rem;
+      font-weight: 700;
+      margin-bottom: 1.5rem;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;
+      user-select: none;
+      pointer-events: none;
+    }
+
+    .feature-description {
+      color: var(--text-secondary);
+      margin-bottom: 2rem;
+      font-size: 1.1rem;
+      user-select: none;
+      pointer-events: none;
+    }
+
+    .feature-list {
+      list-style: none;
+      user-select: none;
+      pointer-events: none;
+    }
+
+    .feature-item {
+      display: flex;
+      align-items: center;
+      margin-bottom: 1rem;
+      color: var(--text-muted);
+      user-select: none;
+      pointer-events: none;
+    }
+
+    .feature-item::before {
+      content: '✓';
+      color: var(--accent);
+      margin-right: 0.75rem;
+      font-weight: bold;
+    }
+
+    /* Footer */
+    footer {
+      background: var(--secondary);
+      padding-top: 3.5rem;
+      padding-bottom: 7rem;
+      text-align: center;
+      border-top: 1px solid rgba(255, 255, 255, 0.05);
+    }
+
+    .footer-content {
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+
+    .footer-logo {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.25rem;
+      margin-bottom: 2rem;
+      user-select: none;
+      pointer-events: none;
+    }
+
+    .footer-links {
+      display: flex;
+      justify-content: center;
+      gap: 1rem;
+      margin-bottom: 2rem;
+      flex-wrap: wrap;
+    }
+
+    .footer-link {
+      color: var(--text-secondary);
+      text-decoration: none;
+      transition: var(--transition);
+    }
+
+    .footer-link:hover {
+      color: var(--accent);
+    }
+
+    .footer-social {
+      display: flex;
+      justify-content: center;
+      gap: 1.5rem;
+      margin-bottom: 2rem;
+    }
+
+    .social-icon {
+      width: 40px;
+      height: 40px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: var(--transition);
+      color: var(--text-primary);
+      text-decoration: none;
+      font-size: 1.2rem;
+    }
+
+    .social-icon:hover {
+      transform: translateY(-3px);
+    }
+
+    .social-icon img {
+      width: 30px;
+      height: 30px;
+      object-fit: contain;
+      display: block;
+      filter: invert(1);
+    }
+
+    .copyright {
+      color: var(--text-muted);
+      font-size: 0.9rem;
+      user-select: none;
+      pointer-events: none;
+    }
+
+    /* Canvas */
+    canvas {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: 1;
+      pointer-events: none;
+    }
+
+    /* Responsive Design */
+    @media (max-width: 992px) {
+      .hero-title {
+        font-size: 5rem;
+      }
+
+      .feature-container {
+        flex-direction: column;
+        gap: 2rem;
+      }
+
+      .feature-image {
+        width: 100%;
+        height: 300px;
+      }
+
+      .timeline::before {
+        left: 30px;
+      }
+
+      .timeline-item {
+        width: 100%;
+      }
+
+      .timeline-item:nth-child(odd) .timeline-content,
+      .timeline-item:nth-child(even) .timeline-content {
+        width: calc(100% - 60px);
+        margin-left: 60px;
+        margin-right: 0;
+        text-align: left;
+      }
+
+      .timeline-item:nth-child(odd) .timeline-content::before,
+      .timeline-item:nth-child(even) .timeline-content::before {
+        left: -45px;
+        right: auto;
+      }
+    }
+
+    @media (max-width: 768px) {
+      .navbar {
+        padding: 1rem;
+      }
+
+      .nav-links {
+        position: fixed;
+        top: 0;
+        right: -100%;
+        width: 50%;
+        height: 100vh;
+        background: #000;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        transition: var(--transition);
+        backdrop-filter: blur(10px);
+        z-index: 1000;
+      }
+
+      .nav-links.active {
+        right: 0;
+      }
+
+      .menu-toggle {
+        display: block;
+        z-index: 1001;
+      }
+
+      .hero-title {
+        font-size: 3rem;
+      }
+
+      .hero-subtitle {
+        font-size: 1.1rem;
+      }
+
+      .section-title {
+        font-size: 2rem;
+      }
+
+      .btn {
+        padding: 0.75rem 1.5rem;
+      }
+
+      #meet .models-grid {
+        display: flex;
+        overflow-x: auto;
+        gap: 1rem;
+        scroll-snap-type: x mandatory;
+        padding: 0 1rem 1rem;
+        -webkit-overflow-scrolling: touch;
+      }
+    }
+
+    @media (max-width: 480px) {
+      .hero-title {
+        font-size: 2.5rem;
+      }
+
+      .hero-subtitle {
+        font-size: 1rem;
+      }
+
+      .section-title {
+        font-size: 1.75rem;
+      }
+
+      .timeline-content {
+        padding: 1rem;
+      }
+
+      .timeline-title {
+        font-size: 1.1rem;
+      }
+
+       #meet .model-card{
+        flex: 0 0 80vw;
+        max-width: 80vw;
+        scroll-snap-align: center;
+      }
+
+       #meet .models-grid::-webkit-scrollbar{ display:none; }
+
+       #meet .model-card{ padding:1.25rem; }
+       
+       .model-description{ font-size:0.95rem; }
+
+      .feature-title {
+        font-size: 1.5rem;
+      }
+
+      .feature-description {
+        font-size: 1rem;
+      }
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(0); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .fade-in {
+      animation: fadeIn 0.8s ease forwards;
+      opacity: 0;
+    }
+
+    .delay-1 { animation-delay: 0.2s; }
+    .delay-2 { animation-delay: 0.4s; }
+    .delay-3 { animation-delay: 0.6s; }
+    .delay-4 { animation-delay: 0.8s; }
+
+    .particle {
+      position: absolute;
+      border-radius: 50%;
+      background: rgba(255, 255, 255, 0.5);
+      pointer-events: none;
+    }
+
+.modal {
+  display: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 1000;
+  align-items: center;
+  justify-content: center;
+}
+
+.modal.active {
+  display: flex;
+}
+
+.modal-backdrop {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(23, 23, 23, 0.8);
+  backdrop-filter: blur(10px);
+  z-index: 1;
+}
+
+.modal-content {
+  position: relative;
+  max-width: 1000px;
+  width: 90%;
+  max-height: 80vh;
+  overflow-y: auto;
+  background: var(--bg-card);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  border-radius: 16px;
+  padding: 2rem;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+  z-index: 2;
+  color: var(--text-primary);
+  text-align: left;
+}
+
+#kvkk-close, #gizlilik-close {
+  position: absolute;
+  top: 1rem;
+  right: 1rem;
+  background: none;
+  border: none;
+  color: var(--text-primary);
+  font-size: 1.5rem;
+  cursor: pointer;
+  transition: var(--transition);
+}
+
+#kvkk-close:hover, #gizlilik-close:hover {
+  color: var(--accent);
+}
+
+.modal-content h2 {
+  font-size: 2rem;
+  font-weight: 700;
+  margin-bottom: 1.5rem;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;
+}
+
+.modal-content h3 {
+  font-size: 1.5rem;
+  font-weight: 600;
+  margin: 1rem 0;
+}
+
+.modal-content p {
+  color: var(--text-secondary);
+  margin-bottom: 1rem;
+  font-size: 1rem;
+}
+
+.modal-content ul {
+  list-style: none;
+  margin: 1rem 0;
+}
+
+.modal-content ul li {
+  display: block;
+  margin-bottom: .75rem;
+  color: var(--text-secondary);
+}
+
+.modal-content ul li::before {
+  content: '•';
+  color: var(--text-secondary);
+  margin-right: 0.75rem;
+  font-weight: bold;
+}
+
+.modal-content a {
+  color: var(--text-secondary);
+  text-decoration: none;
+}
+
+.modal-content a:hover {
+  text-decoration: underline;
+}
+
+.modal-content::-webkit-scrollbar {
+  width: 8px;
+}
+
+.modal-content::-webkit-scrollbar-track {
+  background: var(--secondary);
+}
+
+.modal-content::-webkit-scrollbar-thumb {
+  background: var(--accent);
+  border-radius: 4px;
+}
+
+.modal-content::-webkit-scrollbar-thumb:hover {
+  background: var(--accent-light);
+}
+
+/* Responsive Modal */
+@media (max-width: 768px) {
+  .modal-content {
+    width: 95%;
+    padding: 1.5rem;
+  }
+
+  .modal-content h2 {
+    font-size: 1.75rem;
+  }
+
+  .modal-content h3 {
+    font-size: 1.25rem;
+  }
+
+  .modal-content p {
+    font-size: 0.9rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .modal-content {
+    padding: 1rem;
+  }
+
+  .modal-content h2 {
+    font-size: 1.5rem;
+  }
+
+  .modal-content h3 {
+    font-size: 1.1rem;
+  }
+}
+
+@media (max-width: 768px), (max-height: 500px) {
+  #think .feature-container {
+    flex-direction: column-reverse;
+    gap: 1.5rem;
+  }
+}
+
+.fixed-input-wrapper {
+  position: fixed;         /* ← now lives on the viewport */
+  left: 50%;               /* center it */
+  bottom: 0;
+  transform: translateX(-50%);
+  z-index: 9998;
+  width: 500px;
+  max-width: 100%;
+}
+
+.fixed-input-inner {
+  display: flex;
+  align-items: center;
+  width: 100%;
+  background: #303030;
+  border-radius: 20px;
+  backdrop-filter: blur(6px);
+  transition: var(--transition);
+  overflow: hidden;
+}
+
+.fixed-input {
+  flex: 1;
+  padding: 16px 0 16px 16px;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;
+  font-size: 1rem;
+  border: none;
+  border-radius: 20px;
+  color: var(--text-primary);
+  background: transparent;
+}
+
+.fixed-input::placeholder {
+  color: #bbb;
+}
+
+.fixed-input:focus {
+  outline: none;
+}
+
+.input-send-btn {
+  padding: 10px;
+  margin-right: 8px;
+  border-radius: 12px;
+  height: 100%;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.input-send-btn img {
+  width: 18px;
+  height: 18px;
+  object-fit: contain;
+  filter: invert(1);
+  pointer-events: none;
+}
+
+.input-send-btn:hover {
+  background: #c0c0c0;
+}
+
+.input-send-btn:hover img {
+  filter: none;
+}
+
+/* Yalnızca mobil (≤768 px) */
+@media (max-width: 768px){
+  .swipe-arrow{
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 42px;height:42px;
+    border-radius: 50%;
+    background: rgba(0,0,0,.45);
+    backdrop-filter: blur(4px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #fff;
+    z-index: 4;
+    pointer-events: none;
+    transition: opacity .3s;
+    pointer-events: auto;
+    cursor: pointer;
+  }
+
+  .fixed-input-inner {
+    border-radius: 20px 20px 0 0;
+  }
+
+  .swipe-arrow.right { right: 6px; }
+  .swipe-arrow.left { left: 6px; }
+  .swipe-arrow svg { width: 22px; height: 22px; }
+}
+
+/* Tablet & desktop’ta okları gizle */
+@media (min-width:769px){
+  .swipe-arrow{ display:none !important; }
+}
+
+  </style>
+</head>
+<body>
+  <nav class="navbar">
+    <a href="#home" class="logo">
+      <img src="icons/quik_icon.png" alt="Quik Logo" class="logo-icon" draggable= "False">
+      <span class="logo-text">uik</span>
+    </a>
+    <ul class="nav-links">
+      <li><a href="#home" class="nav-link active">Anasayfa</a></li>
+      <li><a href="#about" class="nav-link">Hakkında</a></li>
+      <li><a href="#meet" class="nav-link">Modeller</a></li>
+      <li><a href="#prime" class="nav-link">quik-prime</a></li>
+      <li><a href="#think" class="nav-link">quik-think</a></li>
+    </ul>
+    <button class="menu-toggle">☰</button>
+  </nav>
+
+  <div class="fixed-input-wrapper">
+    <div class="fixed-input-inner">
+      <input type="text" id="user-message" class="fixed-input"
+             placeholder="quik uygulamasına ileti gönder..." />
+      <button id="send-btn" class="input-send-btn">
+        <img src="icons/send_btn.png" alt="Gönder" />
+      </button>
+    </div>
+  </div>
+
+  <section id="home">
+    <canvas id="hero-canvas"></canvas>
+    <div class="container hero-content">
+
+<div class="fade-in delay-2">
+  <a href="#" class="btn glow-btn" onclick="openChatbotPage()">quik ile sohbete başla</a>
+</div>
+  </section>
+
+  <section id="about">
+    <canvas id="about-canvas"></canvas>
+    <div class="container">
+      <h2 class="section-title">Hakkında</h2>
+      <div class="timeline">
+        <div class="timeline-item fade-in">
+          <div class="timeline-content">
+            <h3 class="timeline-title">Doğuş - 2024</h3>
+            <p class="timeline-text">quik, hızlı ve modern bir yapay zeka asistanı olmak için geliştirilmeye başlandı.</p>
+          </div>
+        </div>
+        <div class="timeline-item fade-in delay-1">
+          <div class="timeline-content">
+            <h3 class="timeline-title">Lansman - 2025</h3>
+            <p class="timeline-text">Kapsamlı testler ve simülasyonlarını tamamladıktan sonra kullanıcılarla buluştu.</p>
+          </div>
+        </div>
+        <div class="timeline-item fade-in delay-2">
+          <div class="timeline-content">
+            <h3 class="timeline-title">Vizyon - Gelecek</h3>
+            <p class="timeline-text">quik, sürekli gelişen yapısıyla yenilikçi çözümler üretmeye devam ediyor.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="meet">
+    <canvas id="meet-canvas"></canvas>
+    <div class="container">
+      <h2 class="section-title">Modellerimizle Tanışın</h2>
+      <div class="models-grid">
+<!-- Kaydırma Okları -->
+<div class="swipe-arrow left"  id="arrowLeft">
+  <svg viewBox="0 0 24 24"><polyline points="16 4 8 12 16 20"
+       fill="none" stroke="currentColor" stroke-width="3"
+       stroke-linecap="round" stroke-linejoin="round"/></svg>
+</div>
+
+<div class="swipe-arrow right" id="arrowRight">
+  <svg viewBox="0 0 24 24"><polyline points="8 4 16 12 8 20"
+       fill="none" stroke="currentColor" stroke-width="3"
+       stroke-linecap="round" stroke-linejoin="round"/></svg>
+</div>
+        <div class="model-card fade-in">
+          <h3 class="model-title">quik-prime-3b-it-q4_k_m</h3>
+          <p class="model-description">Günlük işlerinizi hızlandıran, verimli bir asistan. Metinleri anlama, özetleme ve içerik oluşturma konusunda uzmanlaşmıştır.</p>
+          <ul class="model-features">
+            <li class="model-feature">3 milyar parametreli Transformers mimarisi</li>
+            <li class="model-feature">16 bin bağlam uzunluğunda (32 bin denenebilir)</li>
+            <li class="model-feature">4-bit ağırlık kuantizasyonu</li>
+            <li class="model-feature">400 milyar token içeren veri seti</li>
+            <li class="model-feature">4 farklı kişilik karakteri</li>
+          </ul>
+        </div>
+        <div class="model-card fade-in delay-1">
+          <h3 class="model-title">quik-think-4b-it-q4_k_m</h3>
+          <p class="model-description">Karmaşık problemleri çözen mantık odaklı model. Veri analizi, karar verme ve stratejik planlama konularında uzmanlaşmıştır.</p>
+          <ul class="model-features">
+            <li class="model-feature">4 milyar parametreli Transformers mimarisi</li>
+            <li class="model-feature">32 bin bağlam uzunluğunda (128 bin denenebilir)</li>
+            <li class="model-feature">4-bit ağırlık kuantizasyonu</li>
+            <li class="model-feature">500 milyar token içeren veri seti</li>
+            <li class="model-feature">Deterministik kişilik karakteri</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="prime">
+    <canvas id="prime-canvas"></canvas>
+    <div class="container">
+      <div class="feature-container">
+        <div class="feature-image feature-image-prime">
+  <img src="icons/quik_prime.png" alt="Quik Prime" class="feature-img">
+</div>
+        <div class="feature-content fade-in">
+          <h2 class="feature-title">quik-prime-3b-it-q4_k_m</h2>
+          <p class="feature-description">
+            quik-prime, yoğun iş temponuza ayak uyduran hızlı ve sezgisel bir yapay zeka asistanıdır. Günlük görevlerinizi otomatikleştirerek size zaman kazandırır ve verimliliğinizi artırır.
+          </p>
+          <ul class="feature-list">
+            <li class="feature-item">Metin oluşturma ve düzenleme</li>
+            <li class="feature-item">E-posta yanıtlama ve özetleme</li>
+            <li class="feature-item">Toplantı notları ve görev yönetimi</li>
+            <li class="feature-item">Çoklu dil çevirisi ve düzeltme</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="think">
+    <canvas id="think-canvas"></canvas>
+    <div class="container">
+      <div class="feature-container">
+        <div class="feature-content fade-in">
+          <h2 class="feature-title">quik-think-4b-it-q4_k_m</h2>
+          <p class="feature-description">
+            quik-think, mantıksal çıkarımlar ve karmaşık analizler için optimize edilmiştir. Veri odaklı karar alma süreçlerinde size rehberlik eder ve stratejik planlamalarınızı güçlendirir.
+          </p>
+          <ul class="feature-list">
+            <li class="feature-item">Veri analizi ve raporlama</li>
+            <li class="feature-item">Tahmine dayalı modelleme</li>
+            <li class="feature-item">Kod üretme ve hata ayıklama</li>
+            <li class="feature-item">Optimizasyon ve problem çözme</li>
+          </ul>
+        </div>
+<div class="feature-image feature-image-think">
+  <img src="icons/quik_think.png" alt="Quik Think" class="feature-img">
+</div>
+
+      </div>
+    </div>
+  </section>
+
+  <footer>
+  <div class="footer-content">
+    </div>
+      <p class="feature-description" style="font-size: 1rem;">quik • Sosyal Gelişim ve Dayanışma Derneği (SGDD-ASAM) ürünüdür</p>
+
+    <div class="footer-social">
+      <a href="#" class="social-icon"><img src="icons/linkedin.png" alt="Linkedin Icon"></a>
+      <a href="#" class="social-icon"><img src="icons/twitter.png" alt="Twitter Icon"></a>
+      <a href="#" class="social-icon"><img src="icons/instagram.png" alt="Instagram Icon"></a>
+      <a href="#" class="social-icon"><img src="icons/facebook.png" alt="Facebook Icon"></a>
+    </div>
+
+    <div class="footer-links">
+      <a href="#" class="footer-link" id="kvkk-trigger">Kullanım Şartları</a>|
+      <a href="#" class="footer-link" id="gizlilik-trigger">Gizlilik Politikası</a>
+    </div>
+
+    <p class="copyright">© 2025 quik. Tüm hakları saklıdır.</p>
+  </div>
+
+<!-- KVKK Modal -->
+<div id="kvkk-modal" class="modal">
+  <div class="modal-backdrop"></div>
+  <div class="modal-content">
+    <button id="kvkk-close" aria-label="Kapat">×</button>
+    <h2>Kullanım Şartları</h2>
+    <p>
+      İşbu Kullanım Şartları ve Kişisel Verilerin Korunması Politikası, <strong>Sosyal Gelişim ve Dayanışma Derneği (SGDD‑ASAM)</strong> tarafından geliştirilen ve işletilen <strong>quik</strong> adlı dijital hizmet platformunun (web sitesi, mobil uygulama ve diğer çevrimiçi servisler dâhil) kullanımına ilişkin hükümleri içermektedir. Hizmeti kullanarak, bu şartları okuduğunuzu, anladığınızı ve kabul ettiğinizi beyan etmiş olursunuz.
+    </p>
+    
+    <h3>1. Hizmetin Kapsamı</h3>
+    <p>
+      quik, kullanıcılarına yapay zekâ tabanlı asistan hizmetleri sunar. Bu hizmetler; metin tabanlı bilgi alma, öneri üretme, sohbet etkileşimi, dosya yükleme ve çeşitli entegrasyonlar aracılığıyla bilgi akışı sağlamayı kapsar. SGDD‑ASAM, hizmet içeriğinde değişiklik yapma, geçici veya kalıcı olarak durdurma hakkını saklı tutar.
+    </p>
+    <p>
+      Platform, sivil toplum kuruluşlarının, toplulukların ve bireylerin sosyal dayanışma ve gelişim faaliyetlerini desteklemek amacıyla tasarlanmıştır. Sunulan yapay zekâ hizmetleri, kullanıcı sorguları doğrultusunda özelleştirilmiş yanıtlar üretir ve 7/24 erişilebilir durumdadır.
+    </p>
+    
+    <h3>2. Kullanıcı Yükümlülükleri</h3>
+    <ul>
+      <li>Kullanıcı, quik hizmetlerini sadece yasal ve etik kurallar çerçevesinde kullanmalıdır.</li>
+      <li>Yanıltıcı, yasa dışı, müstehcen, ayrımcı veya nefret içeren içerikler paylaşmak yasaktır.</li>
+      <li>Hesap bilgilerinizin gizliliğinden siz sorumlusunuz; şifre paylaşımı yapılmamalıdır.</li>
+      <li>Yazılımsal veya teknik yollarla hizmetin aksatılmasına neden olacak eylemler yasaktır (ör. bot saldırıları, tersine mühendislik, kaynak kod müdahalesi).</li>
+      <li>quik sistemini, diğer kullanıcılara zarar verecek veya onları rahatsız edecek şekilde kullanmak yasaktır.</li>
+      <li>Hizmeti kullanırken üçüncü tarafların haklarını ihlal eden içerikler paylaşmamak kullanıcının sorumluluğundadır.</li>
+      <li>Platform üzerinden yasadışı ürün veya hizmetlerin reklamını yapmak, pazarlamak veya satışını gerçekleştirmek kesinlikle yasaktır.</li>
+      <li>Platforma giriş yaparken doğru ve güncel bilgiler sağlamak zorunludur.</li>
+    </ul>
+    
+    <h3>3. Fikri Mülkiyet Hakları</h3>
+    <p>
+      quik'e ait tüm içerikler (metin, grafik, ikonlar, yazılım kodları, algoritmalar ve model çıktıları) <strong>SGDD‑ASAM'a</strong> veya lisans alınmış üçüncü taraflara aittir. Kullanıcı, bu içerikleri izinsiz şekilde çoğaltamaz, dağıtamaz veya ticari amaçla kullanamaz.
+    </p>
+    <p>
+      Kullanıcılar tarafından platforma yüklenen içerikler üzerindeki mülkiyet hakları kullanıcıya ait olmaya devam eder. Ancak, kullanıcı bu içerikleri platforma yükleyerek, SGDD-ASAM'a söz konusu içerikleri hizmetin sağlanması ve iyileştirilmesi amacıyla kullanma, saklama, işleme ve görüntüleme hakkı tanımış olur. Bu lisans, kullanıcının quik platformundaki hesabını silmesi durumunda sona erer.
+    </p>
+    
+    <h3>4. Kişisel Verilerin İşlenmesi</h3>
+    <p>
+      SGDD-ASAM, 6698 sayılı Kişisel Verilerin Korunması Kanunu (KVKK) kapsamında veri sorumlusu olarak hareket etmektedir. Platformda toplanan ve işlenen kişisel veriler şunları içerebilir:
+    </p>
+    <ul>
+      <li><strong>Kimlik Bilgileri:</strong>&nbsp;Ad, soyad, doğum tarihi</li>
+      <li><strong>İletişim Bilgileri:</strong>&nbsp;E-posta adresi, telefon numarası, adres</li>
+      <li><strong>Hesap Bilgileri:</strong>&nbsp;Kullanıcı adı, şifre (şifrelenmiş formatta)</li>
+      <li><strong>Kullanım Verileri:</strong>&nbsp;Sorgular, etkileşimler, platforma yüklenen dosyalar</li>
+      <li><strong>Teknik Veriler:</strong>&nbsp;IP adresi, cihaz bilgileri, çerezler, kullanım istatistikleri</li>
+    </ul>
+    <p>
+      Bu veriler, aşağıdaki amaçlarla işlenmektedir:
+    </p>
+    <ul>
+      <li>Hizmetin sunulması ve kişiselleştirilmesi</li>
+      <li>Kullanıcı hesaplarının yönetilmesi</li>
+      <li>Kullanıcı desteğinin sağlanması</li>
+      <li>Hizmetin güvenliğinin ve kalitesinin iyileştirilmesi</li>
+      <li>Yasal yükümlülüklerin yerine getirilmesi</li>
+      <li>Hizmet kullanımına ilişkin analiz ve istatistik oluşturulması</li>
+    </ul>
+    <p>
+      Kişisel verileriniz, yasal zorunluluklar dışında üçüncü taraflarla paylaşılmaz. Bazı durumlarda, hizmetin sağlanması için gerekli olan üçüncü taraf hizmet sağlayıcılarıyla (örneğin bulut depolama, analitik servisleri) veri paylaşımı yapılabilir. Bu durumda, söz konusu üçüncü tarafların da KVKK ve ilgili mevzuata uygun hareket etmeleri sağlanır.
+    </p>
+    <p>
+      Kişisel verileriniz, ilgili mevzuatta öngörülen veya işlendikleri amaç için gerekli olan süre kadar muhafaza edilir. Hesabınızı sildiğinizde, kişisel verileriniz makul bir süre içinde sistemlerimizden silinir veya anonimleştirilir.
+    </p>
+    
+    <h3>5. Kullanıcı Hakları</h3>
+    <p>
+      KVKK'nın 11. maddesi uyarınca, kişisel verilerinizle ilgili olarak aşağıdaki haklara sahipsiniz:
+    </p>
+    <ul>
+      <li>Kişisel verilerinizin işlenip işlenmediğini öğrenme</li>
+      <li>Kişisel verileriniz işlenmişse buna ilişkin bilgi talep etme</li>
+      <li>Kişisel verilerinizin işlenme amacını ve bunların amacına uygun kullanılıp kullanılmadığını öğrenme</li>
+      <li>Yurt içinde veya yurt dışında kişisel verilerinizin aktarıldığı üçüncü kişileri bilme</li>
+      <li>Kişisel verilerinizin eksik veya yanlış işlenmiş olması hâlinde bunların düzeltilmesini isteme</li>
+      <li>Kişisel verilerinizin silinmesini veya yok edilmesini isteme</li>
+      <li>İşlenen verilerin münhasıran otomatik sistemler vasıtasıyla analiz edilmesi suretiyle aleyhinize bir sonucun ortaya çıkmasına itiraz etme</li>
+      <li>Kişisel verilerinizin kanuna aykırı olarak işlenmesi sebebiyle zarara uğramanız hâlinde zararın giderilmesini talep etme</li>
+    </ul>
+    <p>
+      Bu haklarınızı kullanmak için <a href="mailto:kvkk@sgdd-asam.org">kvkk@sgdd-asam.org</a> adresine e-posta gönderebilir veya aşağıda belirtilen iletişim adresimize yazılı başvuruda bulunabilirsiniz.
+    </p>
+    
+    <h3>6. Yapay Zeka Kullanımı ve Veri İşleme</h3>
+    <p>
+      Quik platformu, yapay zeka teknolojilerini kullanarak hizmet sunmaktadır. Bu kapsamda:
+    </p>
+    <ul>
+      <li>Platform, kullanıcı sorguları ve girdileri doğrultusunda otomatik içerik üretmektedir.</li>
+      <li>Üretilen içerikler, yapay zeka algoritmalarına dayalı olup, %100 doğruluk garantisi verilmemektedir.</li>
+      <li>Kullanıcı verileri, yapay zeka sisteminin iyileştirilmesi amacıyla anonimleştirilerek kullanılabilir.</li>
+      <li>Kullanıcılar tarafından platforma yüklenen dosyalar ve paylaşılan içerikler, sistem tarafından analiz edilebilir ancak üçüncü taraflarla paylaşılmaz.</li>
+      <li>Yapay zeka sistemi, kullanıcı tercihlerini ve davranışlarını öğrenerek kişiselleştirilmiş bir deneyim sunabilir.</li>
+    </ul>
+    <p>
+      Yapay zeka modelimiz, genel kaynaklardan ve yasal olarak elde edilmiş verilerle eğitilmiştir. Model, ayrımcılık, nefret söylemi ve zararlı içerik üretimini engellemek için tasarlanmıştır ancak otomatik sistemlerin doğası gereği istenmeyen çıktılar üretebilir. Böyle durumlarda lütfen geri bildirimde bulununuz.
+    </p>
+    
+    <h3>7. Dosya Yükleme ve Güvenlik</h3>
+    <p>
+      Kullanıcılar, platforma aşağıdaki koşullar çerçevesinde dosya yükleyebilirler:
+    </p>
+    <ul>
+      <li>İzin verilen dosya türleri: .pdf, .doc, .docx, .txt, .jpg, .jpeg, .png (maksimum 25MB)</li>
+      <li>Yüklenen tüm dosyalar virüs ve zararlı yazılım taramasından geçirilir.</li>
+      <li>Telif hakkı ihlali içeren, yasadışı veya uygunsuz içerikli dosyaların yüklenmesi yasaktır.</li>
+      <li>Yüklenen dosyalar, kullanıcı izni olmadan üçüncü taraflarla paylaşılmaz.</li>
+      <li>SGDD-ASAM, uygunsuz içerik barındıran dosyaları önceden bildirmeksizin silme hakkını saklı tutar.</li>
+    </ul>
+    <p>
+      Yüklenen dosyalar, kullanıcının hesabı aktif olduğu sürece sistemde saklanır. Hesap silme işlemi sonrasında, dosyalar 30 gün içinde otomatik olarak silinir.
+    </p>
+    
+    <h3>8. Hizmette Değişiklik ve Erişim</h3>
+    <p>
+      SGDD‑ASAM, Quik hizmetine dair içerik, kullanıcı arayüzü, algoritmalar ve fonksiyonellikler üzerinde dilediği zaman değişiklik yapabilir. Bu kapsamda, kullanıcı deneyimini optimize etmek amacıyla sistemsel güncellemeler önceden bildirilmeksizin devreye alınabilir.
+    </p>
+    <p>
+      Platform, planlı bakım çalışmaları, güvenlik güncellemeleri veya teknik aksaklıklar nedeniyle geçici olarak erişilemez olabilir. SGDD-ASAM, planlanmış bakımlar hakkında kullanıcıları önceden bilgilendirmeye çalışacaktır, ancak acil durumlarda bu mümkün olmayabilir.
+    </p>
+    <p>
+      Hizmet, 7/24 erişilebilir olarak tasarlanmıştır ancak belirli coğrafi bölgelerde veya ağ koşullarında performans farklılıkları görülebilir. SGDD-ASAM, hizmetin kesintisiz şekilde sunulacağını garanti etmez.
+    </p>
+    
+    <h3>9. Sorumluluğun Sınırlandırılması</h3>
+    <p>
+      Quik tarafından sunulan bilgiler ve çıktılar, yalnızca öneri niteliğindedir. SGDD‑ASAM, hizmetin %100 doğrulukta çalışacağını taahhüt etmez. Kullanıcı, üretilen çıktılara dayanarak aldığı kararlarda kendi sorumluluğunu taşır. Hizmetin geçici olarak kullanılamaması, veri kaybı veya hatalı bilgi aktarımı gibi durumlardan SGDD‑ASAM sorumlu tutulamaz.
+    </p>
+    <p>
+      Quik platformunun kullanımından kaynaklanabilecek dolaylı, dolaysız, özel, arızi veya cezai zararlardan SGDD-ASAM sorumlu değildir. Bu sorumluluk reddi, aşağıdakileri içerir ancak bunlarla sınırlı değildir:
+    </p>
+    <ul>
+      <li>Yapay zeka çıktılarına dayanarak alınan kararlar nedeniyle ortaya çıkabilecek zararlar</li>
+      <li>Hizmetin kullanılamaması nedeniyle yaşanan iş kaybı veya fırsat maliyeti</li>
+      <li>Sistemde yaşanabilecek veri kayıpları veya güvenlik ihlalleri</li>
+      <li>Üçüncü taraf entegrasyonlarından kaynaklanan sorunlar</li>
+      <li>Kullanıcılar arasında paylaşılan içeriklerden doğan anlaşmazlıklar</li>
+    </ul>
+    <p>
+      Platform üzerinden sağlanan bilgiler, profesyonel tavsiye (tıbbi, hukuki, finansal vb.) yerine geçmez. Önemli kararlar için mutlaka ilgili alanda uzman kişilere danışılmalıdır.
+    </p>
+    
+    <h3>10. Platform Kullanımı</h3>
+    <p>
+      Quik platformu, SGDD-ASAM çalışanlarının kullanımı için tasarlanmamıştır. Bu çalışanlar, platforma erişim sağlamak için Quik uygulaması tarafından onay almalıdır. SGDD-ASAM, kullanıcılar tarafından bilerek veya bilmeyerek sağlanan kişisel verileri, tespit edildiği takdirde sistemden silme hakkını saklı tutar.
+    </p>
+    <p>
+      Ebeveynler ve yasal vasiler, çocukların platform kullanımını denetlemekle ve çocukların kişisel verilerinin korunmasını sağlamakla yükümlüdür. Çocuklara yönelik içerik oluşturma veya çocuklarla ilgili veri toplama amacıyla platformun kullanılması yasaktır.
+    </p>
+    
+    <h3>11. Ödeme Koşulları ve İadeler</h3>
+    <p>
+      Quik platformunun bütün hizmetleri SGDD-ASAM çalışanlarına ücretsiz olarak sunulmaktadır. Gelecekte sunulabilecek ücretli hizmetlere ilişkin ücretlendirme politikaları ayrıca belirtilecektir. Ücretli hizmetler için aşağıdaki koşullar geçerli olacaktır:
+    </p>
+    <ul>
+      <li>Ödeme bilgilerinin doğru ve güncel olmasından kullanıcı sorumludur.</li>
+      <li>Abonelik temelli hizmetler, aksi belirtilmedikçe otomatik yenileme özelliğine sahiptir.</li>
+      <li>İptal edilen aboneliklerde, fatura döneminin sonuna kadar hizmet sunulmaya devam eder.</li>
+      <li>Hizmet kalitesinde ciddi aksaklıklar yaşanması durumunda, son 14 gün içinde yapılan ödemeler için iade talep edilebilir.</li>
+      <li>İade talepleri:&nbsp;&nbsp;<a href="mailto:iade@sgdd-asam.org">iade@sgdd-asam.org</a>&nbsp;adresine gönderilmelidir.</li>
+    </ul>
+    
+    <h3>12. Hizmetin Sonlandırılması</h3>
+    <p>
+      SGDD‑ASAM, kullanıcıların bu kullanım şartlarına aykırı davrandığını tespit ettiğinde, ilgili kullanıcıların hizmete erişimini geçici veya kalıcı olarak durdurabilir. Ayrıca, güvenlik veya bakım amaçlı olarak hizmet geçici süreyle durdurulabilir.
+    </p>
+    <p>
+      Kullanıcı, dilediği zaman hesabını kapatma hakkına sahiptir. Hesap kapatma işlemi, kullanıcı profilindeki "Hesabımı Sil" seçeneği üzerinden gerçekleştirilebilir. Hesap silme işlemi sonrasında:
+    </p>
+    <ul>
+      <li>Kişisel verileriniz 30 gün içinde sistemden silinir veya anonimleştirilir.</li>
+      <li>Yüklediğiniz içerikler sistemden kaldırılır.</li>
+      <li>Yasal yükümlülükler gereği saklanması gereken veriler, yasal süre boyunca muhafaza edilir.</li>
+    </ul>
+    <p>
+      SGDD-ASAM, teknik, ekonomik veya stratejik nedenlerle Quik platformunu tamamen sonlandırma hakkını saklı tutar. Böyle bir durumda, kullanıcılara en az 30 gün önceden bildirim yapılacaktır.
+    </p>
+    
+    <h3>13. Üçüncü Taraf Bağlantıları</h3>
+    <p>
+      Quik platformunda bazı entegrasyonlar veya yönlendirmeler üçüncü taraf web sitelerine yapılabilir. Bu sitelerin içerikleri SGDD‑ASAM'ın sorumluluğunda değildir. Kullanıcı, bu sitelere eriştiğinde kendi gizlilik politikalarını ve kullanım şartlarını ayrıca değerlendirmelidir.
+    </p>
+    <p>
+      Platformda yer alan üçüncü taraf hizmetleri (ödeme sistemleri, analitik araçları, vb.) kendi kullanım koşullarına ve gizlilik politikalarına tabidir. Bu hizmetleri kullanmadan önce ilgili koşulları incelemeniz önerilir.
+    </p>
+    
+    <h3>14. Teknik ve İdari Güvenlik Önlemleri</h3>
+    <p>
+      SGDD-ASAM, kullanıcı verilerinin güvenliğini sağlamak için aşağıdaki teknik ve idari önlemleri almaktadır:
+    </p>
+    <ul>
+      <li>Veri şifreleme protokolleri (SSL/TLS)</li>
+      <li>Düzenli güvenlik güncellemeleri ve zafiyet taramaları</li>
+      <li>İki faktörlü kimlik doğrulama seçeneği</li>
+      <li>Erişim kontrolleri ve yetkilendirme sistemleri</li>
+      <li>Düzenli veri yedekleme işlemleri</li>
+      <li>Personel için veri güvenliği eğitimleri</li>
+      <li>Fiziksel güvenlik önlemleri (sunucu güvenliği vb.)</li>
+    </ul>
+    <p>
+      Herhangi bir veri ihlali durumunda, yasal gerekliliklere uygun olarak ilgili kişilere ve düzenleyici kurumlara bildirimde bulunulacaktır.
+    </p>
+    
+    <h3>15. Şikayet ve Destek Yönetimi</h3>
+    <p>
+      Quik platformu ile ilgili her türlü soru, sorun ve şikayetleriniz için aşağıdaki kanallardan destek alabilirsiniz:
+    </p>
+    <ul>
+      <li><strong>Platform içi yardım merkezi:</strong>&nbsp;Quik - Yapay zeka destek elemanı</li>
+      <li><strong>E-posta:</strong>&nbsp;<a href="mailto:destek@sgdd-asam.org">destek@sgdd-asam.org</a></li>
+      <li><strong>Çevrimiçi destek formu:</strong>&nbsp;<a href="https://quik-help@sgdd-asam.org/destek">quik-help@sgdd-asam.org/destek</a></li>
+      <li><strong>Telefon:</strong>&nbsp;+90 312 212 60 13 (Hafta içi 09:00-17:30)</li>
+    </ul>
+    <p>
+      Şikayetler, alındıktan sonra en geç 72 saat içinde değerlendirilecek ve çözüm süreci başlatılacaktır. Karmaşık sorunlar için bu süre uzayabilir ancak her durumda süreç hakkında bilgilendirileceksiniz.
+    </p>
+    
+    <h3>16. Güncellemeler</h3>
+    <p>
+      SGDD‑ASAM, Kullanım Şartları üzerinde dilediği zaman değişiklik yapabilir. Güncel metin her zaman uygulama içinden veya <a href="https://quik-chatbot.sgdd-asam.org">quik-chatbot.sgdd-asam.org</a> üzerinden erişilebilir olacaktır. Kullanıcılar, değişiklikleri takip etmekle yükümlüdür. Güncel şartların yayımlanmasının ardından hizmeti kullanmaya devam etmek, yeni şartların kabul edildiği anlamına gelir.
+    </p>
+    <p>
+      Önemli değişiklikler durumunda, kullanıcılara e-posta veya platform üzerinden bildirim gönderilecektir. Değişikliklerin yürürlüğe girmesinden önce kullanıcılara en az 15 gün süre tanınacaktır.
+    </p>
+    
+    <h3>17. Uygulanacak Hukuk ve Yetki</h3>
+    <p>
+      İşbu şartlar, <strong>T.C. yasalarına</strong> tabidir. Taraflar arasında çıkabilecek uyuşmazlıklar öncelikle uzlaşma yoluyla çözülmeye çalışılır. Çözülemediği takdirde <strong>Ankara Mahkemeleri ve İcra Daireleri</strong> yetkilidir.
+    </p>
+    <p>
+      Bu sözleşme, tüketici hakları ve elektronik ticaret ile ilgili yürürlükteki mevzuat hükümlerine tabidir. Sözleşmenin herhangi bir hükmünün geçersiz olması durumunda, diğer hükümler geçerliliğini korur.
+    </p>
+    
+    <h3>18. Mücbir Sebepler</h3>
+    <p>
+      Doğal afetler, salgın hastalıklar, savaş, terör eylemleri, hükümet kısıtlamaları, internet altyapısındaki aksaklıklar gibi SGDD-ASAM'ın kontrolü dışında gelişen durumlar nedeniyle hizmetin sunulamaması veya aksaması halinde, SGDD-ASAM sorumlu tutulamaz. Mücbir sebep durumunun sona ermesinin ardından hizmet mümkün olan en kısa sürede normale döndürülecektir.
+    </p>
+    
+    <h3>19. İletişim</h3>
+    <ul>
+      <li><strong>E-posta:</strong>&nbsp;<a href="mailto:destek@sgdd-asam.org">destek@sgdd-asam.org</a></li>
+      <li><strong>Kişisel Veri Talepleri:</strong>&nbsp;<a href="mailto:kvkk@sgdd-asam.org">kvkk@sgdd-asam.org</a></li>
+      <li><strong>Adres:</strong>&nbsp;SGDD-ASAM Genel Merkezi – "Birlik Mah., Katar Cad. No:11, Çankaya / ANKARA"</li>
+      <li><strong>Telefon:</strong>&nbsp;+90 312 212 60 13</li>
+      <li><strong>Web:</strong>&nbsp;<a href="https://www.sgdd-asam.org">www.sgdd-asam.org</a></li>
+    </ul>
+    <p><i>Bu şartların son güncellenme tarihi: 21 Nisan 2025</i></p>
+    <p><i>
+      SGDD‑ASAM, kullanıcı verilerinin güvenliği ve gizliliği konusunda yasal sorumluluklarını titizlikle yerine getirir. Bu politika, SGDD‑ASAM'ın etik değerleriyle uyumlu olarak hazırlanmıştır.
+    </i></p>
+
+  </div>
+</div>
+
+
+<!-- Gizlilik Politikası Modal -->
+<div id="gizlilik-modal" class="modal">
+  <div class="modal-backdrop"></div>
+  <div class="modal-content">
+    <button id="gizlilik-close" aria-label="Kapat">×</button>
+    <h2>Gizlilik Politikası</h2>
+    <p>
+      Bu Gizlilik Politikası, <strong>Quik</strong> adlı dijital ürün ve hizmetlerin kullanımı sırasında elde edilen verilerin işlenmesi ve korunmasına ilişkin ilkeleri tanımlar. <strong>Quik</strong> markası, <strong>Sosyal Gelişim ve Dayanışma Derneği İktisadi İşletmesi (SGDD‑ASAM)</strong> tarafından geliştirilmiş ve işletilmektedir. SGDD‑ASAM, kullanıcı mahremiyetine yüksek düzeyde önem verir ve kişisel verilerin güvenliğini mevzuatlara uygun biçimde sağlamayı taahhüt eder.
+    </p>
+    
+    <h3>1. Kapsam</h3>
+    <p>
+      Bu politika, Quik'e ait mobil uygulama, web sitesi ve entegre hizmetler aracılığıyla elde edilen kişisel verileri kapsar. Politika, sadece Quik tarafından toplanan verileri içerir; üçüncü taraf hizmet sağlayıcıların politikaları ayrıca geçerlidir.
+    </p>
+    <p>
+      Bu gizlilik politikası, aşağıdaki platformlar ve kanallar üzerinden toplanan tüm verileri kapsamaktadır:
+    </p>
+    <ul>
+      <li>Quik mobil uygulaması (iOS ve Android)</li>
+      <li>Quik web platformu (quik.sgdd-asam.org)</li>
+      <li>Quik'e bağlı API servisleri ve entegrasyonlar</li>
+      <li>Quik müşteri hizmetleri ve teknik destek kanalları</li>
+      <li>Quik resmi sosyal medya hesapları ve iletişim kanalları</li>
+    </ul>
+    
+    <h3>2. Toplanan Bilgi Türleri</h3>
+    <ul>
+      <li><strong>Kimlik Bilgileri:</strong>&nbsp;Ad, soyad, kullanıcı adı, doğum tarihi, cinsiyet, fotoğraf (profil resmi olarak yüklendiği takdirde)</li>
+      <li><strong>İletişim Bilgileri:</strong>&nbsp;E-posta adresi, IP adresi, telefon numarası (isteğe bağlı), posta adresi (isteğe bağlı)</li>
+      <li><strong>Oturum Bilgileri:</strong>&nbsp;Giriş-çıkış saatleri, cihaz tipi, tarayıcı bilgisi, işletim sistemi, cihaz tanımlayıcıları, ağ bilgileri</li>
+      <li><strong>Davranış Verileri:</strong>&nbsp;Uygulama içi gezinti, tıklama ve etkileşim kayıtları, kullanılan özellikler, arama geçmişi, içerik tercihleri, içerik yükleme ve paylaşım davranışları</li>
+      <li><strong>Tanımlama Bilgileri (Çerezler):</strong>&nbsp;Kullanıcı tercihlerinin takibi, oturum bilgilerinin korunması, hizmet performansının optimizasyonu</li>
+      <li><strong>Konum Verileri:</strong>&nbsp;Genel konum bilgisi (ülke/şehir düzeyinde, hassas konum verileri isteğe bağlıdır)</li>
+      <li><strong>İçerik ve Dosya Verileri:</strong>&nbsp;Kullanıcının platforma yüklediği dosyalar, paylaştığı içerikler, notlar, yorumlar ve mesajlar</li>
+      <li><strong>Ödeme Bilgileri:</strong>&nbsp;Ücretli hizmetler için kullanılan (ancak tam olarak saklanmayan) ödeme bilgileri</li>
+      <li><strong>Anket ve Geri Bildirim Verileri:</strong>&nbsp;Kullanıcının gönüllü olarak sağladığı değerlendirme, şikayet ve öneriler</li>
+    </ul>
+    
+    <h3>3. Verilerin Toplanma Yöntemleri</h3>
+    <p>
+      Veriler doğrudan kullanıcıdan (kayıt formu, giriş işlemi vb.) ya da otomatik sistemler aracılığıyla (çerezler, oturum kaydı, cihaz tespiti) toplanır.
+    </p>
+    <p>
+      Veri toplama yöntemlerimiz aşağıdaki kanalları içerir:
+    </p>
+    <ul>
+      <li><strong>Doğrudan Kullanıcı Girişi:</strong>&nbsp;Kayıt formları, profil güncelleme, tercih belirleme, sohbet etkileşimleri</li>
+      <li><strong>Otomatik Veri Toplama:</strong>&nbsp;Çerezler, piksel etiketleri, sunucu günlükleri, uygulama analitikleri</li>
+      <li><strong>Cihaz Bilgileri:</strong>&nbsp;Kullanılan cihazın özellikleri, ekran çözünürlüğü, bağlantı türü, cihaz kimliği</li>
+      <li><strong>Kullanım Verileri:</strong>&nbsp;Etkileşim süreleri, sayfa görüntüleme, tıklama davranışları, kullanım sıklığı</li>
+      <li><strong>Entegrasyonlar:</strong>&nbsp;Üçüncü taraf hizmetlerle entegrasyonlar aracılığıyla (Google, Apple, Facebook ile giriş gibi) alınan ve paylaşılan veriler</li>
+      <li><strong>Müşteri Hizmetleri:</strong>&nbsp;Destek talepleri, çağrı kayıtları, e-posta yazışmaları sırasında paylaşılan bilgiler</li>
+    </ul>
+    
+    <h3>4. Verilerin Kullanım Amaçları</h3>
+    <ul>
+      <li>Kullanıcı hesabı oluşturmak ve yönetmek</li>
+      <li>Kimlik doğrulama ve yetkilendirme yapmak</li>
+      <li>Teknik destek ve müşteri hizmetleri sunmak</li>
+      <li>Sistem güvenliğini sağlamak</li>
+      <li>Kullanıcı deneyimini kişiselleştirmek</li>
+      <li>Hizmetlerimizi geliştirmek ve iyileştirmek</li>
+      <li>Yapay zeka modellerini eğitmek ve optimize etmek (anonimleştirilmiş verilerle)</li>
+      <li>Kullanıcı davranış analizleri ve istatistikler oluşturmak</li>
+      <li>Hizmet kalitesini ve performansını izlemek</li>
+      <li>Dolandırıcılık ve kötüye kullanımı önlemek</li>
+      <li>Platformun kullanımına ilişkin istatistikler oluşturmak</li>
+      <li>Pazarlama faaliyetleri yürütmek (kullanıcının izni olması durumunda)</li>
+      <li>Hizmet güncellemeleri ve önemli değişiklikler hakkında bilgilendirmek</li>
+      <li>Mevzuat gerekliliklerini yerine getirmek</li>
+    </ul>
+    
+    <h3>5. Hukuki Dayanak</h3>
+    <p>
+      Veriler, 6698 sayılı KVKK, Avrupa Birliği Genel Veri Koruma Tüzüğü (GDPR) gibi ulusal ve uluslararası düzenlemelere uygun olarak; <strong>açık rıza</strong>, <strong>sözleşmenin ifası</strong>, <strong>hukuki yükümlülük</strong> ve <strong>meşru menfaat</strong> gerekçeleriyle işlenir.
+    </p>
+    <p>
+      Verilerinizi işlerken dayandığımız yasal dayanaklar aşağıdadır:
+    </p>
+    <ul>
+      <li><strong>Açık Rıza:</strong>&nbsp;Belirli veri işleme faaliyetleri için açık rızanızı talep ederiz. Örneğin, pazarlama iletişimleri için e-posta adresinizi kullanmak veya konum verilerinizi işlemek gibi.</li>
+      <li><strong>Sözleşmenin İfası:</strong>&nbsp;Quik kullanım koşullarını kabul ettiğinizde, sizinle aramızda bir sözleşme kurulur. Bu sözleşmenin gereklerini yerine getirmek için verilerinizi işleriz.</li>
+      <li><strong>Hukuki Yükümlülük:</strong>&nbsp;Vergi mevzuatı, bilgi güvenliği düzenlemeleri, elektronik ticaret kanunları gibi yasal yükümlülüklerimizi yerine getirmek için veri işleme faaliyetleri gerçekleştirebiliriz.</li>
+      <li><strong>Meşru Menfaat:</strong>&nbsp;Güvenlik önlemleri almak, dolandırıcılığı önlemek, hizmet kalitesini artırmak gibi meşru menfaatlerimiz doğrultusunda verilerinizi işleyebiliriz.</li>
+      <li><strong>Hayati Çıkarların Korunması:</strong>&nbsp;Nadir durumlarda, sizin veya başka bir kişinin hayati çıkarlarını korumak için veri işleme gerekli olabilir.</li>
+      <li><strong>Kamu Yararına Faaliyet:</strong>&nbsp;Kamu sağlığı, bilimsel araştırma gibi kamu yararına faaliyetler için veriler anonim hale getirilerek kullanılabilir.</li>
+    </ul>
+    
+    <h3>6. Çerezler ve Takip Teknolojileri</h3>
+    <p>
+      Çerezler (cookies), kullanıcı tercihlerini hatırlamak ve analitik toplamak amacıyla kullanılır. Kullanıcı, çerez kullanımına ilişkin tercihlerini tarayıcı ayarlarından değiştirebilir.
+    </p>
+    <p>
+      Quik platformunda aşağıdaki çerez ve takip teknolojileri kullanılmaktadır:
+    </p>
+    <ul>
+      <li><strong>Zorunlu Çerezler:</strong>&nbsp;Platformun temel işlevleri için gerekli olan ve devre dışı bırakılamayan çerezlerdir. Bunlar güvenlik, kimlik doğrulama ve temel site fonksiyonları için kullanılır.</li>
+      <li><strong>Performans Çerezleri:</strong>&nbsp;Ziyaretçilerin siteyi nasıl kullandıklarına dair bilgi toplar. Bu çerezler, sitenin performansını ve kullanıcı deneyimini iyileştirmemize yardımcı olur.</li>
+      <li><strong>İşlevsellik Çerezleri:</strong>&nbsp;Kullanıcı tercihlerini (dil seçimi, bölge ayarları vb.) hatırlayarak daha kişiselleştirilmiş bir deneyim sunmak için kullanılır.</li>
+      <li><strong>Analitik Çerezler:</strong>&nbsp;Ziyaretçi davranışlarını analiz etmek için kullanılır. Bu çerezler, hangi sayfaların daha popüler olduğu, kullanıcıların sitede ne kadar zaman geçirdiği gibi bilgileri toplar.</li>
+      <li><strong>Piksel Etiketleri (Web Beacons):</strong>&nbsp;Web sayfalarına yerleştirilen ve kullanıcı davranışlarını izleyen küçük grafik dosyalarıdır.</li>
+      <li><strong>Yerel Depolama (Local Storage):</strong>&nbsp;Tarayıcınızın yerel depolama alanında bazı verileri saklayarak uygulama performansını iyileştirmek için kullanılır.</li>
+    </ul>
+    <p>
+      Çerez tercihlerinizi yönetmek için:
+    </p>
+    <ul>
+      <li>Platformumuzun çerez ayarları panelini kullanabilirsiniz</li>
+      <li>Tarayıcı ayarlarınızdan çerezleri kabul edip etmemeyi seçebilirsiniz</li>
+      <li>"Gizli mod" veya "inkognito" pencerelerinde gezinti yapabilirsiniz</li>
+      <li>Çerez engelleyici eklentiler kullanabilirsiniz</li>
+    </ul>
+    <p>
+      Çerezleri tamamen devre dışı bırakmanız durumunda, platformumuzun bazı işlevlerinin düzgün çalışmayabileceğini lütfen unutmayın.
+    </p>
+    
+    <h3>7. Üçüncü Taraflara Aktarım</h3>
+    <p>
+      Kişisel veriler, yalnızca aşağıdaki durumlarda sınırlı ve güvenli şekilde aktarılır:
+    </p>
+    <ul>
+      <li>Sunucu barındırma ve teknik altyapı hizmet sağlayıcıları</li>
+      <li>Yetkili kamu kurumları (mahkeme kararları veya kanun gereği)</li>
+      <li>Analitik ve istatistik hizmetleri (anonimleştirilmiş veri)</li>
+      <li>Ödeme işlemcileri ve finans kuruluşları (ücretli hizmetler için)</li>
+      <li>Müşteri destek hizmetleri sağlayıcıları</li>
+      <li>Bulut depolama sağlayıcıları</li>
+      <li>Güvenlik ve doğrulama hizmeti sağlayıcıları</li>
+      <li>Yazılım geliştirme ve bakım ortakları</li>
+    </ul>
+    <p>
+      Hiçbir koşulda kullanıcı verileri ticari amaçla satılmaz veya paylaşılmaz.
+    </p>
+    <p>
+      Veri aktarımı yaptığımız tüm üçüncü taraflarla, verilerin güvenliğini ve gizliliğini sağlamak amacıyla veri işleme sözleşmeleri imzalanmıştır. Bu sözleşmeler, söz konusu tarafların verilerinizi yalnızca belirtilen amaçlar için kullanmasını ve yeterli güvenlik önlemlerini almasını şart koşar.
+    </p>
+    <p>
+      Verileriniz, yalnızca gerekli durumlarda ve aşağıdaki güvenlik önlemleri altında yurtdışına aktarılabilir:
+    </p>
+    <ul>
+      <li>Avrupa Komisyonu tarafından yeterli koruma sağladığı kabul edilen ülkelere</li>
+      <li>Standart veri koruma maddeleri veya bağlayıcı şirket kuralları gibi uygun güvenceler sunan ülkelere</li>
+      <li>Kullanıcının açık rızası olması durumunda diğer ülkelere</li>
+    </ul>
+    
+    <h3>8. Veri Güvenliği</h3>
+    <p>
+      SGDD‑ASAM, teknik ve idari tedbirler ile veri güvenliğini sağlamak amacıyla aşağıdaki yöntemleri kullanır:
+    </p>
+    <ul>
+      <li><strong>Şifreleme Teknolojileri:</strong>&nbsp;AES-256 bit şifreleme, TLS 1.3 protokolü, HTTPS bağlantıları, uçtan uca şifrelenmiş iletişim</li>
+      <li><strong>Erişim Kontrol Sistemleri:</strong>&nbsp;Çok faktörlü kimlik doğrulama, en az yetki prensibi, rol tabanlı erişim kontrolleri, otomatik oturum sonlandırma</li>
+      <li><strong>Güvenlik İzleme:</strong>&nbsp;7/24 güvenlik izleme, anormal davranış tespiti, yetkisiz erişim önleme sistemleri, DDoS koruma çözümleri</li>
+      <li><strong>Düzenli Testler:</strong>&nbsp;Zafiyet taramaları, penetrasyon testleri, güvenlik duvarı testleri, kod güvenliği analizleri</li>
+      <li><strong>Veri Yedekleme:</strong>&nbsp;Günlük yedeklemeler, coğrafi olarak ayrı lokasyonlarda yedekleme, felaket kurtarma planları</li>
+      <li><strong>Personel Eğitimi:</strong>&nbsp;Düzenli veri güvenliği eğitimleri, sosyal mühendislik farkındalık programları</li>
+      <li><strong>Fiziksel Güvenlik:</strong>&nbsp;Veri merkezlerinde 24 saat kamera gözetimi, biyometrik erişim kontrolleri, çevresel tehdit önlemleri</li>
+      <li><strong>Veri Anonimleştirme:</strong>&nbsp;Analiz ve istatistik amaçlı kullanımlarda veri anonimleştirme teknikleri</li>
+      <li><strong>Güvenlik Belgelendirmesi:</strong>&nbsp;ISO 27001 Bilgi Güvenliği Yönetim Sistemi standartlarına uygunluk</li>
+    </ul>
+    <p>
+      Herhangi bir veri ihlali durumunda, yasal yükümlülüklerimiz çerçevesinde en geç 72 saat içinde ilgili denetim otoritelerine ve etkilenen kullanıcılara bildirimde bulunulacaktır.
+    </p>
+    
+    <h3>9. Saklama Süresi</h3>
+    <p>
+      Veriler, yasal zorunluluklar ve işleme amacı gereğince saklanır; süresi sona erdiğinde güvenli biçimde silinir, yok edilir veya anonimleştirilir. Örnek:
+    </p>
+    <ul>
+      <li><strong>Hesap Bilgileri:</strong>&nbsp;Hesap aktif olduğu sürece ve hesabın kapatılmasından sonra 90 gün</li>
+      <li><strong>Oturum Kayıtları:</strong>&nbsp;2 yıl</li>
+      <li><strong>Mesajlaşma İçerikleri:</strong>&nbsp;Aktif hesaplarda süresiz, hesap kapatıldıktan sonra 90 gün</li>
+      <li><strong>İşlem Kayıtları:</strong>&nbsp;5 yıl</li>
+      <li><strong>Ödeme Bilgileri:</strong>&nbsp;Son işlemden sonra 2 yıl</li>
+      <li><strong>Destek Talepleri:</strong>&nbsp;3 yıl</li>
+      <li><strong>Güvenlik Kayıtları:</strong>&nbsp;3 yıl</li>
+      <li><strong>İşlem Logları:</strong>&nbsp;18 ay</li>
+      <li><strong>Analitik Veriler:</strong>&nbsp;Anonimleştirilmiş formda 5 yıl</li>
+      <li><strong>Muhasebe Kayıtları:</strong>&nbsp;10 yıl (Vergi Usul Kanunu kapsamında)</li>
+    </ul>
+    <p>
+      Veri saklama sürelerimiz, aşağıdaki kriterler göz önünde bulundurularak belirlenmektedir:
+    </p>
+    <ul>
+      <li>Yasal yükümlülükler ve zamanaşımı süreleri</li>
+      <li>Veri işleme amacının gerektirdiği süre</li>
+      <li>Sektör standartları ve iyi uygulamalar</li>
+      <li>Olası hukuki uyuşmazlıklarda delil teşkil etme potansiyeli</li>
+    </ul>
+    <p>
+      Yasal saklama süresi sona eren veriler, düzenli veri temizleme işlemleri kapsamında güvenli şekilde silinir veya anonim hale getirilir. Bu işlemler, veri silme politikalarına uygun olarak gerçekleştirilir ve kayıt altına alınır.
+    </p>
+    
+    <h3>10. Kullanıcı Hakları</h3>
+    <p>
+      KVKK ve GDPR kapsamında, kullanıcılar aşağıdaki haklara sahiptir:
+    </p>
+    <ul>
+      <li><strong>Bilgi Edinme Hakkı:</strong>&nbsp;Hangi kişisel verilerinizin işlendiğini öğrenme</li>
+      <li><strong>Erişim Hakkı:</strong>&nbsp;İşlenen kişisel verilerinize erişim talep etme ve bunların kopyalarını alma</li>
+      <li><strong>Düzeltme Hakkı:</strong>&nbsp;Yanlış veya eksik kişisel verilerinizin düzeltilmesini isteme</li>
+      <li><strong>Silme Hakkı (Unutulma Hakkı):</strong>&nbsp;Belirli koşullar altında verilerinizin silinmesini talep etme</li>
+      <li><strong>İşleme Sınırlandırma Hakkı:</strong>&nbsp;Verilerinizin işlenmesini sınırlandırma talebinde bulunma</li>
+      <li><strong>Veri Taşınabilirliği Hakkı:</strong>&nbsp;Verilerinizi yapılandırılmış, yaygın olarak kullanılan ve makine tarafından okunabilir bir formatta alma</li>
+      <li><strong>İtiraz Hakkı:</strong>&nbsp;Meşru menfaat temelinde yapılan veri işlemelerine itiraz etme</li>
+      <li><strong>Otomatik Karar Almaya İtiraz:</strong>&nbsp;Otomatik karar alma (profilleme dahil) süreçlerine tabi olmama</li>
+      <li><strong>Rızayı Geri Çekme Hakkı:</strong>&nbsp;Daha önce verdiğiniz rızayı istediğiniz zaman geri çekme</li>
+      <li><strong>Şikayet Hakkı:</strong>&nbsp;Veri koruma otoritesine şikayette bulunma</li>
+    </ul>
+    <p>
+      Bu haklarınızı kullanmak için aşağıdaki yöntemlerle bizimle iletişime geçebilirsiniz:
+    </p>
+    <ul>
+      <li><strong>E-posta:</strong>&nbsp;<a href="mailto:kvkk@sgdd-asam.org">kvkk@sgdd-asam.org</a></li>
+      <li><strong>Posta:</strong>&nbsp;"Birlik Mah. Katar Cad. No:11, Çankaya / ANKARA"</li>
+      <li><strong>Güvenli Online Form:</strong>&nbsp;<a href="https://quik.sgdd-asam.org/veri-basvuru">quik.sgdd-asam.org/veri-basvuru</a></li>
+      <li><strong>Quik Uygulaması:</strong>&nbsp;Hesap ayarları > Gizlilik > Veri Talepleri bölümü</li>
+    </ul>
+    <p>
+      Talebiniz alındıktan sonra, kimlik doğrulama işlemi gerçekleştirilir ve 30 gün içerisinde talebinizi yanıtlarız. Talebin karmaşıklığına bağlı olarak bu süre 60 güne kadar uzatılabilir, ancak böyle bir durumda sizi bilgilendiririz.
+    </p>
+    
+    <h3>11. Çocukların Gizliliği</h3>
+    <p>
+      Quik platformu, 18 yaşın altındaki çocukların kullanımını hedeflememektedir. Bilerek 18 yaş altındaki kişilerden kişisel veri toplamayız. Eğer bir ebeveyn veya vasi, çocuğunun bize kişisel veri sağladığını düşünüyorsa, lütfen bizimle iletişime geçin ve bu bilgileri sistemlerimizden silmek için gerekli adımları atacağız.
+    </p>
+    <p>
+      18 yaşın altındaki bir çocuğa ait kişisel veri topladığımızı fark ettiğimizde, bu verileri sistemlerimizden en kısa sürede sileriz. Ebeveynler veya yasal vasiler, çocuklarının verilerinin toplanması, kullanılması veya ifşa edilmesiyle ilgili sorular için <a href="mailto:kvkk@sgdd-asam.org">kvkk@sgdd-asam.org</a> adresinden bizimle iletişime geçebilirler.
+    </p>
+    
+    <h3>12. Yapay Zeka ve Veri İşleme</h3>
+    <p>
+      Quik platformunda kullanılan yapay zeka teknolojilerinin veri işleme faaliyetleri aşağıdaki şekilde gerçekleşir:
+    </p>
+    <ul>
+      <li>Yapay zeka modellerimiz, kullanıcı sorguları ve etkileşimleri doğrultusunda kişiselleştirilmiş içerik ve yanıtlar üretir.</li>
+      <li>Kullanıcı verileri, yapay zeka sistemlerinin eğitilmesi ve geliştirilmesi için yalnızca anonimleştirilmiş formda kullanılabilir.</li>
+      <li>Yapay zeka sistemlerimiz, kullanıcı davranışlarını öğrenerek daha doğru ve kişiselleştirilmiş yanıtlar vermek için kullanım modellerini analiz eder.</li>
+      <li>Kullanıcılara tam kontrol sağlamak adına, yapay zeka özelliklerini ayarlar menüsünden kişiselleştirme ve sınırlandırma imkanı sunulur.</li>
+      <li>Yapay zeka sistemlerimiz, kişiselleştirilmiş içerik üretmek amacıyla kullanıcı tercihlerini ve davranışlarını öğrenir, ancak hassas kişisel veri kategorileri (sağlık verileri, dini inançlar, siyasi görüşler vb.) varsayılan olarak kullanılmaz.</li>
+    </ul>
+    <p>
+      Yapay zeka sistemlerimiz, ayrımcılık yapmaması, önyargılı olmaması ve kişilik haklarına saygılı olması için düzenli olarak denetlenir ve test edilir. Kullanıcılar, yapay zeka sisteminin ürettiği sonuçlara itiraz etme veya doğruluğunu sorgulama hakkına sahiptir.
+    </p>
+    
+    <h3>13. Uluslararası Veri Transferleri</h3>
+    <p>
+      SGDD-ASAM, veri depolama ve işleme amacıyla Türkiye sınırları dışında bulunan sunuculara veri aktarımı yapabilir. Bu aktarımlar, aşağıdaki güvenceler sağlanarak gerçekleştirilir:
+    </p>
+    <ul>
+      <li>Avrupa Komisyonu'nun yeterlilik kararı bulunan ülkelere aktarım</li>
+      <li>Standart veri koruma maddeleri veya bağlayıcı şirket kuralları gibi uygun güvenceler sağlanması</li>
+      <li>İlgili kişinin açık rızası alınarak veri aktarımı yapılması</li>
+      <li>Sözleşmenin ifası veya hukuki yükümlülükler için gerekli olması durumunda veri aktarımı</li>
+    </ul>
+       <p>
+      Uluslararası veri transferlerimiz, KVKK ve GDPR gerekliliklerine uygun olarak gerçekleştirilir. Veri transferi sırasında gerekli tüm teknik ve idari önlemler alınır ve veri sahiplerinin hakları her aşamada korunur.
+    </p>
+    
+    <h3>14. Politika Güncellemeleri</h3>
+    <p>
+      Bu Gizlilik Politikası, teknolojik gelişmeler, mevzuat değişiklikleri veya Quik hizmetlerinde yapılan güncellemeler doğrultusunda zaman zaman değiştirilebilir. Politika değişiklikleri, güncellenmiş metnin platformumuzda yayımlanmasıyla yürürlüğe girer.
+    </p>
+    <p>
+      Politika üzerinde önemli değişiklikler yapıldığında, kullanıcılara bildirim gönderilir veya uygulama içi bildirim yoluyla bilgilendirme sağlanır. Değişikliklerden sonra hizmetlerimizi kullanmaya devam etmeniz, güncellenmiş politikayı kabul ettiğiniz anlamına gelir.
+    </p>
+    <p>
+      Kullanıcıların, Gizlilik Politikası’nı düzenli aralıklarla gözden geçirmeleri tavsiye edilir.
+    </p>
+    
+    <h3>15. İletişim Bilgileri</h3>
+    <p>
+      Gizlilik Politikası veya veri işleme uygulamalarımız hakkında sorularınız, talepleriniz veya şikayetleriniz olması durumunda bizimle aşağıdaki kanallar üzerinden iletişime geçebilirsiniz:
+    </p>
+    <ul>
+      <li><strong>E-posta:</strong>&nbsp;<a href="mailto:kvkk@sgdd-asam.org">kvkk@sgdd-asam.org</a></li>
+      <li><strong>Telefon:</strong>&nbsp;+90 312 474 31 00</li>
+      <li><strong>Posta Adresi:</strong>&nbsp;"Birlik Mah. Katar Cad. No:11, Çankaya / ANKARA"</li>
+      <li><strong>Online İletişim Formu:</strong>&nbsp;<a href="https://quik.sgdd-asam.org/iletisim">quik.sgdd-asam.org/iletisim</a></li>
+    </ul>
+    <p>
+      Tüm veri işleme faaliyetlerimiz, kullanıcılarımızın güvenliği ve memnuniyeti öncelikli olacak şekilde yürütülmektedir.
+    </p>
+    
+    <p style="margin-top:20px; text-align:center;">
+      Son güncelleme tarihi: <strong>27 Nisan 2025</strong>
+    </p>
+  </div>
+</div>
+
+</footer>
+
+  <script>
+    // Navigation
+    const navbar = document.querySelector('.navbar');
+    const navLinks = document.querySelectorAll('.nav-link');
+    const menuToggle = document.querySelector('.menu-toggle');
+    const navLinksContainer = document.querySelector('.nav-links');
+    
+    // Menu toggle for mobile
+    menuToggle.addEventListener('click', () => {
+      navLinksContainer.classList.toggle('active');
+    });
+
+    // Close mobile menu when clicking on a link
+    navLinks.forEach(link => {
+      link.addEventListener('click', () => {
+        navLinksContainer.classList.remove('active');
+      });
+    });
+
+    // Change active link on scroll
+    window.addEventListener('scroll', () => {
+      let current = '';
+      const sections = document.querySelectorAll('section');
+      
+      // Navbar background change on scroll
+      if (window.scrollY > 50) {
+        navbar.classList.add('scrolled');
+      } else {
+        navbar.classList.remove('scrolled');
+      }
+      
+      // Highlight current section in navbar
+      sections.forEach(section => {
+        const sectionTop = section.offsetTop;
+        const sectionHeight = section.clientHeight;
+        if (pageYOffset >= (sectionTop - sectionHeight / 3)) {
+          current = section.getAttribute('id');
+        }
+      });
+
+      navLinks.forEach(link => {
+        link.classList.remove('active');
+        if (link.getAttribute('href') === `#${current}`) {
+          link.classList.add('active');
+        }
+      });
+    });
+
+    // Intersection Observer for animations
+    const observerOptions = {
+      threshold: 0.25,
+      rootMargin: "0px 0px -100px 0px"
+    };
+
+    const observer = new IntersectionObserver(entries => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('fade-in');
+        }
+      });
+    }, observerOptions);
+
+    document.querySelectorAll('.fade-in').forEach(el => {
+      observer.observe(el);
+    });
+
+    // Hero Canvas Animation
+    function initHeroCanvas() {
+      const canvas = document.getElementById('hero-canvas');
+      const ctx = canvas.getContext('2d');
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+
+      let particles = [];
+      const particleCount = 50;
+      const colors = ['#ffffff'];
+
+      class Particle {
+        constructor() {
+          this.x = Math.random() * canvas.width;
+          this.y = Math.random() * canvas.height;
+          this.size = Math.random() * 1 + 1;
+          this.speedX = Math.random() * 0.5 - 0.25;
+          this.speedY = Math.random() * 0.5 - 0.25;
+          this.color = colors[Math.floor(Math.random() * colors.length)];
+          this.opacity = Math.random() * 0.25 + 0.05;
+        }
+
+        update() {
+          this.x += this.speedX;
+          this.y += this.speedY;
+          
+          if (this.x > canvas.width || this.x < 0) {
+            this.speedX = -this.speedX;
+          }
+          
+          if (this.y > canvas.height || this.y < 0) {
+            this.speedY = -this.speedY;
+          }
+        }
+
+        draw() {
+          ctx.fillStyle = this.color;
+          ctx.globalAlpha = this.opacity;
+          ctx.beginPath();
+          ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+          ctx.fill();
+        }
+      }
+
+      function createParticles() {
+        for (let i = 0; i < particleCount; i++) {
+          particles.push(new Particle());
+        }
+      }
+
+      function connectParticles() {
+        for (let i = 0; i < particles.length; i++) {
+          for (let j = i + 1; j < particles.length; j++) {
+            const dx = particles[i].x - particles[j].x;
+            const dy = particles[i].y - particles[j].y;
+            const distance = Math.sqrt(dx * dx + dy * dy);
+            
+            if (distance < 150) {
+              ctx.beginPath();
+              ctx.strokeStyle = particles[i].color;
+              ctx.globalAlpha = (1 - distance / 150) * 0.2;
+              ctx.lineWidth = 1;
+              ctx.moveTo(particles[i].x, particles[i].y);
+              ctx.lineTo(particles[j].x, particles[j].y);
+              ctx.stroke();
+            }
+          }
+        }
+      }
+
+      function animate() {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        
+        particles.forEach(particle => {
+          particle.update();
+          particle.draw();
+        });
+        
+        connectParticles();
+        requestAnimationFrame(animate);
+      }
+
+      createParticles();
+      animate();
+
+      window.addEventListener('resize', () => {
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+        particles = [];
+        createParticles();
+      });
+    }
+
+    // Initialize other canvas animations
+    function initSectionCanvas(canvasId, color) {
+      const canvas = document.getElementById(canvasId);
+      const ctx = canvas.getContext('2d');
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+
+      let particles = [];
+      const particleCount = 50;
+
+      class Particle {
+        constructor() {
+          this.x = Math.random() * canvas.width;
+          this.y = Math.random() * canvas.height;
+          this.size = Math.random() * 2 + 0.5;
+          this.speedX = Math.random() * 0.5 - 0.25;
+          this.speedY = Math.random() * 0.5 - 0.25;
+          this.color = color;
+          this.opacity = Math.random() * 0.3 + 0.1;
+        }
+
+        update() {
+          this.x += this.speedX;
+          this.y += this.speedY;
+          
+          if (this.x > canvas.width || this.x < 0) {
+            this.speedX = -this.speedX;
+          }
+          
+          if (this.y > canvas.height || this.y < 0) {
+            this.speedY = -this.speedY;
+          }
+        }
+
+        draw() {
+          ctx.fillStyle = this.color;
+          ctx.globalAlpha = this.opacity;
+          ctx.beginPath();
+          ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+          ctx.fill();
+        }
+      }
+
+      function createParticles() {
+        for (let i = 0; i < particleCount; i++) {
+          particles.push(new Particle());
+        }
+      }
+
+      function animate() {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        
+        particles.forEach(particle => {
+          particle.update();
+          particle.draw();
+        });
+        
+        requestAnimationFrame(animate);
+      }
+
+      createParticles();
+      animate();
+
+      window.addEventListener('resize', () => {
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+        particles = [];
+        createParticles();
+      });
+    }
+
+    // Initialize all canvas animations
+    window.addEventListener('load', () => {
+      initHeroCanvas();
+      initSectionCanvas('about-canvas', '#ffffff');
+      initSectionCanvas('meet-canvas', '#ffffff');
+      initSectionCanvas('prime-canvas', '#ffffff');
+      initSectionCanvas('think-canvas', '#ffffff');
+    });
+
+    // Smooth scrolling for anchor links
+document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+  anchor.addEventListener('click', function (e) {
+    e.preventDefault();
+
+    const target = document.querySelector(this.getAttribute('href'));
+    if (!target) return;
+
+    const navHeight  = navbar.offsetHeight;
+    const needOffset = target.offsetHeight < window.innerHeight;
+    const targetPos  = needOffset
+      ? target.offsetTop - navHeight  // Kısa bölüm → başlık kapanmasın
+      : target.offsetTop;             // Tam ekran bölüm → tam hizala
+
+    window.scrollTo({
+      top: targetPos < 0 ? 0 : targetPos,
+      behavior: 'smooth'
+    });
+
+    navLinksContainer.classList.remove('active'); // Mobil menüyü kapat
+  });
+});
+
+// Modal Control
+const kvkkTrigger = document.getElementById('kvkk-trigger');
+const gizlilikTrigger = document.getElementById('gizlilik-trigger');
+const kvkkModal = document.getElementById('kvkk-modal');
+const gizlilikModal = document.getElementById('gizlilik-modal');
+const kvkkClose = document.getElementById('kvkk-close');
+const gizlilikClose = document.getElementById('gizlilik-close');
+
+function openModal(modal) {
+  modal.classList.add('active');
+  document.body.style.overflow = 'hidden'; // Arka plan kaydırmasını engelle
+  modal.setAttribute('aria-hidden', 'false');
+  modal.querySelector('.modal-content').focus(); // Erişilebilirlik için odak
+}
+
+function closeModal(modal) {
+  modal.classList.remove('active');
+  document.body.style.overflow = ''; // Kaydırmayı geri getir
+  modal.setAttribute('aria-hidden', 'true');
+}
+
+// KVKK Modal Olay Dinleyicileri
+kvkkTrigger.addEventListener('click', (e) => {
+  e.preventDefault();
+  openModal(kvkkModal);
+});
+
+kvkkClose.addEventListener('click', () => {
+  closeModal(kvkkModal);
+});
+
+// Gizlilik Modal Olay Dinleyicileri
+gizlilikTrigger.addEventListener('click', (e) => {
+  e.preventDefault();
+  openModal(gizlilikModal);
+});
+
+gizlilikClose.addEventListener('click', () => {
+  closeModal(gizlilikModal);
+});
+
+// Arka plana tıklama ile kapatma
+kvkkModal.addEventListener('click', (e) => {
+  if (e.target === kvkkModal || e.target.classList.contains('modal-backdrop')) {
+    closeModal(kvkkModal);
+  }
+});
+
+gizlilikModal.addEventListener('click', (e) => {
+  if (e.target === gizlilikModal || e.target.classList.contains('modal-backdrop')) {
+    closeModal(gizlilikModal);
+  }
+});
+
+// Escape tuşu ile kapatma
+document.addEventListener('keydown', (e) => {
+  if (e.key === 'Escape') {
+    if (kvkkModal.classList.contains('active')) {
+      closeModal(kvkkModal);
+    }
+    if (gizlilikModal.classList.contains('active')) {
+      closeModal(gizlilikModal);
+    }
+  }
+});
+
+// Modal erişilebilirlik başlangıç ayarları
+kvkkModal.setAttribute('aria-hidden', 'true');
+gizlilikModal.setAttribute('aria-hidden', 'true');
+
+// JS örneği:
+document.getElementById("send-btn").addEventListener("click", () => {
+  const msg = document.getElementById("user-message").value.trim();
+  if (msg !== "") {
+    console.log("Kullanıcı mesajı:", msg);
+  }
+});
+
+document.getElementById("user-message").addEventListener("keydown", function (e) {
+  if (e.key === "Enter") {
+    e.preventDefault();
+    const msg = this.value.trim();
+    if (msg !== "") {
+      const encodedMsg = encodeURIComponent(msg);
+      this.value = ""; // 🎯 INPUT SIFIRLANIYORRR
+
+      const currentPath = window.location.href;
+      const basePath = currentPath.substring(0, currentPath.lastIndexOf("/"));
+      window.open(`${basePath}/Quik_Chatbot.html?msg=${encodedMsg}`, "_blank");
+    }
+  }
+});
+
+
+window.addEventListener("keydown", (e) => {
+  const input = document.getElementById("user-message");
+
+  // Ctrl, Alt, Meta, Shift, ve F1–F12 tuşlarını engelle
+  const isModifierKey = e.ctrlKey || e.altKey || e.metaKey || e.key === "Shift";
+  const isFunctionKey = e.key.startsWith("F") && e.key.length <= 3; // F1, F2... F12
+
+  if (isModifierKey || isFunctionKey) return;
+
+  // Eğer input fokus değilse → fokusla ve bastığı harfi ekle
+  if (document.activeElement !== input) {
+    input.focus();
+
+    // Yalnızca tek karakterlik (harf, sayı, sembol) tuşları yaz
+    if (e.key.length === 1) {
+      input.value = e.key;
+    }
+
+    e.preventDefault(); // Sayfada başka bir etki olmasın
+  }
+});
+
+/* Menü: boşluğa tıklayınca kapat */
+document.addEventListener('click', (e) => {
+  const menuOpen   = navLinksContainer.classList.contains('active');
+  const clickedOut = !navLinksContainer.contains(e.target) &&
+                     !menuToggle.contains(e.target);
+
+  if (menuOpen && clickedOut) {
+    navLinksContainer.classList.remove('active');
+  }
+});
+
+/* ----- Modeller kaydırma okları + tıklamayla kaydırma ----- */
+(() => {
+  const grid       = document.querySelector('#meet .models-grid');
+  const leftArrow  = document.getElementById('arrowLeft');
+  const rightArrow = document.getElementById('arrowRight');
+
+  if (!grid || !leftArrow || !rightArrow) return;
+
+  /* Bir kartın toplam genişliğini (gap dâhil) hesapla */
+  function cardWidth () {
+    const firstCard = grid.querySelector('.model-card');
+    if (!firstCard) return grid.clientWidth;
+
+    const gap = parseInt(getComputedStyle(grid).gap || 16, 10);
+    return firstCard.offsetWidth + gap;
+  }
+
+  /* Okların görünürlüğünü güncelle */
+function updateArrows() {
+  const max = grid.scrollWidth - grid.clientWidth;
+
+  const disableLeft  = grid.scrollLeft < 10;        // En soldaysa
+  const disableRight = grid.scrollLeft > max - 10;  // En sağdaysa
+
+  leftArrow.style.opacity       = disableLeft ? '0' : '1';
+  leftArrow.style.pointerEvents = disableLeft ? 'none' : 'auto';
+
+  rightArrow.style.opacity       = disableRight ? '0' : '1';
+  rightArrow.style.pointerEvents = disableRight ? 'none' : 'auto';
+}
+
+  /* Başlangıç ve her kaydırma/resize'da kontrol */
+  updateArrows();
+  grid.addEventListener('scroll', updateArrows);
+  window.addEventListener('resize', updateArrows);
+
+  /* Ok tıklamaları → kart genişliği kadar kaydır */
+  rightArrow.addEventListener('click', () => {
+    grid.scrollBy({ left:  cardWidth(), behavior: 'smooth' });
+  });
+
+  leftArrow.addEventListener('click', () => {
+    grid.scrollBy({ left: -cardWidth(), behavior: 'smooth' });
+  });
+})();
+
+function openChatbotPage() {
+  const currentPath = window.location.href;
+  const basePath = currentPath.substring(0, currentPath.lastIndexOf("/"));
+  window.open(`${basePath}/Quik_Chatbot.html`, "_blank");
+}
+
+
+  </script>
+</body>
+</html>
