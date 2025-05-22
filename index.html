@@ -4234,6 +4234,26 @@ body.dark .help-item:hover {
   .chat-history-item:active   { background:#c0c0c0; }
 }
 
+/* ==========================================
+   < 768 px ekranda: tooltip DA yok, hover DA yok
+   ========================================== */
+@media (max-width: 768px) {
+
+  /* 1. Tooltip’i tamamen kapat
+     - Tooltip’i pseudo-element ile gösteriyorsan */
+  [data-tooltip]::after,
+  [data-tooltip]:hover::after,
+  [data-tooltip]:focus::after {
+    display: none !important;
+    content: none !important;
+  }
+
+  /* Eğer tooltip’i ayrı bir .tooltip kutusuyla gösteriyorsan */
+  .tooltip, .tooltip-show {         /* sen hangi sınıfı kullanıyorsan */
+    display: none !important;
+    pointer-events: none !important;
+  }
+}
 
 
   </style>
@@ -9247,15 +9267,16 @@ function toggleSGDDPassword(){
 }
 
 (function () {
-  /* mobile / tablet = no hover + coarse pointer */
-  if (!matchMedia('(hover:none), (pointer:coarse)').matches) return;
+  /* ÇALIŞMA KOŞULU → pencere 768 px'den küçükse */
+  if (!matchMedia('(max-width: 768px)').matches) return;
 
+  /* Sidebar ve tetikleyiciler */
   const sidebar   = document.getElementById('sidebar');
-  const triggers  = ['new-chat-btn', 'sidebar-brand'];      // IDs to tap
+  const triggers  = ['new-chat-btn', 'sidebar-brand'];   // ID’lerini koru/ekle
+
   triggers.forEach(id => {
     document.getElementById(id)?.addEventListener('click', () => {
-      /* close only if it’s open */
-      if (sidebar.classList.contains('open')) closeSidebar();
+      if (sidebar.classList.contains('open')) closeSidebar();  // animasyonlu kapat
     }, { passive: true });
   });
 })();
