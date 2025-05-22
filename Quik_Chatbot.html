@@ -4217,6 +4217,24 @@ body.dark .help-item:hover {
   user-select:none;
 }
 
+/* Sadece hover destekleyen (mouse) ortamlarda 3-nokta gizlensin */
+@media (hover:hover) {
+  .more-options-btn           { display:none;  opacity:0; }
+  .chat-history-item:hover .more-options-btn {
+    display:block; opacity:1;
+  }
+}
+
+/* Dokunmatik (hover:none) cihazlarda buton daima görünsün */
+@media (hover:none) {
+  .more-options-btn           { display:block; opacity:1; }
+}
+
+@media (hover:none) {
+  .chat-history-item:active   { background:#c0c0c0; }
+}
+
+
 
   </style>
 </head>
@@ -4374,7 +4392,7 @@ body.dark .help-item:hover {
   <span class="emoji" data-emoji="😟">😟</span>
   <span class="emoji" data-emoji="😕">😕</span>
   <span class="emoji" data-emoji="🙁">🙁</span>
-  <span class="emoji" data-emoji=☹️">☹️</span>
+  <span class="emoji" data-emoji="☹️">☹️</span>
   <span class="emoji" data-emoji="😣">😣</span>
   <span class="emoji" data-emoji="😖">😖</span>
   <span class="emoji" data-emoji="😫">😫</span>
@@ -4384,7 +4402,6 @@ body.dark .help-item:hover {
   <span class="emoji" data-emoji="😭">😭</span>
 <span class="emoji" data-emoji="🥹">🥹</span>
 <span class="emoji" data-emoji="🤤">🤤</span>
-<span class="emoji" data-emoji="😵‍💫">😵‍💫</span>
 <span class="emoji" data-emoji="😵">😵</span>
 <span class="emoji" data-emoji="😲">😲</span>
 <span class="emoji" data-emoji="😳">😳</span>
@@ -4408,7 +4425,6 @@ body.dark .help-item:hover {
 <span class="emoji" data-emoji="🧐">🧐</span>
 <span class="emoji" data-emoji="😎">😎</span>
 <span class="emoji" data-emoji="🤠">🤠</span>
-<span class="emoji" data-emoji="🥸">🥸</span>
 <span class="emoji" data-emoji="🥵">🥵</span>
 <span class="emoji" data-emoji="🥶">🥶</span>
 <span class="emoji" data-emoji="🤑">🤑</span>
@@ -4480,7 +4496,6 @@ body.dark .help-item:hover {
 <span class="emoji" data-emoji="🐫">🐫</span>
 <span class="emoji" data-emoji="🦒">🦒</span>
 <span class="emoji" data-emoji="🦓">🦓</span>
-<span class="emoji" data-emoji="🦬">🦬</span>
 <span class="emoji" data-emoji="🐄">🐄</span>
 <span class="emoji" data-emoji="🐖">🐖</span>
 <span class="emoji" data-emoji="🐏">🐏</span>
@@ -4494,7 +4509,6 @@ body.dark .help-item:hover {
 <span class="emoji" data-emoji="🐿️">🐿️</span>
 <span class="emoji" data-emoji="🦔">🦔</span>
 <span class="emoji" data-emoji="🐾">🐾</span>
-<span class="emoji" data-emoji="🪴">🪴</span>
 <span class="emoji" data-emoji="🌵">🌵</span>
 <span class="emoji" data-emoji="🎄">🎄</span>
 <span class="emoji" data-emoji="🌳">🌳</span>
