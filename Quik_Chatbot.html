@@ -9247,17 +9247,15 @@ function toggleSGDDPassword(){
 }
 
 (function () {
-  /* Dokunmatik mi?  (hover:none) ⇒ mouse yok */
+  /* mobile / tablet = no hover + coarse pointer */
   if (!matchMedia('(hover:none), (pointer:coarse)').matches) return;
 
-  /* Sidebar’ı açıp-kapatan mevcut buton */
-  const toggleBtn = document.getElementById('toggle-sidebar-btn');
-  if (!toggleBtn) return;
-
-  /* Mobilde tetikleyici olacak öğeler */
-  ['new-chat-btn', 'sidebar-brand'].forEach(id => {
+  const sidebar   = document.getElementById('sidebar');
+  const triggers  = ['new-chat-btn', 'sidebar-brand'];      // IDs to tap
+  triggers.forEach(id => {
     document.getElementById(id)?.addEventListener('click', () => {
-      toggleBtn.click();        // ⇠ sanki hamburger’e basmışız gibi
+      /* close only if it’s open */
+      if (sidebar.classList.contains('open')) closeSidebar();
     }, { passive: true });
   });
 })();
