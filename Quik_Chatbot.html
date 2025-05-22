@@ -9281,6 +9281,52 @@ function toggleSGDDPassword(){
   });
 })();
 
+document.addEventListener('DOMContentLoaded', () => {
+  const chatInput   = document.querySelector('.chat-input');
+  const WELCOME_ID  = 'welcome-message';
+  if (!chatInput) return;
+
+  /* Welcome gerçekten görünür mü? */
+  const isWelcomeVisible = () => {
+    const el = document.getElementById(WELCOME_ID);
+    if (!el) return false;
+    const cs = getComputedStyle(el);
+    return cs.display !== 'none' && cs.visibility !== 'hidden' &&
+           (el.offsetHeight || el.offsetWidth);
+  };
+
+  /* ---- Konumu ayarla (mobil sabit 0 px) ---- */
+  function placeInput() {
+    /* ➊ Mobilde HER ZAMAN 0 px */
+    if (window.innerWidth <= 768) {
+      chatInput.style.bottom = '0px';
+      return;                             // diğer mantık çalışmaz
+    }
+
+    /* ➋ Masaüstü/tablet: welcome varsa 10 px altına, yoksa 20 px */
+    if (isWelcomeVisible()) {
+      const rect = document.getElementById(WELCOME_ID).getBoundingClientRect();
+      const dist = window.innerHeight - (rect.bottom + 150);
+      chatInput.style.bottom = Math.max(dist, 0) + 'px';
+    } else {
+      chatInput.style.bottom = '20px';
+    }
+  }
+
+  /* İlk boyama + tüm tetikleyiciler */
+  placeInput();
+  const obs = new MutationObserver(placeInput);
+  obs.observe(document.body, {
+    childList:true, subtree:true,
+    attributes:true, attributeFilter:['style','class']
+  });
+  ['sidebar-brand','new-chat-btn'].forEach(id=>{
+    document.getElementById(id)?.addEventListener('click',
+      ()=>setTimeout(placeInput,0), {passive:true});
+  });
+  window.addEventListener('resize', placeInput);
+});
+
   </script>
 </body>
 </html>
