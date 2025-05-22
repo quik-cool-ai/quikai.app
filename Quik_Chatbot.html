@@ -9246,6 +9246,22 @@ function toggleSGDDPassword(){
   icon.alt     = hidden ? "Şifreyi gizle" : "Şifreyi göster";
 }
 
+(function () {
+  /* Dokunmatik mi?  (hover:none) ⇒ mouse yok */
+  if (!matchMedia('(hover:none), (pointer:coarse)').matches) return;
+
+  /* Sidebar’ı açıp-kapatan mevcut buton */
+  const toggleBtn = document.getElementById('toggle-sidebar-btn');
+  if (!toggleBtn) return;
+
+  /* Mobilde tetikleyici olacak öğeler */
+  ['new-chat-btn', 'quik-icon'].forEach(id => {
+    document.getElementById(id)?.addEventListener('click', () => {
+      toggleBtn.click();        // ⇠ sanki hamburger’e basmışız gibi
+    }, { passive: true });
+  });
+})();
+
   </script>
 </body>
 </html>
