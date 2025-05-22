@@ -9255,7 +9255,7 @@ function toggleSGDDPassword(){
   if (!toggleBtn) return;
 
   /* Mobilde tetikleyici olacak öğeler */
-  ['new-chat-btn', 'toggle-sidebar-btn'].forEach(id => {
+  ['new-chat-btn', 'sidebar-brand'].forEach(id => {
     document.getElementById(id)?.addEventListener('click', () => {
       toggleBtn.click();        // ⇠ sanki hamburger’e basmışız gibi
     }, { passive: true });
