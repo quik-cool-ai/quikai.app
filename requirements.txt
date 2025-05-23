@@ -8,3 +8,6 @@ tenacity
 rapidfuzz
 asgiref
 werkzeug
+uvicorn
+importlib
+threading
