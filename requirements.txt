@@ -1,0 +1,10 @@
+flask
+flask-cors
+tiktoken
+beautifulsoup4
+ollama
+aiohttp
+tenacity
+rapidfuzz
+asgiref
+werkzeug
