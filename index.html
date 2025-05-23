@@ -6634,7 +6634,7 @@ function regenerateAnswer(bubble) {
   setSendButtonToStopState();
 
   // Streaming isteği
-  fetch("http://localhost:5000/chat", {
+  fetch("${API_BASE_URL}/chat", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({
@@ -6702,7 +6702,7 @@ async function sendMessage() {
     const formData = new FormData();
     uploadedFiles.forEach(file => formData.append("files", file));
     try {
-      const response = await fetch("http://localhost:5000/upload", {
+      const response = await fetch("http://${API_BASE_URL}:5000/upload", {
         method: "POST",
         body: formData
       });
@@ -6746,7 +6746,7 @@ currentConversation.messages.push({
 
 if (currentConversation.messages.length === 1) {
   try {
-    const response = await fetch("http://localhost:5000/generate-title", {
+    const response = await fetch("http://${API_BASE_URL}:5000/generate-title", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ message: combinedMessage })
@@ -6785,7 +6785,7 @@ if (currentConversation.messages.length === 1) {
   setSendButtonToStopState();
 
   try {
-    const response = await fetch("http://localhost:5000/chat", {
+    const response = await fetch("http://${API_BASE_URL}:5000/chat", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
@@ -7542,7 +7542,7 @@ async function sendFileToBackend(file) {
   formData.append("file", file);
   
   try {
-    const response = await fetch("http://localhost:5000/process-file", {
+    const response = await fetch("http://${API_BASE_URL}:5000/process-file", {
       method: "POST",
       body: formData
     });
@@ -9326,6 +9326,8 @@ document.addEventListener('DOMContentLoaded', () => {
   });
   window.addEventListener('resize', placeInput);
 });
+
+const API_BASE_URL = "https://4ff0-34-148-38-124.ngrok-free.app";   // ← Colab / ngrok URL’iniz
 
   </script>
 </body>
