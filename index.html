@@ -4235,7 +4235,7 @@ body.dark .help-item:hover {
 }
 
 /* ==========================================
-   < 768 px ekranda: tooltip DA yok, hover DA yok
+   < 768 px ekranda: tooltip de yok, hover da yok
    ========================================== */
 @media (max-width: 768px) {
 
@@ -4253,6 +4253,102 @@ body.dark .help-item:hover {
     display: none !important;
     pointer-events: none !important;
   }
+}
+
+/* ===== Mini drop görünürlüğü ===== */
+@media (max-width: 337px) {
+  /* Eski üç butonu gizle */
+  #file-upload-btn,
+  #emoji-btn,
+  #web-search-btn   { display:none !important; }
+
+  /* Mini birleşik buton göster */
+  #mini-drop-btn    { display:inline-flex !important; }
+}
+
+/* ===== Dropdown tasarımı ===== */
+.mini-dropdown {
+  position:absolute;
+  left: 17px;   /* butonun sağında açılacak */
+  bottom: 52px;
+  background: var(--input-bg);
+  border: 1px solid var(--accent);
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0,0,0,.3);
+  display:none;
+  flex-direction: column;
+  z-index: 1000;
+}
+
+.mini-item {
+  display:flex;
+  align-items:center;
+  gap:4px;
+  padding:4px 10px;
+  background:none;
+  color:var(--text-primary);
+  border:none;
+  cursor:pointer;
+  font-size: 0.8rem;
+}
+
+.mini-item:hover {
+  background: #c0c0c0;
+  border-radius: 8px;
+}
+
+body.dark .mini-item:hover {
+  background: #c0c0c0;
+  color: var(--sidebar-bg);
+}
+
+body.dark .mini-item img {
+  filter: brightness(0) invert(1); /* Matches dark mode icon behavior */
+}
+
+body.dark .mini-item:hover img {
+  filter: none; /* Matches hover behavior of other buttons */
+}
+
+.mini-drop-btn {
+  position: fixed;
+  bottom: 15px;
+  left: 17px;
+  z-index: 200;
+  background-color: transparent;
+  border: none;
+  box-shadow: 0 4px 6px -2px rgba(0, 0, 0, 0.15),
+              4px 0 6px -2px rgba(0, 0, 0, 0.15),
+              -4px 0 6px -2px rgba(0, 0, 0, 0.15),
+              0 -4px 6px -2px rgba(0, 0, 0, 0.15);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 35px;
+  border-radius: 12px;
+  color: var(--text-color);
+}
+
+body.dark .mini-drop-btn {
+  box-shadow: 0 4px 6px -2px rgba(0, 0, 0, 0.15),
+              4px 0 6px -2px rgba(0, 0, 0, 0.15),
+              -4px 0 6px -2px rgba(0, 0, 0, 0.15),
+              0 -4px 6px -2px rgba(0, 0, 0, 0.15);
+}
+
+body.dark .mini-drop-btn img {
+  filter: brightness(0) invert(1); /* Matches dark mode icon behavior */
+}
+
+body.dark .mini-drop-btn:hover img {
+  filter: none; /* Matches hover behavior of other buttons */
+}
+
+body.dark .mini-drop-btn:hover {
+  background-color: #c0c0c0;
+  color: var(--sidebar-bg);
 }
 
 
@@ -4677,7 +4773,21 @@ body.dark .help-item:hover {
     <img src="icons/voice_page_icon.png" alt="Ses Sayfası" style= "width: 17px; height: 17px;" draggable="false">
   </button>
 
+
+
+
   <textarea id="chat-input-textarea" placeholder="quik uygulamasına ileti gönder..."></textarea>
+    <!-- Mini birleşik buton -->
+<button id="mini-drop-btn" class="mini-drop-btn" data-tooltip="Daha Fazla" style="display:none;">
+  <img src="icons/more_vert.png" alt="Daha Fazla" draggable="false" style= "width: 17px; height: 17px;">
+</button>
+
+<!-- Açılır menü -->
+<div id="mini-dropdown" class="mini-dropdown">
+  <button id="mini-file"  class="mini-item"><img src="icons/addfile_btn.png" style= "width: 17px; height: 17px;">Dosya</button>
+  <button id="mini-emoji" class="mini-item"><img src="icons/emoji_icon.png" style= "width: 17px; height: 17px;">Emoji</button>
+  <button id="mini-web"   class="mini-item"><img src="icons/web_search_btn.png" style= "width: 17px; height: 17px;">Web</button>
+</div>
   <button id="send-btn" class="send-btn" data-tooltip="Gönder">
     <img src="icons/send_btn.png" alt="Send Icon" style="width:17px; height:17px;" draggable="false">
   </button>
@@ -4687,6 +4797,9 @@ body.dark .help-item:hover {
   <p>Dosyalarınızı buraya bırakın</p>
   <p class="subtext">Dosyalarınızı buraya bırakarak sohbete ekleyin</p>
 </div>
+
+
+
 
 <!-- Yeni: Sidebar arama butonu, settings-btn'ün solunda -->
 <button id="sidebar-search-toggle" data-tooltip="Sohbet Ara" class="sidebar-search-toggle">
@@ -6634,7 +6747,7 @@ function regenerateAnswer(bubble) {
   setSendButtonToStopState();
 
   // Streaming isteği
-  fetch("${API_BASE_URL}/chat", {
+  fetch("http://localhost:5000/chat", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({
@@ -6702,7 +6815,7 @@ async function sendMessage() {
     const formData = new FormData();
     uploadedFiles.forEach(file => formData.append("files", file));
     try {
-      const response = await fetch(`${API_BASE_URL}/upload`, {
+      const response = await fetch("http://localhost:5000/upload", {
         method: "POST",
         body: formData
       });
@@ -6746,7 +6859,7 @@ currentConversation.messages.push({
 
 if (currentConversation.messages.length === 1) {
   try {
-    const response = await fetch(`${API_BASE_URL}/generate-title`, {
+    const response = await fetch("http://localhost:5000/generate-title", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ message: combinedMessage })
@@ -6785,7 +6898,7 @@ if (currentConversation.messages.length === 1) {
   setSendButtonToStopState();
 
   try {
-    const response = await fetch(`${API_BASE_URL}/chat`, {
+    const response = await fetch("http://localhost:5000/chat", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
@@ -7542,7 +7655,7 @@ async function sendFileToBackend(file) {
   formData.append("file", file);
   
   try {
-    const response = await fetch(`${API_BASE_URL}/process-file`, {
+    const response = await fetch("http://localhost:5000/process-file", {
       method: "POST",
       body: formData
     });
@@ -9327,7 +9440,41 @@ document.addEventListener('DOMContentLoaded', () => {
   window.addEventListener('resize', placeInput);
 });
 
-const API_BASE_URL = "https://2a7f-34-148-38-124.ngrok-free.app";   // ← Colab / ngrok URL’iniz
+/* ---------- Mini drop ---------- */
+(() => {
+  const dropBtn   = document.getElementById('mini-drop-btn');
+  const dropdown  = document.getElementById('mini-dropdown');
+  if (!dropBtn || !dropdown) return;
+
+  /* Aç / kapa */
+  dropBtn.addEventListener('click', (e) => {
+    e.stopPropagation();
+    dropdown.style.display = dropdown.style.display === 'flex' ? 'none' : 'flex';
+  });
+
+  /* Pencereye tıklayınca kapat */
+  window.addEventListener('click', () => dropdown.style.display = 'none');
+
+  /* Ekran genişliği 337 px’i geçtiğinde otomatik kapat */
+  const mq = matchMedia('(min-width: 338px)');
+  mq.addEventListener('change', () => {
+    if (mq.matches) dropdown.style.display = 'none';
+  });
+
+  /* pencereye tıklanınca kapat */
+  window.addEventListener('click', () => dropdown.style.display = 'none');
+
+  /* alt butonları eski fonksiyonlara bağla */
+  document.getElementById('mini-file') ?.addEventListener('click', () =>
+       document.getElementById('file-upload-btn')?.click());
+
+  document.getElementById('mini-emoji')?.addEventListener('click', () =>
+       document.getElementById('emoji-btn')?.click());
+
+  document.getElementById('mini-web')  ?.addEventListener('click', () =>
+       document.getElementById('web-search-btn')?.click());
+})();
+
 
   </script>
 </body>
