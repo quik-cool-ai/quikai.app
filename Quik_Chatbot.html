@@ -1711,7 +1711,7 @@ body.dark .settings-nav li.active {
   flex-direction: column;
   align-items: flex-start; /* Sağ hizalı */
   width: 100%; /* Tam genişlik */
-  margin-top: 10px; /* Üst boşluk */
+  margin-top: 2px; /* Üst boşluk */
 }
 
 .progress-bar {
@@ -2864,6 +2864,16 @@ body.dark .general-icon {
   color: var(--text-color);
   transition: border-color 0.3s ease;
   box-sizing: border-box;
+  -webkit-appearance: none;
+  -moz-appearance:    none;
+  appearance:         none;
+  /* 2) Sağda yer tutucu boşluk bırak */
+  padding-right: 2.5em;
+  /* 3) Arkaya kendi arrow ikonunuzu koyun */
+  background: url("icons/arrow_down.png") no-repeat;
+  background-position: calc(100% - 8px) center;
+  background-size: 12px;
+  cursor: pointer;
 }
 
 /* Dark Mode için */
@@ -2989,6 +2999,7 @@ body.dark .file-upload-btn:hover img {
   max-height: 200px;
   overflow-y: hidden;
   align-items: flex-start;
+  flex-direction: row;
 }
 
 /* Individual File Box */
@@ -2998,7 +3009,7 @@ body.dark .file-upload-btn:hover img {
   background-color: var(--input-bg);
   border: 1px solid var(--code-border);
   border-radius: 8px;
-  padding: 0.4rem 0.8rem;
+  padding: 0.4rem 0.4rem;
   margin-bottom: 0.15rem;
   margin-left: 0.60rem;
   flex: 0 0 auto;
@@ -3034,7 +3045,7 @@ body.dark .file-box {
   background: none;
   border: none;
   cursor: pointer;
-  margin-left: 5px;
+  margin-left: 8px;
   padding: 0;
   width: 20px;
   height: 20px;
@@ -3320,7 +3331,7 @@ button.theme-btn:hover {
     font-weight: 600;
     border: 1px solid #c0c0c0;
     border-radius: 8px;
-    padding: 4px 6px;
+    padding: 3.4px 6px;
     cursor: pointer;
     font-size: 0.65rem;
   }
@@ -4235,7 +4246,7 @@ body.dark .help-item:hover {
 }
 
 /* ==========================================
-   < 768 px ekranda: tooltip DA yok, hover DA yok
+   < 768 px ekranda: tooltip de yok, hover da yok
    ========================================== */
 @media (max-width: 768px) {
 
@@ -4253,6 +4264,135 @@ body.dark .help-item:hover {
     display: none !important;
     pointer-events: none !important;
   }
+}
+
+/* ===== Mini drop görünürlüğü ===== */
+@media (max-width: 337px) {
+  /* Eski üç butonu gizle */
+  #file-upload-btn,
+  #emoji-btn,
+  #web-search-btn   { display:none !important; }
+
+  /* Mini birleşik buton göster */
+  #mini-drop-btn    { display:inline-flex !important; }
+}
+
+/* ===== Dropdown tasarımı ===== */
+.mini-dropdown {
+  position:absolute;
+  left: 17px;   /* butonun sağında açılacak */
+  bottom: 52px;
+  background: var(--input-bg);
+  border: 1px solid var(--accent);
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0,0,0,.3);
+  display:none;
+  flex-direction: column;
+  z-index: 1000;
+}
+
+.mini-item {
+  display:flex;
+  align-items:center;
+  gap:4px;
+  padding:4px 10px;
+  background:none;
+  color:var(--text-primary);
+  border:none;
+  cursor:pointer;
+  font-size: 0.8rem;
+}
+
+.mini-item:hover {
+  background: #c0c0c0;
+  border-radius: 8px;
+}
+
+body.dark .mini-item:hover {
+  background: #c0c0c0;
+  color: var(--sidebar-bg);
+}
+
+body.dark .mini-item img {
+  filter: brightness(0) invert(1); /* Matches dark mode icon behavior */
+}
+
+body.dark .mini-item:hover img {
+  filter: none; /* Matches hover behavior of other buttons */
+}
+
+.mini-drop-btn {
+  position: fixed;
+  bottom: 15px;
+  left: 17px;
+  z-index: 200;
+  background-color: transparent;
+  border: none;
+  box-shadow: 0 4px 6px -2px rgba(0, 0, 0, 0.15),
+              4px 0 6px -2px rgba(0, 0, 0, 0.15),
+              -4px 0 6px -2px rgba(0, 0, 0, 0.15),
+              0 -4px 6px -2px rgba(0, 0, 0, 0.15);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 35px;
+  border-radius: 12px;
+  color: var(--text-color);
+}
+
+body.dark .mini-drop-btn {
+  box-shadow: 0 4px 6px -2px rgba(0, 0, 0, 0.15),
+              4px 0 6px -2px rgba(0, 0, 0, 0.15),
+              -4px 0 6px -2px rgba(0, 0, 0, 0.15),
+              0 -4px 6px -2px rgba(0, 0, 0, 0.15);
+}
+
+body.dark .mini-drop-btn img {
+  filter: brightness(0) invert(1); /* Matches dark mode icon behavior */
+}
+
+body.dark .mini-drop-btn:hover img {
+  filter: none; /* Matches hover behavior of other buttons */
+}
+
+body.dark .mini-drop-btn:hover {
+  background-color: #c0c0c0;
+  color: var(--sidebar-bg);
+}
+
+.chat-input #page-down-btn {
+  position: absolute;
+  bottom: calc(100% + 8px);
+  right: 50%;
+  width: 28px;
+  height: 28px;
+  background: transparent;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+  
+  /* buton gizliyken hiçbir etkileşim olmasın */
+  pointer-events: none;
+  opacity: 0;
+  transform: translateY(10px);
+  transition: opacity 0.3s ease, transform 0.3s ease;
+  z-index: 303;
+}
+.chat-input #page-down-btn.visible {
+  /* göründüğünde etkileşim geri gelsin */
+  pointer-events: auto;
+  opacity: 1;
+  transform: translateY(0);
+}
+.chat-input #page-down-btn img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+body.dark .chat-input #page-down-btn img {
+  filter: invert(1) brightness(0.8);
 }
 
 
@@ -4339,8 +4479,13 @@ body.dark .help-item:hover {
   </div>
 </div>
 
+
 <!-- Chat Input kısmı -->
 <div class="chat-input">
+<button id="page-down-btn">
+  <img src="icons/page_down_btn.png" alt="Sayfanın en altına git" />
+</button>
+
   <div class="file-container" id="file-container"></div> <!-- Container for uploaded files -->
   <button class="file-upload-btn" id="file-upload-btn" data-tooltip="Dosya Ekle">
     <img src="icons/addfile_btn.png" alt="Add File Icon" style="width:20px; height:20px;" draggable="false">
@@ -4677,7 +4822,21 @@ body.dark .help-item:hover {
     <img src="icons/voice_page_icon.png" alt="Ses Sayfası" style= "width: 17px; height: 17px;" draggable="false">
   </button>
 
+
+
+
   <textarea id="chat-input-textarea" placeholder="quik uygulamasına ileti gönder..."></textarea>
+    <!-- Mini birleşik buton -->
+<button id="mini-drop-btn" class="mini-drop-btn" data-tooltip="Daha Fazla" style="display:none;">
+  <img src="icons/more_vert.png" alt="Daha Fazla" draggable="false" style= "width: 17px; height: 17px;">
+</button>
+
+<!-- Açılır menü -->
+<div id="mini-dropdown" class="mini-dropdown">
+  <button id="mini-file"  class="mini-item"><img src="icons/addfile_btn.png" style= "width: 17px; height: 17px;">Dosya</button>
+  <button id="mini-emoji" class="mini-item"><img src="icons/emoji_icon.png" style= "width: 17px; height: 17px;">Emoji</button>
+  <button id="mini-web"   class="mini-item"><img src="icons/web_search_btn.png" style= "width: 17px; height: 17px;">Web</button>
+</div>
   <button id="send-btn" class="send-btn" data-tooltip="Gönder">
     <img src="icons/send_btn.png" alt="Send Icon" style="width:17px; height:17px;" draggable="false">
   </button>
@@ -4687,6 +4846,9 @@ body.dark .help-item:hover {
   <p>Dosyalarınızı buraya bırakın</p>
   <p class="subtext">Dosyalarınızı buraya bırakarak sohbete ekleyin</p>
 </div>
+
+
+
 
 <!-- Yeni: Sidebar arama butonu, settings-btn'ün solunda -->
 <button id="sidebar-search-toggle" data-tooltip="Sohbet Ara" class="sidebar-search-toggle">
@@ -5848,17 +6010,17 @@ document.querySelectorAll(".emoji").forEach(emoji => {
 });
 
 function updateNewChatBtnPosition() {
-  if (document.body.classList.contains("sidebar-open")) {
-    // Sidebar açık: Yeni sohbet butonu sidebar içerisindeyse
+  // Sidebar yerine #sidebar.open kontrolü yapıyoruz
+  if (sidebar.classList.contains("open")) {
+    // Sidebar açık: butonu sidebar içine taşı ve normal yerleşime döndür
     if (newChatBtn.parentNode !== sidebar) {
       sidebar.appendChild(newChatBtn);
     }
-    // Sabit konumlama kaldırılıyor, normal yerleşim kullanılıyor.
     newChatBtn.style.position = "";
     newChatBtn.style.top = "";
     newChatBtn.style.left = "";
   } else {
-    // Sidebar kapalı: Butonu body’ye taşı ve toggle butonunun sağında fixed olarak göster.
+    // Sidebar kapalı: butonu body’ye taşı ve toggle’ın sağına sabitle
     if (newChatBtn.parentNode !== document.body) {
       document.body.appendChild(newChatBtn);
     }
@@ -6133,6 +6295,7 @@ function finishEditing() {
     renderChatHistory();
     saveConversations();
     updateTopBarTitle();
+goToChat(conv.id);
     populateChatSummaryDropdown();
 }
         input.addEventListener("blur", finishEditing);
@@ -6158,22 +6321,31 @@ function finishEditing() {
       // Delete button handler
 dropdownMenu.querySelector(".delete-btn").addEventListener("click", (e) => {
   e.stopPropagation();
-  dropdownMenu.style.display = "none"; // Close dropdown
+  dropdownMenu.style.display = "none";
 
   openConfirmModal(() => {
-    conversations = conversations.filter((c) => c.id !== conv.id);
+    // 1. Üç satırda sohbeti sil ve kaydet
+    conversations = conversations.filter(c => c.id !== conv.id);
+    saveConversations();
+
+    // 2. Eğer silinen sohbet şu andaki sohbetse → temizle, welcome göster
     if (currentConversation?.id === conv.id) {
       currentConversation = null;
       chatContainer.innerHTML = "";
       chatContainer.appendChild(welcomeMessage);
       welcomeMessage.style.display = "block";
-      document.title = "quik";
-      updateTopBarTitle();
     }
+
+    // 3. URL’i ana sayfaya çek ve sessionStorage’daki lastConversationId’yi temizle
+    saveLastConversationId(null);
+    goToHome();
+
+    // 4. Liste, sayaç, dropdown’ı güncelle, başlığı resetle
     renderChatHistory();
-    saveConversations();
     updateChatCount();
     populateChatSummaryDropdown();
+    document.title = "quik";
+    updateTopBarTitle();
   }, "Bu sohbeti silmek istediğinize emin misiniz?");
 });
 
@@ -6204,6 +6376,7 @@ dropdownMenu.querySelector(".delete-btn").addEventListener("click", (e) => {
         }
         document.title = currentConversation.title || "quik";
         updateTopBarTitle();
+goToChat(conv.id); // BU SATIRI EKLE
       });
 
 
@@ -6387,25 +6560,24 @@ function updateAssistantBubble(text) {
   if (isUserAtBottom()) scrollChatToBottom();
 }
 
-async function startNewConversation() {
-  if (conversations.length >= 200) {
-    conversations.shift(); // En eski sohbeti sil
-  }
-  currentConversation = { 
-    id: Date.now(), 
+function startNewConversation() {
+  if (conversations.length >= 200) conversations.shift();
+  const id = generateStrongUUID(); // Benzersiz ve uzun ID üretimi
+  currentConversation = {
+    id: id,
     title: "Yeni Sohbet",
-    messages: [], 
+    messages: [],
     timestamp: Date.now(),
-    isNew: true  // Yeni sohbete özel flag
+    isNew: true
   };
   conversations.push(currentConversation);
-  renderChatHistory();
-  populateChatSummaryDropdown();
   saveConversations();
-  chatContainer.innerHTML = "";
-  welcomeMessage.style.display = "none";
-  updateChatCount();
+  renderChat();
+  renderChatHistory();
+  updateTopBarTitle();
+  goToChat(id); // URL'yi güncelle
 }
+
 
 function openSidebar() {
   sidebar.classList.add("open");
@@ -6762,6 +6934,7 @@ if (currentConversation.messages.length === 1) {
     renderChatHistory();
     document.title = currentConversation.title;
     updateTopBarTitle();
+goToChat(currentConversation.id);
   }
 }
 
@@ -9075,11 +9248,16 @@ function closeConfirmModal() {
 // ESC ile modal kapatma
 document.addEventListener("keydown", (e) => {
   const confirmModal = document.getElementById('confirm-modal');
-  
-  if (e.key === "Escape" && confirmModal.style.display === 'block') {
-    e.preventDefault();  // ESC'yi başka yere gitmesin diye durdur
-    e.stopPropagation(); // ESC'nin başka event'lere gitmesini engelle
-    cancelAction(); // Sadece modalı kapat
+  if (confirmModal.style.display === 'block') {
+    if (e.key === "Escape") {
+      e.preventDefault();
+      e.stopPropagation();
+      cancelAction();
+    } else if (e.key === "Enter") {
+      e.preventDefault();
+      e.stopPropagation();
+      confirmAction();
+    }
   }
 });
 
@@ -9326,6 +9504,130 @@ document.addEventListener('DOMContentLoaded', () => {
   });
   window.addEventListener('resize', placeInput);
 });
+
+/* ---------- Mini drop ---------- */
+(() => {
+  const dropBtn   = document.getElementById('mini-drop-btn');
+  const dropdown  = document.getElementById('mini-dropdown');
+  if (!dropBtn || !dropdown) return;
+
+  /* Aç / kapa */
+  dropBtn.addEventListener('click', (e) => {
+    e.stopPropagation();
+    dropdown.style.display = dropdown.style.display === 'flex' ? 'none' : 'flex';
+  });
+
+  /* Pencereye tıklayınca kapat */
+  window.addEventListener('click', () => dropdown.style.display = 'none');
+
+  /* Ekran genişliği 337 px’i geçtiğinde otomatik kapat */
+  const mq = matchMedia('(min-width: 338px)');
+  mq.addEventListener('change', () => {
+    if (mq.matches) dropdown.style.display = 'none';
+  });
+
+  /* pencereye tıklanınca kapat */
+  window.addEventListener('click', () => dropdown.style.display = 'none');
+
+  /* alt butonları eski fonksiyonlara bağla */
+  document.getElementById('mini-file') ?.addEventListener('click', () =>
+       document.getElementById('file-upload-btn')?.click());
+
+  document.getElementById('mini-emoji')?.addEventListener('click', () =>
+       document.getElementById('emoji-btn')?.click());
+
+  document.getElementById('mini-web')  ?.addEventListener('click', () =>
+       document.getElementById('web-search-btn')?.click());
+})();
+
+    // 1. Kriptografik, uzun ve collision-free ID üretimi
+    function generateStrongUUID(length = 40) {
+      const array = new Uint8Array(length);
+      window.crypto.getRandomValues(array);
+      return Array.from(array, dec => ('0' + dec.toString(16)).slice(-2)).join('');
+    }
+
+    // 2. URL’i home veya chatid parametresiyle güncelleyen yardımcılar
+    function goToHome() {
+      history.replaceState(null, '', window.location.pathname + '?home');
+    }
+    function goToChat(chatid) {
+      history.replaceState(null, '', window.location.pathname + '?chatid=' + chatid);
+    }
+
+    // 3. Sidebar-logo veya 'Yeni Sohbet' butonuna tıklandığında home’a yönlendir
+    sidebarBrand.addEventListener('click', () => {
+      goToHome();
+    });
+    newChatBtn.addEventListener('click', () => {
+      goToHome();
+    });
+
+// ——— Sayfa ilk yüklendiğinde URL’den sohbeti yükle ———
+window.addEventListener('DOMContentLoaded', () => {
+  const params = new URLSearchParams(window.location.search);
+  if (params.has('chatid')) {
+    const chatid = params.get('chatid');
+    const conv = conversations.find(c => c.id === chatid);
+    if (conv) {
+      currentConversation = conv;
+      renderChatHistory();
+      renderChat();
+      updateTopBarTitle();
+      return;              // sohbet bulundu; anasayfaya düşme
+    }
+  }
+  // chatid yok veya geçersizse anasayfa
+  goToHome();
+});
+
+// Butonu seç
+const pageDownBtn = document.getElementById('page-down-btn');
+
+// Scroll kontrolü: 
+// — Altta < 20px kalınca gizle, yoksa göster
+window.addEventListener('scroll', () => {
+  const fromBottom = document.documentElement.scrollHeight 
+                   - (window.scrollY + window.innerHeight);
+  if (fromBottom > 20) {
+    pageDownBtn.classList.add('visible');
+  } else {
+    pageDownBtn.classList.remove('visible');
+  }
+});
+
+// Tıklayınca smooth scroll ile en alta in
+pageDownBtn.addEventListener('click', () => {
+  window.scrollTo({ top: document.documentElement.scrollHeight, behavior: 'smooth' });
+});
+
+document.addEventListener("DOMContentLoaded", () => {
+  const pageDownBtn = document.getElementById("page-down-btn");
+  const scrollWrapper = document.querySelector(".scroll-wrapper"); // Mesajları kaydıran container :contentReference[oaicite:0]{index=0}
+
+  // 1) scrollWrapper’a scroll listener ekle
+  scrollWrapper.addEventListener("scroll", () => {
+    // Ne kadar yukarıdayız?
+    const fromBottom = scrollWrapper.scrollHeight
+                     - (scrollWrapper.scrollTop + scrollWrapper.clientHeight);
+    // Eğer en alta < 20px kalmadıysa butonu göster
+    if (fromBottom > 20) {
+      pageDownBtn.classList.add("visible");
+    } else {
+      pageDownBtn.classList.remove("visible");
+    }
+  });
+
+  // 2) Butona tıklandığında yine scrollWrapper’ın en altına in
+  pageDownBtn.addEventListener("click", () => {
+    scrollWrapper.scrollTo({ 
+      top: scrollWrapper.scrollHeight, 
+      behavior: "smooth" 
+    });
+  });
+});
+
+
 
   </script>
 </body>
