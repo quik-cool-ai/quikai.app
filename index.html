@@ -549,7 +549,6 @@ body.dark .history-icon {
   justify-content: flex-end; /* Örneğin sağda başka butonlar varsa */
   padding: 1.5rem 3rem;
   background-color: var(--topbar-bg);
-  border-bottom: 1px solid rgba(128, 128, 128, 0.2);
   z-index: 100;
   height: 58px;
 }
@@ -575,9 +574,6 @@ body.dark .top-bar-title:hover {
   color: var(--bg-color);
 }
 
-    body.dark .top-bar {
-      border-bottom: 1px solid rgba(128, 128, 128, 0.5);
-    }
 
     @media (max-width: 768px) {
       .top-bar {
@@ -4014,8 +4010,8 @@ body.dark .theme-filter-btn img {
 
 #help-btn {
   position: fixed;
-  bottom: 9px;   /* Sağ alt köşeden yukarı 15px boşluk */
-  right: 13px;    /* Sağdan 15px boşluk */
+  top: 9px;   /* Sağ alt köşeden yukarı 15px boşluk */
+  right: 93px;    /* Sağdan 15px boşluk */
   width: 40px;
   height: 40px;
   background-color: transparent;
@@ -4025,7 +4021,7 @@ body.dark .theme-filter-btn img {
   align-items: center;
   justify-content: center;
   cursor: pointer;
-  z-index: 301;
+  z-index: 302;
 }
 
 #help-btn img {
@@ -4053,8 +4049,8 @@ body.dark #help-btn:hover img {
 /* Dropdown Menü */
 .help-dropdown {
   position: fixed;
-  bottom: 50px; /* Help butonunun üstüne denk gelecek */
-  right: 13px;
+  top: 9px; /* Help butonunun üstüne denk gelecek */
+  right: 133px;
   background-color: var(--input-bg);
   border-radius: 12px;
   box-shadow: 0 4px 12px rgba(0,0,0,0.2);
@@ -4363,17 +4359,16 @@ body.dark .mini-drop-btn:hover {
 }
 
 .chat-input #page-down-btn {
-  position: absolute;
+  position: fixed;
   bottom: calc(100% + 8px);
-  right: 50%;
+  right: calc(50% - 14px);
   width: 28px;
   height: 28px;
-  background: transparent;
-  border: none;
-  padding: 0;
+  background: var(--bg-color);
+  border: solid 1px var(--text-color);
+  border-radius: 16px;
+  padding: 3px;
   cursor: pointer;
-  
-  /* buton gizliyken hiçbir etkileşim olmasın */
   pointer-events: none;
   opacity: 0;
   transform: translateY(10px);
@@ -4848,7 +4843,15 @@ body.dark .chat-input #page-down-btn img {
 </div>
 
 
+<!-- Kullanım Şartları ve Gizlilik Politikası Modali -->
+<button id="help-btn">
+  <img src="icons/question_icon.png" alt="Yardım" draggable="false">
+</button>
 
+<div id="help-dropdown" class="help-dropdown">
+  <button class="help-item" id="terms-btn">Kullanım Şartları</button>
+  <button class="help-item" id="privacy-btn">Gizlilik Politikası</button>
+</div>
 
 <!-- Yeni: Sidebar arama butonu, settings-btn'ün solunda -->
 <button id="sidebar-search-toggle" data-tooltip="Sohbet Ara" class="sidebar-search-toggle">
@@ -5915,15 +5918,7 @@ console.log(quikChat.sendMessage("Nasılsın?"));</code></pre>
 </div><!-- /settings-modal -->
 
 
-<!-- Kullanım Şartları ve Gizlilik Politikası Modali -->
-<button id="help-btn">
-  <img src="icons/question_icon.png" alt="Yardım" draggable="false">
-</button>
 
-<div id="help-dropdown" class="help-dropdown">
-  <button class="help-item" id="terms-btn">Kullanım Şartları</button>
-  <button class="help-item" id="privacy-btn">Gizlilik Politikası</button>
-</div>
 
 
 <!-- Silme Onay Modali -->
@@ -8572,6 +8567,9 @@ const chatSearchInput = document.getElementById("chat-search-input");
 const chatSearchResults = document.getElementById("chat-search-results");
 
 sidebarSearchToggle.addEventListener("click", (e) => {
+  // YARDIM DROPDOWN’U KAPAT
+  document.getElementById('help-dropdown').style.display = 'none';
+
   if (document.getElementById("settings-modal").style.display === "block") {
     return;
   }
@@ -8581,7 +8579,7 @@ sidebarSearchToggle.addEventListener("click", (e) => {
   document.getElementById("settings-btn").classList.add("blurred");
   sidebarSearchToggle.classList.add("blurred");
   document.getElementById("toggle-sidebar-btn").classList.add("blurred"); // Ekstra
-  document.querySelector(".new-chat-btn").classList.add("blurred"); // Ekstra
+  document.querySelector(".new-chat-btn").classList.add("blurred");       // Ekstra
   e.stopPropagation();
 });
 
