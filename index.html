@@ -269,6 +269,13 @@
       transform: translate(50%, -50%) !important;
     }
 
+    .help-btn[data-tooltip]::after {
+      left: auto !important;
+      right: 202% !important;
+      top: 50% !important;
+      transform: translate(50%, -50%) !important;
+    }
+
     /* Tıklama sonrası tooltip’i gizle */
     [data-tooltip].no-tooltip::after {
       opacity: 0 !important;
@@ -654,7 +661,7 @@ body.dark .top-bar-title:hover {
 
 .welcome-message {
   position: absolute; /* absolute yerine fixed, ekranın ortasında sabit kalır */
-  top: 43%;
+  top: 35%;
   left: 50%;
   transform: translate(-50%, -50%);
   text-align: center;
@@ -676,6 +683,7 @@ body.dark .top-bar-title:hover {
 /* Media query for small screens (max-width: 768px) */
 @media (max-width: 768px) {
   .welcome-message {
+    top: 45%;
     width: 85%; /* Slightly narrower for smaller screens */
     padding: 0.75rem;
   }
@@ -962,22 +970,23 @@ body.dark .copy-btn:hover {
 }
 
 .copy-btn.copied {
-  background-color: #28a745; /* yeşil ton */
-  color: #fff !important;
+  background-color: transparent;
 }
 
 body.dark .copy-btn:hover img {
-  filter: none; /* ikon doğal renginde (muhtemelen siyah) görünsün */
+  filter: none;
 }
 
-/* Dark mode'da kopyalandıktan sonra da zıt renk kalsın */
 body.dark .copy-btn.copied {
-  background-color: var(--success-color, #28a745);
-  color: #fff;
+  background-color: transparent;
+}
+
+body.dark .copy-btn.copied {
+  filter: none;
 }
 
 .code-block {
-  background-color: var(--code-bg);    /* Light mod için açık gri arka plan */
+  background-color: var(--code-bg);
   border: 1px solid var(--code-border); 
   margin-bottom: 1.5rem;
   overflow: hidden;
@@ -998,6 +1007,7 @@ body.dark .code-block {
 .code-header {
   position: relative;
   background: var(--code-bg);
+  border-bottom: 1px solid #c0c0c0;
   padding: 8px 12px;
   display: flex;
   justify-content: space-between;
@@ -1032,16 +1042,16 @@ body.dark .code-language {
 /* Copy butonu */
 .code-header .copy-btn {
   position: absolute;
-  top: 9px;
-  right: 8px;
+  top: 10px;
+  right: 10px;
   background-color: transparent;
   color: var(--text-color);
   border: none;
-  padding: 3px 6px;
+  padding: 4px 6px;
   border-radius: 4px;
   cursor: pointer;
   font-size: 0.5rem;
-  opacity: 0.8;
+  opacity: 1;
   transition: opacity 0.3s;
   z-index: 10; /* Butonu öne çıkarmak için */
 }
@@ -1056,7 +1066,7 @@ body.dark .code-header .copy-btn {
 }
 
 body.dark .code-header .copy-btn:hover {
-  background-color: #f0f0f0; /* Dark mode'da şeffaf veya istediğin başka renk */
+  background-color: #c0c0c0; /* Dark mode'da şeffaf veya istediğin başka renk */
   color: var(--sidebar-bg);
   opacity: 1;
 }
@@ -1322,7 +1332,7 @@ body.dark .settings-btn:hover {
     }
 
     /* Kapatma Butonu */
-    .modal-close {
+    .settings-close {
       position: absolute;
       top: 12px;
       right: 12px;
@@ -1331,7 +1341,7 @@ body.dark .settings-btn:hover {
       color: var(--text-color);
     }
 
-body.dark .modal-close:hover {
+body.dark .settings-close:hover {
   color: var(--sidebar-bg);
 }
 
@@ -1465,9 +1475,7 @@ body.dark .settings-modal-content {
     overflow-y: auto; /* Kaydırma çubuğu aktif */
   }
 }
-  .settings-header {
-    padding: 8px 10px;
-  }
+
 
 @media (max-width: 480px) {
   .settings-modal-content {
@@ -1523,7 +1531,7 @@ body.dark .settings-modal-content {
   margin-bottom: 20px;
 }
 .settings-header h2 {
-  font-size: clamp(1rem, 2.5vw, 1.1rem); /* Esnek font boyutu */
+  font-size: 1.1rem; /* Esnek font boyutu */
   color: var(--text-color);
 }
 
@@ -2393,7 +2401,7 @@ body.dark td {
       left: 0;
       background-color: var(--input-bg);
       border-radius: 12px;
-      min-width: 235px;
+      min-width: 175px;
       z-index: 305;
       box-shadow: 0 0 8px rgba(192, 192, 192, 0.75);
     }
@@ -2512,6 +2520,15 @@ body.dark .model-description {
   margin-left: -7px;
   z-index: 300; /* Chat-input’un (302) altında */
   transition: opacity 0.2s ease; /* Pürüzsüz geçiş */
+}
+
+#code-block .copy-btn,
+#chat-container .feedback-controls,
+#chat-container .feedback-controls * {
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
 }
 
 .assistant-bubble:hover .feedback-controls {
@@ -3760,12 +3777,14 @@ body.dark .sidebar-search-toggle:hover img {
   display: flex;
   justify-content: space-between;
   align-items: center;
+  padding-bottom: 5px;
   padding-top: 10px;
+  background-color: var(--nav-bg);
   border-bottom: 2px solid #c0c0c0;
+  margin-bottom: 10px;
 }
 
 .chat-search-header h2 {
-  margin: 0 10px 20px;
   font-size: 1.1rem;
   color: var(--text-color);
 }
@@ -4008,41 +4027,43 @@ body.dark .theme-filter-btn img {
   filter: invert(1);
 }
 
-#help-btn {
+.help-btn {
   position: fixed;
-  top: 9px;   /* Sağ alt köşeden yukarı 15px boşluk */
-  right: 93px;    /* Sağdan 15px boşluk */
-  width: 40px;
-  height: 40px;
-  background-color: transparent;
+  top: 9px;      /* settings-btn ile aynı hizada */
+  right: 93px;   /* Ayarlar butonundan (right:13px) solda konumlanacak, bu değeri ihtiyaca göre ayarlayın */
   border: none;
+  background: none;
   border-radius: 12px;
   display: flex;
   align-items: center;
   justify-content: center;
   cursor: pointer;
+  transition: transform 0.3s ease, color 0.3s ease;
+  color: var(--text-color);
+  width: 40px;
+  height: 40px;
   z-index: 302;
 }
 
-#help-btn img {
+.help-btn img {
   width: 20px;
   height: 20px;
   pointer-events: none;
 }
 
-#help-btn:hover {
+.help-btn:hover {
   background-color: #c0c0c0;
 }
 
-body.dark #help-btn img {
+body.dark .help-btn img {
   filter: brightness(0) invert(1);
 }
 
-body.dark #help-btn:hover {
+body.dark .help-btn:hover {
   background-color: #c0c0c0;
 }
 
-body.dark #help-btn:hover img {
+body.dark .help-btn:hover img {
   filter: none;
 }
 
@@ -4065,8 +4086,8 @@ body.dark #help-btn:hover img {
   border: none;
   text-align: left;
   width: 100%;
-  padding: 16.5px 8px;
-  font-size: 0.85rem;
+  padding: 0.8rem;
+  font-size: 0.8rem;
   cursor: pointer;
   color: var(--text-color);
   border-radius: 12px;
@@ -4365,18 +4386,17 @@ body.dark .mini-drop-btn:hover {
   width: 28px;
   height: 28px;
   background: var(--bg-color);
-  border: solid 1px var(--text-color);
+  border: solid 1px #c0c0c0;
   border-radius: 16px;
   padding: 3px;
   cursor: pointer;
   pointer-events: none;
   opacity: 0;
-  transform: translateY(10px);
-  transition: opacity 0.3s ease, transform 0.3s ease;
   z-index: 303;
+  transform: translateY(5px);
+  transition: transform 0.3s ease;     /* sadece kayma animasyonu kalsın */
 }
 .chat-input #page-down-btn.visible {
-  /* göründüğünde etkileşim geri gelsin */
   pointer-events: auto;
   opacity: 1;
   transform: translateY(0);
@@ -4388,6 +4408,173 @@ body.dark .mini-drop-btn:hover {
 }
 body.dark .chat-input #page-down-btn img {
   filter: invert(1) brightness(0.8);
+}
+
+.help-item img {
+  width: 17px;
+  height: 17px;
+  vertical-align: middle;
+}
+
+body.dark .help-item img {
+  filter: invert(1);
+}
+
+body.dark .help-item:hover img {
+  filter: invert(0);
+}
+
+#terms-modal .modal-content,
+#privacy-modal .modal-content {
+  padding: 1.2rem;           /* tüm içerik etrafına boşluk */
+  border-radius: 1rem;     /* köşeleri yuvarla */
+  color: var(--text-color);
+  font-size: 0.8rem;
+  line-height: 1.6;        /* satır yüksekliği */
+  max-height: 80vh;        /* keep the card on screen          */
+  overflow-y: auto;        /* card scrolls, backdrop doesn’t   */
+}
+
+#terms-modal h2,
+#privacy-modal h2 {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-bottom: 20px;
+  padding-top: 10px;
+  background-color: var(--nav-bg);
+  border-bottom: 2px solid #c0c0c0;
+  margin-bottom: 10px;
+  font-size: 1.1rem;
+}
+
+#terms-modal a,
+#privacy-modal a {
+  color: var(--text-color);
+  font-weight: 600;
+}
+
+/* Ortak ikon stili */
+.like-icon,
+.dislike-icon,
+.copy-icon,
+.regen-icon {
+  display: inline-block;
+  width: 16px;
+  height: 16px;
+  background-size: contain;
+  background-repeat: no-repeat;
+  user-select: none;      /* Seçilemesin   */
+  -webkit-user-drag: none;/* Sürüklenemesin*/
+}
+
+/* İlk hâli */
+.like-icon  { background-image: url("icons/like_btn.png");   }
+.dislike-icon { background-image: url("icons/dislike_btn.png"); }
+.copy-icon { background-image: url("icons/copy_btn.png");   }
+.regen-icon { background-image: url("icons/regenerate_btn.png");   }
+
+/* Tıklanınca değişecek sınıf */
+.like-icon.liked      { background-image: url("icons/liked_btn.png");    }
+.dislike-icon.disliked{ background-image: url("icons/disliked_btn.png"); }
+.copy-icon.copied { background-image: url("icons/copied_btn.png"); }
+
+body.dark .like-icon,
+body.dark .dislike-icon,
+body.dark .copy-icon,
+body.dark .regen-icon {
+  filter: invert(1);
+}
+
+/* Dark modda buton üzerine gelince invert etkisini kaldır */
+body.dark .like-btn:hover .like-icon   { filter: invert(0) !important; }
+body.dark .dislike-btn:hover .dislike-icon { filter: invert(0) !important; }
+body.dark .copy-btn:hover .copy-icon { filter: invert(0) !important; }
+body.dark .regen-btn:hover .regen-icon { filter: invert(0) !important; }
+
+#chat-container .code-block .copy-btn,
+#chat-container .code-block .copy-btn * {
+  user-select: none !important;
+  -webkit-user-drag: none !important;
+}
+
+.code-header,
+.code-header * {
+  user-select: none !important;
+  -webkit-user-drag: none !important;
+}
+
+/* user-bubble içindeki eklenen görselleri sabit boyutlandırmak için */
+.chat-bubble.user-bubble .attachment-img {
+  margin-top: 1rem;
+  border-radius: 12px;
+  width: 100%;           /* kapsayıcıya göre ölçeklensin */
+  height: auto;          /* orantılı kalsın */
+  object-fit: contain;   /* taşma olmasın, boşluk bıraksın */
+  display: block;        /* alt alta dizilsin */
+  margin-bottom: 0.5rem; /* metin ile arada boşluk */
+  -webkit-user-drag: none !important;
+  cursor: pointer;
+}
+.modal-img-container {
+  position: relative;
+  display: inline-block;
+}
+
+.image-modal {
+  overflow-y: auto;
+  z-index: 999999;
+  position: fixed;
+  top: 0; left: 0;
+  width: 100vw; height: 100vh;
+  background: rgba(0,0,0,0.93);
+  display: none;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+.image-modal[aria-hidden="false"],
+.image-modal.open { /* aktif olduğunda görünür olsun */
+  display: flex;
+}
+
+.image-modal__container {
+  position: relative;
+  display: flex;
+  top: 10px;
+  align-items: center;
+  justify-content: center;
+  max-width: 96vw;
+  max-height: 90vh;
+  width: auto;
+  height: auto;
+  box-shadow: 0 2px 32px 0 rgba(0,0,0,0.7);
+}
+
+.image-modal__img {
+  max-width: 100vw;
+  max-height: 90vh;
+  width: auto;
+  height: auto;
+  border-radius: 14px;
+  display: block;
+  object-fit: contain;
+  user-select: none;
+  -webkit-user-drag: none;
+  transition: box-shadow 0.2s;
+}
+
+@media (max-width: 600px) {
+  .image-modal__container {
+    max-width: 98vw;
+    max-height: 70vh;
+  }
+  .image-modal__img {
+    max-width: 96vw;
+    max-height: 65vh;
+  }
 }
 
 
@@ -4410,13 +4597,13 @@ body.dark .chat-input #page-down-btn img {
     <button class="model-option" data-model="quik-prime">
       <span class="model-name">quik-prime</span>
       <div>
-        <span class="model-description">Günlük sorulara hızlı ve ideal yanıtlar</span>
+        <span class="model-description">Günlük sorulara hızlı yanıtlar</span>
       </div>
     </button>
     <button class="model-option" data-model="quik-think">
       <span class="model-name">quik-think</span>
       <div>
-        <span class="model-description">Karmaşık sorunlara derinlemesine çözümler</span>
+        <span class="model-description">Akıl yürütme yoluyla çözümler</span>
       </div>
     </button>
   </div>
@@ -4844,14 +5031,572 @@ body.dark .chat-input #page-down-btn img {
 
 
 <!-- Kullanım Şartları ve Gizlilik Politikası Modali -->
-<button id="help-btn">
+<button id="help-btn" class="help-btn" data-tooltip="Yardım">
   <img src="icons/question_icon.png" alt="Yardım" draggable="false">
 </button>
 
 <div id="help-dropdown" class="help-dropdown">
-  <button class="help-item" id="terms-btn">Kullanım Şartları</button>
-  <button class="help-item" id="privacy-btn">Gizlilik Politikası</button>
+  <button class="help-item" id="terms-btn">
+    <img src="icons/terms_icon.png" alt="Terms Icon" style="width:17px; height:17px; margin-right: 8px;">
+    Kullanım Şartları
+  </button>
+  <button class="help-item" id="privacy-btn">
+    <img src="icons/privacy_icon.png" alt="Privacy Icon" style="width:17px; height:17px; margin-right: 8px;">
+    Gizlilik Politikası
+  </button>
+  <button class="help-item" id="excusive-help-btn">
+    <img src="icons/excusive_help_icon.png" alt="Help Icon" style="width:17px; height:17px; margin-right: 8px;">
+    Yardım
+  </button>
 </div>
+
+<!-- Kullanım Şartları Modali -->
+<div id="terms-modal" class="modal">
+  <div class="modal-content settings-modal-content">
+    <span id="terms-close" class="modal-close settings-close">&times;</span>
+    <div class="modal-body">
+
+      <h2>Kullanım Şartları</h2>
+
+    <p>
+      İşbu Kullanım Şartları ve Kişisel Verilerin Korunması Politikası, <strong>Sosyal Gelişim ve Dayanışma Derneği (SGDD‑ASAM)</strong> tarafından geliştirilen ve işletilen <strong>quik</strong> adlı dijital hizmet platformunun (web sitesi, mobil uygulama ve diğer çevrimiçi servisler dâhil) kullanımına ilişkin hükümleri içermektedir. Hizmeti kullanarak, bu şartları okuduğunuzu, anladığınızı ve kabul ettiğinizi beyan etmiş olursunuz.
+    </p>
+    
+    <h3>1. Hizmetin Kapsamı</h3>
+    <p>
+      quik, kullanıcılarına yapay zekâ tabanlı asistan hizmetleri sunar. Bu hizmetler; metin tabanlı bilgi alma, öneri üretme, sohbet etkileşimi, dosya yükleme ve çeşitli entegrasyonlar aracılığıyla bilgi akışı sağlamayı kapsar. SGDD‑ASAM, hizmet içeriğinde değişiklik yapma, geçici veya kalıcı olarak durdurma hakkını saklı tutar.
+    </p>
+    <p>
+      Platform, sivil toplum kuruluşlarının, toplulukların ve bireylerin sosyal dayanışma ve gelişim faaliyetlerini desteklemek amacıyla tasarlanmıştır. Sunulan yapay zekâ hizmetleri, kullanıcı sorguları doğrultusunda özelleştirilmiş yanıtlar üretir ve 7/24 erişilebilir durumdadır.
+    </p>
+    
+    <h3>2. Kullanıcı Yükümlülükleri</h3>
+    <ul>
+      <li>Kullanıcı, quik hizmetlerini sadece yasal ve etik kurallar çerçevesinde kullanmalıdır.</li>
+      <li>Yanıltıcı, yasa dışı, müstehcen, ayrımcı veya nefret içeren içerikler paylaşmak yasaktır.</li>
+      <li>Hesap bilgilerinizin gizliliğinden siz sorumlusunuz; şifre paylaşımı yapılmamalıdır.</li>
+      <li>Yazılımsal veya teknik yollarla hizmetin aksatılmasına neden olacak eylemler yasaktır (ör. bot saldırıları, tersine mühendislik, kaynak kod müdahalesi).</li>
+      <li>quik sistemini, diğer kullanıcılara zarar verecek veya onları rahatsız edecek şekilde kullanmak yasaktır.</li>
+      <li>Hizmeti kullanırken üçüncü tarafların haklarını ihlal eden içerikler paylaşmamak kullanıcının sorumluluğundadır.</li>
+      <li>Platform üzerinden yasadışı ürün veya hizmetlerin reklamını yapmak, pazarlamak veya satışını gerçekleştirmek kesinlikle yasaktır.</li>
+      <li>Platforma giriş yaparken doğru ve güncel bilgiler sağlamak zorunludur.</li>
+    </ul>
+    
+    <h3>3. Fikri Mülkiyet Hakları</h3>
+    <p>
+      quik'e ait tüm içerikler (metin, grafik, ikonlar, yazılım kodları, algoritmalar ve model çıktıları) <strong>SGDD‑ASAM'a</strong> veya lisans alınmış üçüncü taraflara aittir. Kullanıcı, bu içerikleri izinsiz şekilde çoğaltamaz, dağıtamaz veya ticari amaçla kullanamaz.
+    </p>
+    <p>
+      Kullanıcılar tarafından platforma yüklenen içerikler üzerindeki mülkiyet hakları kullanıcıya ait olmaya devam eder. Ancak, kullanıcı bu içerikleri platforma yükleyerek, SGDD-ASAM'a söz konusu içerikleri hizmetin sağlanması ve iyileştirilmesi amacıyla kullanma, saklama, işleme ve görüntüleme hakkı tanımış olur. Bu lisans, kullanıcının quik platformundaki hesabını silmesi durumunda sona erer.
+    </p>
+    
+    <h3>4. Kişisel Verilerin İşlenmesi</h3>
+    <p>
+      SGDD-ASAM, 6698 sayılı Kişisel Verilerin Korunması Kanunu (KVKK) kapsamında veri sorumlusu olarak hareket etmektedir. Platformda toplanan ve işlenen kişisel veriler şunları içerebilir:
+    </p>
+    <ul>
+      <li><strong>Kimlik Bilgileri:</strong>&nbsp;Ad, soyad, doğum tarihi</li>
+      <li><strong>İletişim Bilgileri:</strong>&nbsp;E-posta adresi, telefon numarası, adres</li>
+      <li><strong>Hesap Bilgileri:</strong>&nbsp;Kullanıcı adı, şifre (şifrelenmiş formatta)</li>
+      <li><strong>Kullanım Verileri:</strong>&nbsp;Sorgular, etkileşimler, platforma yüklenen dosyalar</li>
+      <li><strong>Teknik Veriler:</strong>&nbsp;IP adresi, cihaz bilgileri, çerezler, kullanım istatistikleri</li>
+    </ul>
+    <p>
+      Bu veriler, aşağıdaki amaçlarla işlenmektedir:
+    </p>
+    <ul>
+      <li>Hizmetin sunulması ve kişiselleştirilmesi</li>
+      <li>Kullanıcı hesaplarının yönetilmesi</li>
+      <li>Kullanıcı desteğinin sağlanması</li>
+      <li>Hizmetin güvenliğinin ve kalitesinin iyileştirilmesi</li>
+      <li>Yasal yükümlülüklerin yerine getirilmesi</li>
+      <li>Hizmet kullanımına ilişkin analiz ve istatistik oluşturulması</li>
+    </ul>
+    <p>
+      Kişisel verileriniz, yasal zorunluluklar dışında üçüncü taraflarla paylaşılmaz. Bazı durumlarda, hizmetin sağlanması için gerekli olan üçüncü taraf hizmet sağlayıcılarıyla (örneğin bulut depolama, analitik servisleri) veri paylaşımı yapılabilir. Bu durumda, söz konusu üçüncü tarafların da KVKK ve ilgili mevzuata uygun hareket etmeleri sağlanır.
+    </p>
+    <p>
+      Kişisel verileriniz, ilgili mevzuatta öngörülen veya işlendikleri amaç için gerekli olan süre kadar muhafaza edilir. Hesabınızı sildiğinizde, kişisel verileriniz makul bir süre içinde sistemlerimizden silinir veya anonimleştirilir.
+    </p>
+    
+    <h3>5. Kullanıcı Hakları</h3>
+    <p>
+      KVKK'nın 11. maddesi uyarınca, kişisel verilerinizle ilgili olarak aşağıdaki haklara sahipsiniz:
+    </p>
+    <ul>
+      <li>Kişisel verilerinizin işlenip işlenmediğini öğrenme</li>
+      <li>Kişisel verileriniz işlenmişse buna ilişkin bilgi talep etme</li>
+      <li>Kişisel verilerinizin işlenme amacını ve bunların amacına uygun kullanılıp kullanılmadığını öğrenme</li>
+      <li>Yurt içinde veya yurt dışında kişisel verilerinizin aktarıldığı üçüncü kişileri bilme</li>
+      <li>Kişisel verilerinizin eksik veya yanlış işlenmiş olması hâlinde bunların düzeltilmesini isteme</li>
+      <li>Kişisel verilerinizin silinmesini veya yok edilmesini isteme</li>
+      <li>İşlenen verilerin münhasıran otomatik sistemler vasıtasıyla analiz edilmesi suretiyle aleyhinize bir sonucun ortaya çıkmasına itiraz etme</li>
+      <li>Kişisel verilerinizin kanuna aykırı olarak işlenmesi sebebiyle zarara uğramanız hâlinde zararın giderilmesini talep etme</li>
+    </ul>
+    <p>
+      Bu haklarınızı kullanmak için <a href="mailto:kvkk@sgdd-asam.org">kvkk@sgdd-asam.org</a> adresine e-posta gönderebilir veya aşağıda belirtilen iletişim adresimize yazılı başvuruda bulunabilirsiniz.
+    </p>
+    
+    <h3>6. Yapay Zeka Kullanımı ve Veri İşleme</h3>
+    <p>
+      Quik platformu, yapay zeka teknolojilerini kullanarak hizmet sunmaktadır. Bu kapsamda:
+    </p>
+    <ul>
+      <li>Platform, kullanıcı sorguları ve girdileri doğrultusunda otomatik içerik üretmektedir.</li>
+      <li>Üretilen içerikler, yapay zeka algoritmalarına dayalı olup, %100 doğruluk garantisi verilmemektedir.</li>
+      <li>Kullanıcı verileri, yapay zeka sisteminin iyileştirilmesi amacıyla anonimleştirilerek kullanılabilir.</li>
+      <li>Kullanıcılar tarafından platforma yüklenen dosyalar ve paylaşılan içerikler, sistem tarafından analiz edilebilir ancak üçüncü taraflarla paylaşılmaz.</li>
+      <li>Yapay zeka sistemi, kullanıcı tercihlerini ve davranışlarını öğrenerek kişiselleştirilmiş bir deneyim sunabilir.</li>
+    </ul>
+    <p>
+      Yapay zeka modelimiz, genel kaynaklardan ve yasal olarak elde edilmiş verilerle eğitilmiştir. Model, ayrımcılık, nefret söylemi ve zararlı içerik üretimini engellemek için tasarlanmıştır ancak otomatik sistemlerin doğası gereği istenmeyen çıktılar üretebilir. Böyle durumlarda lütfen geri bildirimde bulununuz.
+    </p>
+    
+    <h3>7. Dosya Yükleme ve Güvenlik</h3>
+    <p>
+      Kullanıcılar, platforma aşağıdaki koşullar çerçevesinde dosya yükleyebilirler:
+    </p>
+    <ul>
+      <li>İzin verilen dosya türleri: .pdf, .doc, .docx, .txt, .jpg, .jpeg, .png (maksimum 25MB)</li>
+      <li>Yüklenen tüm dosyalar virüs ve zararlı yazılım taramasından geçirilir.</li>
+      <li>Telif hakkı ihlali içeren, yasadışı veya uygunsuz içerikli dosyaların yüklenmesi yasaktır.</li>
+      <li>Yüklenen dosyalar, kullanıcı izni olmadan üçüncü taraflarla paylaşılmaz.</li>
+      <li>SGDD-ASAM, uygunsuz içerik barındıran dosyaları önceden bildirmeksizin silme hakkını saklı tutar.</li>
+    </ul>
+    <p>
+      Yüklenen dosyalar, kullanıcının hesabı aktif olduğu sürece sistemde saklanır. Hesap silme işlemi sonrasında, dosyalar 30 gün içinde otomatik olarak silinir.
+    </p>
+    
+    <h3>8. Hizmette Değişiklik ve Erişim</h3>
+    <p>
+      SGDD‑ASAM, Quik hizmetine dair içerik, kullanıcı arayüzü, algoritmalar ve fonksiyonellikler üzerinde dilediği zaman değişiklik yapabilir. Bu kapsamda, kullanıcı deneyimini optimize etmek amacıyla sistemsel güncellemeler önceden bildirilmeksizin devreye alınabilir.
+    </p>
+    <p>
+      Platform, planlı bakım çalışmaları, güvenlik güncellemeleri veya teknik aksaklıklar nedeniyle geçici olarak erişilemez olabilir. SGDD-ASAM, planlanmış bakımlar hakkında kullanıcıları önceden bilgilendirmeye çalışacaktır, ancak acil durumlarda bu mümkün olmayabilir.
+    </p>
+    <p>
+      Hizmet, 7/24 erişilebilir olarak tasarlanmıştır ancak belirli coğrafi bölgelerde veya ağ koşullarında performans farklılıkları görülebilir. SGDD-ASAM, hizmetin kesintisiz şekilde sunulacağını garanti etmez.
+    </p>
+    
+    <h3>9. Sorumluluğun Sınırlandırılması</h3>
+    <p>
+      Quik tarafından sunulan bilgiler ve çıktılar, yalnızca öneri niteliğindedir. SGDD‑ASAM, hizmetin %100 doğrulukta çalışacağını taahhüt etmez. Kullanıcı, üretilen çıktılara dayanarak aldığı kararlarda kendi sorumluluğunu taşır. Hizmetin geçici olarak kullanılamaması, veri kaybı veya hatalı bilgi aktarımı gibi durumlardan SGDD‑ASAM sorumlu tutulamaz.
+    </p>
+    <p>
+      Quik platformunun kullanımından kaynaklanabilecek dolaylı, dolaysız, özel, arızi veya cezai zararlardan SGDD-ASAM sorumlu değildir. Bu sorumluluk reddi, aşağıdakileri içerir ancak bunlarla sınırlı değildir:
+    </p>
+    <ul>
+      <li>Yapay zeka çıktılarına dayanarak alınan kararlar nedeniyle ortaya çıkabilecek zararlar</li>
+      <li>Hizmetin kullanılamaması nedeniyle yaşanan iş kaybı veya fırsat maliyeti</li>
+      <li>Sistemde yaşanabilecek veri kayıpları veya güvenlik ihlalleri</li>
+      <li>Üçüncü taraf entegrasyonlarından kaynaklanan sorunlar</li>
+      <li>Kullanıcılar arasında paylaşılan içeriklerden doğan anlaşmazlıklar</li>
+    </ul>
+    <p>
+      Platform üzerinden sağlanan bilgiler, profesyonel tavsiye (tıbbi, hukuki, finansal vb.) yerine geçmez. Önemli kararlar için mutlaka ilgili alanda uzman kişilere danışılmalıdır.
+    </p>
+    
+    <h3>10. Platform Kullanımı</h3>
+    <p>
+      Quik platformu, SGDD-ASAM çalışanlarının kullanımı için tasarlanmamıştır. Bu çalışanlar, platforma erişim sağlamak için Quik uygulaması tarafından onay almalıdır. SGDD-ASAM, kullanıcılar tarafından bilerek veya bilmeyerek sağlanan kişisel verileri, tespit edildiği takdirde sistemden silme hakkını saklı tutar.
+    </p>
+    <p>
+      Ebeveynler ve yasal vasiler, çocukların platform kullanımını denetlemekle ve çocukların kişisel verilerinin korunmasını sağlamakla yükümlüdür. Çocuklara yönelik içerik oluşturma veya çocuklarla ilgili veri toplama amacıyla platformun kullanılması yasaktır.
+    </p>
+    
+    <h3>11. Ödeme Koşulları ve İadeler</h3>
+    <p>
+      Quik platformunun bütün hizmetleri SGDD-ASAM çalışanlarına ücretsiz olarak sunulmaktadır. Gelecekte sunulabilecek ücretli hizmetlere ilişkin ücretlendirme politikaları ayrıca belirtilecektir. Ücretli hizmetler için aşağıdaki koşullar geçerli olacaktır:
+    </p>
+    <ul>
+      <li>Ödeme bilgilerinin doğru ve güncel olmasından kullanıcı sorumludur.</li>
+      <li>Abonelik temelli hizmetler, aksi belirtilmedikçe otomatik yenileme özelliğine sahiptir.</li>
+      <li>İptal edilen aboneliklerde, fatura döneminin sonuna kadar hizmet sunulmaya devam eder.</li>
+      <li>Hizmet kalitesinde ciddi aksaklıklar yaşanması durumunda, son 14 gün içinde yapılan ödemeler için iade talep edilebilir.</li>
+      <li>İade talepleri:&nbsp;&nbsp;<a href="mailto:iade@sgdd-asam.org">iade@sgdd-asam.org</a>&nbsp;adresine gönderilmelidir.</li>
+    </ul>
+    
+    <h3>12. Hizmetin Sonlandırılması</h3>
+    <p>
+      SGDD‑ASAM, kullanıcıların bu kullanım şartlarına aykırı davrandığını tespit ettiğinde, ilgili kullanıcıların hizmete erişimini geçici veya kalıcı olarak durdurabilir. Ayrıca, güvenlik veya bakım amaçlı olarak hizmet geçici süreyle durdurulabilir.
+    </p>
+    <p>
+      Kullanıcı, dilediği zaman hesabını kapatma hakkına sahiptir. Hesap kapatma işlemi, kullanıcı profilindeki "Hesabımı Sil" seçeneği üzerinden gerçekleştirilebilir. Hesap silme işlemi sonrasında:
+    </p>
+    <ul>
+      <li>Kişisel verileriniz 30 gün içinde sistemden silinir veya anonimleştirilir.</li>
+      <li>Yüklediğiniz içerikler sistemden kaldırılır.</li>
+      <li>Yasal yükümlülükler gereği saklanması gereken veriler, yasal süre boyunca muhafaza edilir.</li>
+    </ul>
+    <p>
+      SGDD-ASAM, teknik, ekonomik veya stratejik nedenlerle Quik platformunu tamamen sonlandırma hakkını saklı tutar. Böyle bir durumda, kullanıcılara en az 30 gün önceden bildirim yapılacaktır.
+    </p>
+    
+    <h3>13. Üçüncü Taraf Bağlantıları</h3>
+    <p>
+      Quik platformunda bazı entegrasyonlar veya yönlendirmeler üçüncü taraf web sitelerine yapılabilir. Bu sitelerin içerikleri SGDD‑ASAM'ın sorumluluğunda değildir. Kullanıcı, bu sitelere eriştiğinde kendi gizlilik politikalarını ve kullanım şartlarını ayrıca değerlendirmelidir.
+    </p>
+    <p>
+      Platformda yer alan üçüncü taraf hizmetleri (ödeme sistemleri, analitik araçları, vb.) kendi kullanım koşullarına ve gizlilik politikalarına tabidir. Bu hizmetleri kullanmadan önce ilgili koşulları incelemeniz önerilir.
+    </p>
+    
+    <h3>14. Teknik ve İdari Güvenlik Önlemleri</h3>
+    <p>
+      SGDD-ASAM, kullanıcı verilerinin güvenliğini sağlamak için aşağıdaki teknik ve idari önlemleri almaktadır:
+    </p>
+    <ul>
+      <li>Veri şifreleme protokolleri (SSL/TLS)</li>
+      <li>Düzenli güvenlik güncellemeleri ve zafiyet taramaları</li>
+      <li>İki faktörlü kimlik doğrulama seçeneği</li>
+      <li>Erişim kontrolleri ve yetkilendirme sistemleri</li>
+      <li>Düzenli veri yedekleme işlemleri</li>
+      <li>Personel için veri güvenliği eğitimleri</li>
+      <li>Fiziksel güvenlik önlemleri (sunucu güvenliği vb.)</li>
+    </ul>
+    <p>
+      Herhangi bir veri ihlali durumunda, yasal gerekliliklere uygun olarak ilgili kişilere ve düzenleyici kurumlara bildirimde bulunulacaktır.
+    </p>
+    
+    <h3>15. Şikayet ve Destek Yönetimi</h3>
+    <p>
+      Quik platformu ile ilgili her türlü soru, sorun ve şikayetleriniz için aşağıdaki kanallardan destek alabilirsiniz:
+    </p>
+    <ul>
+      <li><strong>Platform içi yardım merkezi:</strong>&nbsp;Quik - Yapay zeka destek elemanı</li>
+      <li><strong>E-posta:</strong>&nbsp;<a href="mailto:destek@sgdd-asam.org">destek@sgdd-asam.org</a></li>
+      <li><strong>Çevrimiçi destek formu:</strong>&nbsp;<a href="https://quik-help@sgdd-asam.org/destek">quik-help@sgdd-asam.org/destek</a></li>
+      <li><strong>Telefon:</strong>&nbsp;+90 312 212 60 13 (Hafta içi 09:00-17:30)</li>
+    </ul>
+    <p>
+      Şikayetler, alındıktan sonra en geç 72 saat içinde değerlendirilecek ve çözüm süreci başlatılacaktır. Karmaşık sorunlar için bu süre uzayabilir ancak her durumda süreç hakkında bilgilendirileceksiniz.
+    </p>
+    
+    <h3>16. Güncellemeler</h3>
+    <p>
+      SGDD‑ASAM, Kullanım Şartları üzerinde dilediği zaman değişiklik yapabilir. Güncel metin her zaman uygulama içinden veya <a href="https://quik-chatbot.sgdd-asam.org">quik-chatbot.sgdd-asam.org</a> üzerinden erişilebilir olacaktır. Kullanıcılar, değişiklikleri takip etmekle yükümlüdür. Güncel şartların yayımlanmasının ardından hizmeti kullanmaya devam etmek, yeni şartların kabul edildiği anlamına gelir.
+    </p>
+    <p>
+      Önemli değişiklikler durumunda, kullanıcılara e-posta veya platform üzerinden bildirim gönderilecektir. Değişikliklerin yürürlüğe girmesinden önce kullanıcılara en az 15 gün süre tanınacaktır.
+    </p>
+    
+    <h3>17. Uygulanacak Hukuk ve Yetki</h3>
+    <p>
+      İşbu şartlar, <strong>T.C. yasalarına</strong> tabidir. Taraflar arasında çıkabilecek uyuşmazlıklar öncelikle uzlaşma yoluyla çözülmeye çalışılır. Çözülemediği takdirde <strong>Ankara Mahkemeleri ve İcra Daireleri</strong> yetkilidir.
+    </p>
+    <p>
+      Bu sözleşme, tüketici hakları ve elektronik ticaret ile ilgili yürürlükteki mevzuat hükümlerine tabidir. Sözleşmenin herhangi bir hükmünün geçersiz olması durumunda, diğer hükümler geçerliliğini korur.
+    </p>
+    
+    <h3>18. Mücbir Sebepler</h3>
+    <p>
+      Doğal afetler, salgın hastalıklar, savaş, terör eylemleri, hükümet kısıtlamaları, internet altyapısındaki aksaklıklar gibi SGDD-ASAM'ın kontrolü dışında gelişen durumlar nedeniyle hizmetin sunulamaması veya aksaması halinde, SGDD-ASAM sorumlu tutulamaz. Mücbir sebep durumunun sona ermesinin ardından hizmet mümkün olan en kısa sürede normale döndürülecektir.
+    </p>
+    
+    <h3>19. İletişim</h3>
+    <ul>
+      <li><strong>E-posta:</strong>&nbsp;<a href="mailto:destek@sgdd-asam.org">destek@sgdd-asam.org</a></li>
+      <li><strong>Kişisel Veri Talepleri:</strong>&nbsp;<a href="mailto:kvkk@sgdd-asam.org">kvkk@sgdd-asam.org</a></li>
+      <li><strong>Adres:</strong>&nbsp;SGDD-ASAM Genel Merkezi – "Birlik Mah., Katar Cad. No:11, Çankaya / ANKARA"</li>
+      <li><strong>Telefon:</strong>&nbsp;+90 312 212 60 13</li>
+      <li><strong>Web:</strong>&nbsp;<a href="https://www.sgdd-asam.org">www.sgdd-asam.org</a></li>
+    </ul>
+    <p><i>Bu şartların son güncellenme tarihi: 21 Nisan 2025</i></p>
+    <p><i>
+      SGDD‑ASAM, kullanıcı verilerinin güvenliği ve gizliliği konusunda yasal sorumluluklarını titizlikle yerine getirir. Bu politika, SGDD‑ASAM'ın etik değerleriyle uyumlu olarak hazırlanmıştır.
+    </i></p>
+    </div>
+  </div>
+</div>
+
+<!-- Gizlilik Politikası Modali -->
+<div id="privacy-modal" class="modal">
+  <div class="modal-content settings-modal-content">
+    <span id="privacy-close" class="modal-close settings-close">&times;</span>
+    <div class="modal-body">
+    <h2>Gizlilik Politikası</h2>
+
+    <p>
+      Bu Gizlilik Politikası, <strong>Quik</strong> adlı dijital ürün ve hizmetlerin kullanımı sırasında elde edilen verilerin işlenmesi ve korunmasına ilişkin ilkeleri tanımlar. <strong>Quik</strong> markası, <strong>Sosyal Gelişim ve Dayanışma Derneği İktisadi İşletmesi (SGDD‑ASAM)</strong> tarafından geliştirilmiş ve işletilmektedir. SGDD‑ASAM, kullanıcı mahremiyetine yüksek düzeyde önem verir ve kişisel verilerin güvenliğini mevzuatlara uygun biçimde sağlamayı taahhüt eder.
+    </p>
+    
+    <h3>1. Kapsam</h3>
+    <p>
+      Bu politika, Quik'e ait mobil uygulama, web sitesi ve entegre hizmetler aracılığıyla elde edilen kişisel verileri kapsar. Politika, sadece Quik tarafından toplanan verileri içerir; üçüncü taraf hizmet sağlayıcıların politikaları ayrıca geçerlidir.
+    </p>
+    <p>
+      Bu gizlilik politikası, aşağıdaki platformlar ve kanallar üzerinden toplanan tüm verileri kapsamaktadır:
+    </p>
+    <ul>
+      <li>Quik mobil uygulaması (iOS ve Android)</li>
+      <li>Quik web platformu (quik.sgdd-asam.org)</li>
+      <li>Quik'e bağlı API servisleri ve entegrasyonlar</li>
+      <li>Quik müşteri hizmetleri ve teknik destek kanalları</li>
+      <li>Quik resmi sosyal medya hesapları ve iletişim kanalları</li>
+    </ul>
+    
+    <h3>2. Toplanan Bilgi Türleri</h3>
+    <ul>
+      <li><strong>Kimlik Bilgileri:</strong>&nbsp;Ad, soyad, kullanıcı adı, doğum tarihi, cinsiyet, fotoğraf (profil resmi olarak yüklendiği takdirde)</li>
+      <li><strong>İletişim Bilgileri:</strong>&nbsp;E-posta adresi, IP adresi, telefon numarası (isteğe bağlı), posta adresi (isteğe bağlı)</li>
+      <li><strong>Oturum Bilgileri:</strong>&nbsp;Giriş-çıkış saatleri, cihaz tipi, tarayıcı bilgisi, işletim sistemi, cihaz tanımlayıcıları, ağ bilgileri</li>
+      <li><strong>Davranış Verileri:</strong>&nbsp;Uygulama içi gezinti, tıklama ve etkileşim kayıtları, kullanılan özellikler, arama geçmişi, içerik tercihleri, içerik yükleme ve paylaşım davranışları</li>
+      <li><strong>Tanımlama Bilgileri (Çerezler):</strong>&nbsp;Kullanıcı tercihlerinin takibi, oturum bilgilerinin korunması, hizmet performansının optimizasyonu</li>
+      <li><strong>Konum Verileri:</strong>&nbsp;Genel konum bilgisi (ülke/şehir düzeyinde, hassas konum verileri isteğe bağlıdır)</li>
+      <li><strong>İçerik ve Dosya Verileri:</strong>&nbsp;Kullanıcının platforma yüklediği dosyalar, paylaştığı içerikler, notlar, yorumlar ve mesajlar</li>
+      <li><strong>Ödeme Bilgileri:</strong>&nbsp;Ücretli hizmetler için kullanılan (ancak tam olarak saklanmayan) ödeme bilgileri</li>
+      <li><strong>Anket ve Geri Bildirim Verileri:</strong>&nbsp;Kullanıcının gönüllü olarak sağladığı değerlendirme, şikayet ve öneriler</li>
+    </ul>
+    
+    <h3>3. Verilerin Toplanma Yöntemleri</h3>
+    <p>
+      Veriler doğrudan kullanıcıdan (kayıt formu, giriş işlemi vb.) ya da otomatik sistemler aracılığıyla (çerezler, oturum kaydı, cihaz tespiti) toplanır.
+    </p>
+    <p>
+      Veri toplama yöntemlerimiz aşağıdaki kanalları içerir:
+    </p>
+    <ul>
+      <li><strong>Doğrudan Kullanıcı Girişi:</strong>&nbsp;Kayıt formları, profil güncelleme, tercih belirleme, sohbet etkileşimleri</li>
+      <li><strong>Otomatik Veri Toplama:</strong>&nbsp;Çerezler, piksel etiketleri, sunucu günlükleri, uygulama analitikleri</li>
+      <li><strong>Cihaz Bilgileri:</strong>&nbsp;Kullanılan cihazın özellikleri, ekran çözünürlüğü, bağlantı türü, cihaz kimliği</li>
+      <li><strong>Kullanım Verileri:</strong>&nbsp;Etkileşim süreleri, sayfa görüntüleme, tıklama davranışları, kullanım sıklığı</li>
+      <li><strong>Entegrasyonlar:</strong>&nbsp;Üçüncü taraf hizmetlerle entegrasyonlar aracılığıyla (Google, Apple, Facebook ile giriş gibi) alınan ve paylaşılan veriler</li>
+      <li><strong>Müşteri Hizmetleri:</strong>&nbsp;Destek talepleri, çağrı kayıtları, e-posta yazışmaları sırasında paylaşılan bilgiler</li>
+    </ul>
+    
+    <h3>4. Verilerin Kullanım Amaçları</h3>
+    <ul>
+      <li>Kullanıcı hesabı oluşturmak ve yönetmek</li>
+      <li>Kimlik doğrulama ve yetkilendirme yapmak</li>
+      <li>Teknik destek ve müşteri hizmetleri sunmak</li>
+      <li>Sistem güvenliğini sağlamak</li>
+      <li>Kullanıcı deneyimini kişiselleştirmek</li>
+      <li>Hizmetlerimizi geliştirmek ve iyileştirmek</li>
+      <li>Yapay zeka modellerini eğitmek ve optimize etmek (anonimleştirilmiş verilerle)</li>
+      <li>Kullanıcı davranış analizleri ve istatistikler oluşturmak</li>
+      <li>Hizmet kalitesini ve performansını izlemek</li>
+      <li>Dolandırıcılık ve kötüye kullanımı önlemek</li>
+      <li>Platformun kullanımına ilişkin istatistikler oluşturmak</li>
+      <li>Pazarlama faaliyetleri yürütmek (kullanıcının izni olması durumunda)</li>
+      <li>Hizmet güncellemeleri ve önemli değişiklikler hakkında bilgilendirmek</li>
+      <li>Mevzuat gerekliliklerini yerine getirmek</li>
+    </ul>
+    
+    <h3>5. Hukuki Dayanak</h3>
+    <p>
+      Veriler, 6698 sayılı KVKK, Avrupa Birliği Genel Veri Koruma Tüzüğü (GDPR) gibi ulusal ve uluslararası düzenlemelere uygun olarak; <strong>açık rıza</strong>, <strong>sözleşmenin ifası</strong>, <strong>hukuki yükümlülük</strong> ve <strong>meşru menfaat</strong> gerekçeleriyle işlenir.
+    </p>
+    <p>
+      Verilerinizi işlerken dayandığımız yasal dayanaklar aşağıdadır:
+    </p>
+    <ul>
+      <li><strong>Açık Rıza:</strong>&nbsp;Belirli veri işleme faaliyetleri için açık rızanızı talep ederiz. Örneğin, pazarlama iletişimleri için e-posta adresinizi kullanmak veya konum verilerinizi işlemek gibi.</li>
+      <li><strong>Sözleşmenin İfası:</strong>&nbsp;Quik kullanım koşullarını kabul ettiğinizde, sizinle aramızda bir sözleşme kurulur. Bu sözleşmenin gereklerini yerine getirmek için verilerinizi işleriz.</li>
+      <li><strong>Hukuki Yükümlülük:</strong>&nbsp;Vergi mevzuatı, bilgi güvenliği düzenlemeleri, elektronik ticaret kanunları gibi yasal yükümlülüklerimizi yerine getirmek için veri işleme faaliyetleri gerçekleştirebiliriz.</li>
+      <li><strong>Meşru Menfaat:</strong>&nbsp;Güvenlik önlemleri almak, dolandırıcılığı önlemek, hizmet kalitesini artırmak gibi meşru menfaatlerimiz doğrultusunda verilerinizi işleyebiliriz.</li>
+      <li><strong>Hayati Çıkarların Korunması:</strong>&nbsp;Nadir durumlarda, sizin veya başka bir kişinin hayati çıkarlarını korumak için veri işleme gerekli olabilir.</li>
+      <li><strong>Kamu Yararına Faaliyet:</strong>&nbsp;Kamu sağlığı, bilimsel araştırma gibi kamu yararına faaliyetler için veriler anonim hale getirilerek kullanılabilir.</li>
+    </ul>
+    
+    <h3>6. Çerezler ve Takip Teknolojileri</h3>
+    <p>
+      Çerezler (cookies), kullanıcı tercihlerini hatırlamak ve analitik toplamak amacıyla kullanılır. Kullanıcı, çerez kullanımına ilişkin tercihlerini tarayıcı ayarlarından değiştirebilir.
+    </p>
+    <p>
+      Quik platformunda aşağıdaki çerez ve takip teknolojileri kullanılmaktadır:
+    </p>
+    <ul>
+      <li><strong>Zorunlu Çerezler:</strong>&nbsp;Platformun temel işlevleri için gerekli olan ve devre dışı bırakılamayan çerezlerdir. Bunlar güvenlik, kimlik doğrulama ve temel site fonksiyonları için kullanılır.</li>
+      <li><strong>Performans Çerezleri:</strong>&nbsp;Ziyaretçilerin siteyi nasıl kullandıklarına dair bilgi toplar. Bu çerezler, sitenin performansını ve kullanıcı deneyimini iyileştirmemize yardımcı olur.</li>
+      <li><strong>İşlevsellik Çerezleri:</strong>&nbsp;Kullanıcı tercihlerini (dil seçimi, bölge ayarları vb.) hatırlayarak daha kişiselleştirilmiş bir deneyim sunmak için kullanılır.</li>
+      <li><strong>Analitik Çerezler:</strong>&nbsp;Ziyaretçi davranışlarını analiz etmek için kullanılır. Bu çerezler, hangi sayfaların daha popüler olduğu, kullanıcıların sitede ne kadar zaman geçirdiği gibi bilgileri toplar.</li>
+      <li><strong>Piksel Etiketleri (Web Beacons):</strong>&nbsp;Web sayfalarına yerleştirilen ve kullanıcı davranışlarını izleyen küçük grafik dosyalarıdır.</li>
+      <li><strong>Yerel Depolama (Local Storage):</strong>&nbsp;Tarayıcınızın yerel depolama alanında bazı verileri saklayarak uygulama performansını iyileştirmek için kullanılır.</li>
+    </ul>
+    <p>
+      Çerez tercihlerinizi yönetmek için:
+    </p>
+    <ul>
+      <li>Platformumuzun çerez ayarları panelini kullanabilirsiniz</li>
+      <li>Tarayıcı ayarlarınızdan çerezleri kabul edip etmemeyi seçebilirsiniz</li>
+      <li>"Gizli mod" veya "inkognito" pencerelerinde gezinti yapabilirsiniz</li>
+      <li>Çerez engelleyici eklentiler kullanabilirsiniz</li>
+    </ul>
+    <p>
+      Çerezleri tamamen devre dışı bırakmanız durumunda, platformumuzun bazı işlevlerinin düzgün çalışmayabileceğini lütfen unutmayın.
+    </p>
+    
+    <h3>7. Üçüncü Taraflara Aktarım</h3>
+    <p>
+      Kişisel veriler, yalnızca aşağıdaki durumlarda sınırlı ve güvenli şekilde aktarılır:
+    </p>
+    <ul>
+      <li>Sunucu barındırma ve teknik altyapı hizmet sağlayıcıları</li>
+      <li>Yetkili kamu kurumları (mahkeme kararları veya kanun gereği)</li>
+      <li>Analitik ve istatistik hizmetleri (anonimleştirilmiş veri)</li>
+      <li>Ödeme işlemcileri ve finans kuruluşları (ücretli hizmetler için)</li>
+      <li>Müşteri destek hizmetleri sağlayıcıları</li>
+      <li>Bulut depolama sağlayıcıları</li>
+      <li>Güvenlik ve doğrulama hizmeti sağlayıcıları</li>
+      <li>Yazılım geliştirme ve bakım ortakları</li>
+    </ul>
+    <p>
+      Hiçbir koşulda kullanıcı verileri ticari amaçla satılmaz veya paylaşılmaz.
+    </p>
+    <p>
+      Veri aktarımı yaptığımız tüm üçüncü taraflarla, verilerin güvenliğini ve gizliliğini sağlamak amacıyla veri işleme sözleşmeleri imzalanmıştır. Bu sözleşmeler, söz konusu tarafların verilerinizi yalnızca belirtilen amaçlar için kullanmasını ve yeterli güvenlik önlemlerini almasını şart koşar.
+    </p>
+    <p>
+      Verileriniz, yalnızca gerekli durumlarda ve aşağıdaki güvenlik önlemleri altında yurtdışına aktarılabilir:
+    </p>
+    <ul>
+      <li>Avrupa Komisyonu tarafından yeterli koruma sağladığı kabul edilen ülkelere</li>
+      <li>Standart veri koruma maddeleri veya bağlayıcı şirket kuralları gibi uygun güvenceler sunan ülkelere</li>
+      <li>Kullanıcının açık rızası olması durumunda diğer ülkelere</li>
+    </ul>
+    
+    <h3>8. Veri Güvenliği</h3>
+    <p>
+      SGDD‑ASAM, teknik ve idari tedbirler ile veri güvenliğini sağlamak amacıyla aşağıdaki yöntemleri kullanır:
+    </p>
+    <ul>
+      <li><strong>Şifreleme Teknolojileri:</strong>&nbsp;AES-256 bit şifreleme, TLS 1.3 protokolü, HTTPS bağlantıları, uçtan uca şifrelenmiş iletişim</li>
+      <li><strong>Erişim Kontrol Sistemleri:</strong>&nbsp;Çok faktörlü kimlik doğrulama, en az yetki prensibi, rol tabanlı erişim kontrolleri, otomatik oturum sonlandırma</li>
+      <li><strong>Güvenlik İzleme:</strong>&nbsp;7/24 güvenlik izleme, anormal davranış tespiti, yetkisiz erişim önleme sistemleri, DDoS koruma çözümleri</li>
+      <li><strong>Düzenli Testler:</strong>&nbsp;Zafiyet taramaları, penetrasyon testleri, güvenlik duvarı testleri, kod güvenliği analizleri</li>
+      <li><strong>Veri Yedekleme:</strong>&nbsp;Günlük yedeklemeler, coğrafi olarak ayrı lokasyonlarda yedekleme, felaket kurtarma planları</li>
+      <li><strong>Personel Eğitimi:</strong>&nbsp;Düzenli veri güvenliği eğitimleri, sosyal mühendislik farkındalık programları</li>
+      <li><strong>Fiziksel Güvenlik:</strong>&nbsp;Veri merkezlerinde 24 saat kamera gözetimi, biyometrik erişim kontrolleri, çevresel tehdit önlemleri</li>
+      <li><strong>Veri Anonimleştirme:</strong>&nbsp;Analiz ve istatistik amaçlı kullanımlarda veri anonimleştirme teknikleri</li>
+      <li><strong>Güvenlik Belgelendirmesi:</strong>&nbsp;ISO 27001 Bilgi Güvenliği Yönetim Sistemi standartlarına uygunluk</li>
+    </ul>
+    <p>
+      Herhangi bir veri ihlali durumunda, yasal yükümlülüklerimiz çerçevesinde en geç 72 saat içinde ilgili denetim otoritelerine ve etkilenen kullanıcılara bildirimde bulunulacaktır.
+    </p>
+    
+    <h3>9. Saklama Süresi</h3>
+    <p>
+      Veriler, yasal zorunluluklar ve işleme amacı gereğince saklanır; süresi sona erdiğinde güvenli biçimde silinir, yok edilir veya anonimleştirilir. Örnek:
+    </p>
+    <ul>
+      <li><strong>Hesap Bilgileri:</strong>&nbsp;Hesap aktif olduğu sürece ve hesabın kapatılmasından sonra 90 gün</li>
+      <li><strong>Oturum Kayıtları:</strong>&nbsp;2 yıl</li>
+      <li><strong>Mesajlaşma İçerikleri:</strong>&nbsp;Aktif hesaplarda süresiz, hesap kapatıldıktan sonra 90 gün</li>
+      <li><strong>İşlem Kayıtları:</strong>&nbsp;5 yıl</li>
+      <li><strong>Ödeme Bilgileri:</strong>&nbsp;Son işlemden sonra 2 yıl</li>
+      <li><strong>Destek Talepleri:</strong>&nbsp;3 yıl</li>
+      <li><strong>Güvenlik Kayıtları:</strong>&nbsp;3 yıl</li>
+      <li><strong>İşlem Logları:</strong>&nbsp;18 ay</li>
+      <li><strong>Analitik Veriler:</strong>&nbsp;Anonimleştirilmiş formda 5 yıl</li>
+      <li><strong>Muhasebe Kayıtları:</strong>&nbsp;10 yıl (Vergi Usul Kanunu kapsamında)</li>
+    </ul>
+    <p>
+      Veri saklama sürelerimiz, aşağıdaki kriterler göz önünde bulundurularak belirlenmektedir:
+    </p>
+    <ul>
+      <li>Yasal yükümlülükler ve zamanaşımı süreleri</li>
+      <li>Veri işleme amacının gerektirdiği süre</li>
+      <li>Sektör standartları ve iyi uygulamalar</li>
+      <li>Olası hukuki uyuşmazlıklarda delil teşkil etme potansiyeli</li>
+    </ul>
+    <p>
+      Yasal saklama süresi sona eren veriler, düzenli veri temizleme işlemleri kapsamında güvenli şekilde silinir veya anonim hale getirilir. Bu işlemler, veri silme politikalarına uygun olarak gerçekleştirilir ve kayıt altına alınır.
+    </p>
+    
+    <h3>10. Kullanıcı Hakları</h3>
+    <p>
+      KVKK ve GDPR kapsamında, kullanıcılar aşağıdaki haklara sahiptir:
+    </p>
+    <ul>
+      <li><strong>Bilgi Edinme Hakkı:</strong>&nbsp;Hangi kişisel verilerinizin işlendiğini öğrenme</li>
+      <li><strong>Erişim Hakkı:</strong>&nbsp;İşlenen kişisel verilerinize erişim talep etme ve bunların kopyalarını alma</li>
+      <li><strong>Düzeltme Hakkı:</strong>&nbsp;Yanlış veya eksik kişisel verilerinizin düzeltilmesini isteme</li>
+      <li><strong>Silme Hakkı (Unutulma Hakkı):</strong>&nbsp;Belirli koşullar altında verilerinizin silinmesini talep etme</li>
+      <li><strong>İşleme Sınırlandırma Hakkı:</strong>&nbsp;Verilerinizin işlenmesini sınırlandırma talebinde bulunma</li>
+      <li><strong>Veri Taşınabilirliği Hakkı:</strong>&nbsp;Verilerinizi yapılandırılmış, yaygın olarak kullanılan ve makine tarafından okunabilir bir formatta alma</li>
+      <li><strong>İtiraz Hakkı:</strong>&nbsp;Meşru menfaat temelinde yapılan veri işlemelerine itiraz etme</li>
+      <li><strong>Otomatik Karar Almaya İtiraz:</strong>&nbsp;Otomatik karar alma (profilleme dahil) süreçlerine tabi olmama</li>
+      <li><strong>Rızayı Geri Çekme Hakkı:</strong>&nbsp;Daha önce verdiğiniz rızayı istediğiniz zaman geri çekme</li>
+      <li><strong>Şikayet Hakkı:</strong>&nbsp;Veri koruma otoritesine şikayette bulunma</li>
+    </ul>
+    <p>
+      Bu haklarınızı kullanmak için aşağıdaki yöntemlerle bizimle iletişime geçebilirsiniz:
+    </p>
+    <ul>
+      <li><strong>E-posta:</strong>&nbsp;<a href="mailto:kvkk@sgdd-asam.org">kvkk@sgdd-asam.org</a></li>
+      <li><strong>Posta:</strong>&nbsp;"Birlik Mah. Katar Cad. No:11, Çankaya / ANKARA"</li>
+      <li><strong>Güvenli Online Form:</strong>&nbsp;<a href="https://quik.sgdd-asam.org/veri-basvuru">quik.sgdd-asam.org/veri-basvuru</a></li>
+      <li><strong>Quik Uygulaması:</strong>&nbsp;Hesap ayarları > Gizlilik > Veri Talepleri bölümü</li>
+    </ul>
+    <p>
+      Talebiniz alındıktan sonra, kimlik doğrulama işlemi gerçekleştirilir ve 30 gün içerisinde talebinizi yanıtlarız. Talebin karmaşıklığına bağlı olarak bu süre 60 güne kadar uzatılabilir, ancak böyle bir durumda sizi bilgilendiririz.
+    </p>
+    
+    <h3>11. Çocukların Gizliliği</h3>
+    <p>
+      Quik platformu, 18 yaşın altındaki çocukların kullanımını hedeflememektedir. Bilerek 18 yaş altındaki kişilerden kişisel veri toplamayız. Eğer bir ebeveyn veya vasi, çocuğunun bize kişisel veri sağladığını düşünüyorsa, lütfen bizimle iletişime geçin ve bu bilgileri sistemlerimizden silmek için gerekli adımları atacağız.
+    </p>
+    <p>
+      18 yaşın altındaki bir çocuğa ait kişisel veri topladığımızı fark ettiğimizde, bu verileri sistemlerimizden en kısa sürede sileriz. Ebeveynler veya yasal vasiler, çocuklarının verilerinin toplanması, kullanılması veya ifşa edilmesiyle ilgili sorular için <a href="mailto:kvkk@sgdd-asam.org">kvkk@sgdd-asam.org</a> adresinden bizimle iletişime geçebilirler.
+    </p>
+    
+    <h3>12. Yapay Zeka ve Veri İşleme</h3>
+    <p>
+      Quik platformunda kullanılan yapay zeka teknolojilerinin veri işleme faaliyetleri aşağıdaki şekilde gerçekleşir:
+    </p>
+    <ul>
+      <li>Yapay zeka modellerimiz, kullanıcı sorguları ve etkileşimleri doğrultusunda kişiselleştirilmiş içerik ve yanıtlar üretir.</li>
+      <li>Kullanıcı verileri, yapay zeka sistemlerinin eğitilmesi ve geliştirilmesi için yalnızca anonimleştirilmiş formda kullanılabilir.</li>
+      <li>Yapay zeka sistemlerimiz, kullanıcı davranışlarını öğrenerek daha doğru ve kişiselleştirilmiş yanıtlar vermek için kullanım modellerini analiz eder.</li>
+      <li>Kullanıcılara tam kontrol sağlamak adına, yapay zeka özelliklerini ayarlar menüsünden kişiselleştirme ve sınırlandırma imkanı sunulur.</li>
+      <li>Yapay zeka sistemlerimiz, kişiselleştirilmiş içerik üretmek amacıyla kullanıcı tercihlerini ve davranışlarını öğrenir, ancak hassas kişisel veri kategorileri (sağlık verileri, dini inançlar, siyasi görüşler vb.) varsayılan olarak kullanılmaz.</li>
+    </ul>
+    <p>
+      Yapay zeka sistemlerimiz, ayrımcılık yapmaması, önyargılı olmaması ve kişilik haklarına saygılı olması için düzenli olarak denetlenir ve test edilir. Kullanıcılar, yapay zeka sisteminin ürettiği sonuçlara itiraz etme veya doğruluğunu sorgulama hakkına sahiptir.
+    </p>
+    
+    <h3>13. Uluslararası Veri Transferleri</h3>
+    <p>
+      SGDD-ASAM, veri depolama ve işleme amacıyla Türkiye sınırları dışında bulunan sunuculara veri aktarımı yapabilir. Bu aktarımlar, aşağıdaki güvenceler sağlanarak gerçekleştirilir:
+    </p>
+    <ul>
+      <li>Avrupa Komisyonu'nun yeterlilik kararı bulunan ülkelere aktarım</li>
+      <li>Standart veri koruma maddeleri veya bağlayıcı şirket kuralları gibi uygun güvenceler sağlanması</li>
+      <li>İlgili kişinin açık rızası alınarak veri aktarımı yapılması</li>
+      <li>Sözleşmenin ifası veya hukuki yükümlülükler için gerekli olması durumunda veri aktarımı</li>
+    </ul>
+       <p>
+      Uluslararası veri transferlerimiz, KVKK ve GDPR gerekliliklerine uygun olarak gerçekleştirilir. Veri transferi sırasında gerekli tüm teknik ve idari önlemler alınır ve veri sahiplerinin hakları her aşamada korunur.
+    </p>
+    
+    <h3>14. Politika Güncellemeleri</h3>
+    <p>
+      Bu Gizlilik Politikası, teknolojik gelişmeler, mevzuat değişiklikleri veya Quik hizmetlerinde yapılan güncellemeler doğrultusunda zaman zaman değiştirilebilir. Politika değişiklikleri, güncellenmiş metnin platformumuzda yayımlanmasıyla yürürlüğe girer.
+    </p>
+    <p>
+      Politika üzerinde önemli değişiklikler yapıldığında, kullanıcılara bildirim gönderilir veya uygulama içi bildirim yoluyla bilgilendirme sağlanır. Değişikliklerden sonra hizmetlerimizi kullanmaya devam etmeniz, güncellenmiş politikayı kabul ettiğiniz anlamına gelir.
+    </p>
+    <p>
+      Kullanıcıların, Gizlilik Politikası’nı düzenli aralıklarla gözden geçirmeleri tavsiye edilir.
+    </p>
+    
+    <h3>15. İletişim Bilgileri</h3>
+    <p>
+      Gizlilik Politikası veya veri işleme uygulamalarımız hakkında sorularınız, talepleriniz veya şikayetleriniz olması durumunda bizimle aşağıdaki kanallar üzerinden iletişime geçebilirsiniz:
+    </p>
+    <ul>
+      <li><strong>E-posta:</strong>&nbsp;<a href="mailto:kvkk@sgdd-asam.org">kvkk@sgdd-asam.org</a></li>
+      <li><strong>Telefon:</strong>&nbsp;+90 312 474 31 00</li>
+      <li><strong>Posta Adresi:</strong>&nbsp;"Birlik Mah. Katar Cad. No:11, Çankaya / ANKARA"</li>
+      <li><strong>Online İletişim Formu:</strong>&nbsp;<a href="https://quik.sgdd-asam.org/iletisim">quik.sgdd-asam.org/iletisim</a></li>
+    </ul>
+    <p>
+      Tüm veri işleme faaliyetlerimiz, kullanıcılarımızın güvenliği ve memnuniyeti öncelikli olacak şekilde yürütülmektedir.
+    </p>
+
+    </div>
+  </div>
+</div>
+
 
 <!-- Yeni: Sidebar arama butonu, settings-btn'ün solunda -->
 <button id="sidebar-search-toggle" data-tooltip="Sohbet Ara" class="sidebar-search-toggle">
@@ -4862,7 +5607,7 @@ body.dark .chat-input #page-down-btn img {
 <div id="chat-search-modal" class="modal">
   <div class="modal-content chat-search-modal-content">
     <!-- Kapatma Butonu -->
-    <span id="chat-search-close" class="modal-close">&times;</span>
+    <span id="chat-search-close" class="modal-close settings-close">&times;</span>
     <!-- Arama Başlığı -->
     <div class="chat-search-header">
       <h2>Sohbet Ara</h2>
@@ -5919,8 +6664,6 @@ console.log(quikChat.sendMessage("Nasılsın?"));</code></pre>
 
 
 
-
-
 <!-- Silme Onay Modali -->
 <div id="confirm-modal" class="modal" style="display: none;">
   <div class="modal-content">
@@ -5943,6 +6686,20 @@ console.log(quikChat.sendMessage("Nasılsın?"));</code></pre>
     </div>
   </div>
 </div>
+
+
+<!-- Görsel Lightbox Modal -->
+<div id="image-modal" class="image-modal">
+  <div class="image-modal__container">
+    <img id="modal-img" class="image-modal__img" src="" alt="Görsel" />
+  </div>
+</div>
+
+
+
+
+
+
 
 
   <!-- Marked ve Highlight.js Kütüphaneleri -->
@@ -6278,21 +7035,23 @@ function renderChatHistory() {
         input.addEventListener("mouseup", (event) => event.stopPropagation());
         titleSpan.replaceWith(input);
         input.focus();
-function finishEditing() {
-    const newTitle = input.value.trim() || currentTitle;
-    conv.title = newTitle;
 
-    // aktif sohbet düzenleniyorsa tarayıcı başlığını da güncelle
-    if (currentConversation && currentConversation.id === conv.id) {
-        document.title = newTitle || "quik";
-    }
+        function finishEditing() {
+            const newTitle = input.value.trim() || currentTitle;
+            conv.title = newTitle;
 
-    renderChatHistory();
-    saveConversations();
-    updateTopBarTitle();
-goToChat(conv.id);
-    populateChatSummaryDropdown();
-}
+            // aktif sohbet düzenleniyorsa tarayıcı başlığını da güncelle
+            if (currentConversation && currentConversation.id === conv.id) {
+                document.title = newTitle || "quik";
+            }
+
+            renderChatHistory();
+            saveConversations();
+            updateTopBarTitle();
+            goToChat(conv.id);
+            populateChatSummaryDropdown();
+        }
+
         input.addEventListener("blur", finishEditing);
         input.addEventListener("keydown", (event) => {
             if (event.key === "Enter") {
@@ -6314,36 +7073,39 @@ goToChat(conv.id);
       });
 
       // Delete button handler
-dropdownMenu.querySelector(".delete-btn").addEventListener("click", (e) => {
-  e.stopPropagation();
-  dropdownMenu.style.display = "none";
+      dropdownMenu.querySelector(".delete-btn").addEventListener("click", (e) => {
+        e.stopPropagation();
+        dropdownMenu.style.display = "none";
 
-  openConfirmModal(() => {
-    // 1. Üç satırda sohbeti sil ve kaydet
-    conversations = conversations.filter(c => c.id !== conv.id);
-    saveConversations();
+        openConfirmModal(() => {
+          // 1) Sohbeti diziden çıkar ve kaydet
+          conversations = conversations.filter(c => c.id !== conv.id);
+          saveConversations();
 
-    // 2. Eğer silinen sohbet şu andaki sohbetse → temizle, welcome göster
-    if (currentConversation?.id === conv.id) {
-      currentConversation = null;
-      chatContainer.innerHTML = "";
-      chatContainer.appendChild(welcomeMessage);
-      welcomeMessage.style.display = "block";
-    }
+          const deletedIsActive = currentConversation?.id === conv.id;
 
-    // 3. URL’i ana sayfaya çek ve sessionStorage’daki lastConversationId’yi temizle
-    saveLastConversationId(null);
-    goToHome();
+          if (deletedIsActive) {
+            // ── Aktif sohbet silindi ──
+            currentConversation = null;
+            chatContainer.innerHTML = "";
+            chatContainer.appendChild(welcomeMessage);
+            welcomeMessage.style.display = "block";
+            saveLastConversationId(null);
+            goToHome();                        // Yalnızca bu durumda ana sayfa
+            document.title = "quik";
+          } else {
+            // ── Başka bir sohbet silindi ──
+            // URL ve currentConversation dokunulmaz
+            saveLastConversationId(currentConversation?.id || null);
+          }
 
-    // 4. Liste, sayaç, dropdown’ı güncelle, başlığı resetle
-    renderChatHistory();
-    updateChatCount();
-    populateChatSummaryDropdown();
-    document.title = "quik";
-    updateTopBarTitle();
-  }, "Bu sohbeti silmek istediğinize emin misiniz?");
-});
-
+          // Ortak güncellemeler
+          renderChatHistory();
+          updateChatCount();
+          populateChatSummaryDropdown();
+          updateTopBarTitle();
+        }, "Bu sohbeti silmek istediğinize emin misiniz?");
+      });
 
       // --- li Tıklama Olayı (Değişiklik Yok) ---
       li.addEventListener("click", (e) => {
@@ -6359,8 +7121,9 @@ dropdownMenu.querySelector(".delete-btn").addEventListener("click", (e) => {
         currentConversation = conv;
         saveLastConversationId(currentConversation.id);
         renderChat();
-        renderChatHistory(); // Aktif stili ayarlamak için tekrar çağırıyoruz
+        renderChatHistory();
         closeChatSearch();
+
         // Aktif sınıfı tekrar ayarla (renderChatHistory içinde yapılıyor ama garanti olsun)
         document.querySelectorAll(".chat-history-item").forEach((item) => item.classList.remove("active"));
         const activeItem = document.querySelector(`.chat-history-item[data-id="${conv.id}"]`);
@@ -6371,7 +7134,7 @@ dropdownMenu.querySelector(".delete-btn").addEventListener("click", (e) => {
         }
         document.title = currentConversation.title || "quik";
         updateTopBarTitle();
-goToChat(conv.id); // BU SATIRI EKLE
+        goToChat(conv.id);
       });
 
 
@@ -6447,7 +7210,7 @@ function renderChat() {
   chatContainer.innerHTML = "";
   if (currentConversation && currentConversation.messages.length > 0) {
     currentConversation.messages.forEach(msg => {
-      const bubble = appendMessageBubble(msg.sender, msg.text, msg.id);
+      const bubble = appendMessageBubble(msg.sender, msg.text, msg.id, msg.images || []);
       if (msg.sender === "assistant" && msg.complete) {
         addFeedbackControls(bubble, msg.text);
       }
@@ -6461,26 +7224,42 @@ function renderChat() {
 
 
 // appendMessageBubble fonksiyonunu geri dönüş değeriyle güncelle
-function appendMessageBubble(sender, text, messageId) {
+function appendMessageBubble(sender, text, messageId, imagesB64 = []) {
   const bubble = document.createElement("div");
   bubble.className = "chat-bubble " + (sender === "user" ? "user-bubble" : "assistant-bubble");
-
-  // Burada ID’yi dataset’e atıyoruz
   bubble.dataset.msgId = messageId;
 
-  if (sender === "assistant") {
-    bubble.innerHTML = marked.parse(text);
-    bubble.querySelectorAll('pre code').forEach(block => hljs.highlightElement(block));
-    styleCodeBlocks();
-  } else {
-    bubble.innerHTML = marked.parse(text);
+  let innerHTML = "";
+
+  // ➋ Eğer user ve elinde Base64 resimler varsa; each görseli <img> olarak ekle
+  if (sender === "user" && imagesB64.length > 0) {
+    imagesB64.forEach(b64 => {
+    innerHTML += `
+      <img 
+        src="data:image/jpeg;base64,${b64}" 
+        alt="attachment" 
+        class="attachment-img"
+      />
+    `;
+    });
   }
 
+  // ➌ Sonra metni parse et
+  innerHTML += marked.parse(text);
+  bubble.innerHTML = innerHTML;
+
+  // ➍ Eğer assistant ise kod bloklarını highlight et
+  if (sender === "assistant") {
+    bubble.querySelectorAll('pre code').forEach(block => hljs.highlightElement(block));
+    styleCodeBlocks();
+  }
+ chatContainer.appendChild(bubble);
+ // Her yeni balon oluşturulduğunda lightbox dinleyicisini tetikle
+if (window.enableImageModal) window.enableImageModal();
   chatContainer.appendChild(bubble);
   scrollChatToBottom();
   return bubble;
 }
-
 // Düz metni tabloya çeviren yardımcı fonksiyon
 function convertTextToTable(text) {
   const lines = text.trim().split("\n");
@@ -6647,108 +7426,137 @@ function addFeedbackControls(bubble, answerText) {
   // Feedback butonlarını ekle
   const feedbackDiv = document.createElement("div");
   feedbackDiv.className = "feedback-controls";
-// Beğen Butonu
-const likeBtn = document.createElement("button");
-const likeIcon = document.createElement("img");
-likeIcon.src = "icons/like_btn.png";
-likeIcon.alt = "Beğen";
-likeIcon.style.width = "16px";
-likeIcon.style.height = "16px";
-likeBtn.appendChild(likeIcon);
-likeBtn.dataset.tooltip = "Beğendim"; // title yerine dataset
-likeBtn.addEventListener("click", () => {
-  if (likeIcon.src.includes("liked_btn.png")) return; // Zaten beğenilmişse çık
-  likeIcon.src = "icons/liked_btn.png"; // İkonu değiştir
-  dislikeIcon.src = "icons/dislike_btn.png"; // Dislike'ı sıfırla
-  console.log("Cevap beğenildi:", answerText);
-});
 
-// Beğenme Butonu
-const dislikeBtn = document.createElement("button");
-const dislikeIcon = document.createElement("img");
-dislikeIcon.src = "icons/dislike_btn.png";
-dislikeIcon.alt = "Beğenme";
-dislikeIcon.style.width = "16px";
-dislikeIcon.style.height = "16px";
-dislikeBtn.appendChild(dislikeIcon);
-dislikeBtn.dataset.tooltip = "Beğenmedim"; // title yerine dataset
-dislikeBtn.addEventListener("click", () => {
-  if (dislikeIcon.src.includes("disliked_btn.png")) return; // Zaten beğenilmemişse çık
-  dislikeIcon.src = "icons/disliked_btn.png"; // İkonu değiştir
-  likeIcon.src = "icons/like_btn.png"; // Like'ı sıfırla
-  console.log("Cevap beğenilmedi:", answerText);
-});
+  // 1) Beğen Butonu
+  const likeBtn  = document.createElement("button");
+  likeBtn.classList.add("like-btn"); 
 
-// Kopyala Butonu (HTML Formatıyla)
-  const copyBtn = document.createElement("button");
-  const copyIcon = document.createElement("img");
-  copyIcon.src = "icons/copy_btn.png";
-  copyIcon.alt = "Kopyala";
-  copyIcon.style.width = "16px";
-  copyIcon.style.height = "16px";
-  copyBtn.appendChild(copyIcon);
-  copyBtn.dataset.tooltip = "Kopyala";
-  copyBtn.addEventListener("click", async () => {
-    try {
-      // Markdown’ı HTML’e çevir
-      const htmlContent = marked.parse(answerText);
-      // Düz metni de hazırla (Markdown işaretleri temizlenmiş)
-      const plainText = answerText
-        .replace(/\*\*/g, '') // Bold işaretlerini kaldır
-        .replace(/\*/g, '')   // Tek yıldızları kaldır
-        .replace(/_/g, '')    // Alt çizgileri kaldır
-        .replace(/~~/g, '');  // Üstü çizili işaretlerini kaldır
-      
-      // ClipboardItem ile HTML ve düz metni panoya yaz
-      const htmlBlob = new Blob([htmlContent], { type: 'text/html' });
-      const plainBlob = new Blob([plainText], { type: 'text/plain' });
-      const data = [new ClipboardItem({
-        'text/html': htmlBlob,
-        'text/plain': plainBlob
-      })];
+  // <span> kullan, background-image ile ikon yükle
+  const likeIcon = document.createElement("span");
+  likeIcon.className = "like-icon";        // CSS’te tanımlayacağız
+  likeIcon.setAttribute("aria-label", "Beğen");
+  likeIcon.setAttribute("role", "img");    // Erişilebilirlik
 
-      await navigator.clipboard.write(data);
-      copyBtn.classList.add("copied");
-      copyIcon.src = "icons/copied_btn.png";
-      console.log("Formatlı cevap kopyalandı:", htmlContent);
-      console.log("Düz metin hali:", plainText);
-    } catch (err) {
-      console.error("Kopyalama hatası:", err);
-      // Fallback: Düz metni kopyala
-      navigator.clipboard.writeText(answerText).then(() => {
-        copyBtn.classList.add("copied");
-        copyIcon.src = "icons/copied_btn.png";
-        console.log("Fallback: Düz metin kopyalandı:", answerText);
-      }).catch(fallbackErr => {
-        console.error("Fallback kopyalama hatası:", fallbackErr);
-      });
-    }
-    // Buton animasyonu için zamanlayıcı (syntax hatası düzeltildi)
-    setTimeout(() => {
-      copyBtn.classList.remove("copied");
-      copyIcon.src = "icons/copy_btn.png"; // Fazla parantez kaldırıldı
-    }, 2000);
+  /* Seçilemez + sürüklenemez */
+  likeIcon.draggable = false;
+  likeIcon.style.userSelect = "none";
+
+  likeBtn.appendChild(likeIcon);
+  likeBtn.dataset.tooltip = "Beğendim";
+
+  likeBtn.addEventListener("click", () => {
+    if (likeIcon.classList.contains("liked")) return;   // Zaten beğenilmişse
+    likeIcon.classList.add("liked");
+    dislikeIcon.classList.remove("disliked");
+    console.log("Cevap beğenildi:", answerText);
   });
 
-// Yeniden Üret Butonu (İkonlu)
-  const regenBtn = document.createElement("button");
-  const regenIcon = document.createElement("img");
-  regenIcon.src = "icons/regenerate_btn.png";
-  regenIcon.alt = "Yeniden Üret";
-  regenIcon.style.width = "16px";
-  regenIcon.style.height = "16px";
-  regenBtn.appendChild(regenIcon);
-  regenBtn.dataset.tooltip = "Tekrar Dene"; // title yerine dataset
-  regenBtn.addEventListener("click", () => {
-    console.log("Cevap yeniden üretiliyor...");
-    regenerateAnswer(bubble);
+
+  // 2) Beğenme Butonu
+  const dislikeBtn  = document.createElement("button");
+  dislikeBtn.classList.add("dislike-btn"); 
+
+  // İkonu <img> yerine <span> olarak tanımla
+  const dislikeIcon = document.createElement("span");
+  dislikeIcon.className = "dislike-icon";          // CSS’te .dislike-icon → icons/dislike_btn.png
+  dislikeIcon.setAttribute("aria-label", "Beğenme");
+  dislikeIcon.setAttribute("role", "img");
+
+  /* Seçim / kopyalama / sürükleme koruması */
+  dislikeIcon.draggable        = false;
+  dislikeIcon.style.userSelect = "none";
+
+  dislikeBtn.appendChild(dislikeIcon);
+  dislikeBtn.dataset.tooltip = "Beğenmedim"; // title yerine dataset
+
+  dislikeBtn.addEventListener("click", () => {
+    if (dislikeIcon.classList.contains("disliked")) return;     // Zaten beğenilmemişse çık
+
+    dislikeIcon.classList.add("disliked");  // Arka planı icons/disliked_btn.png yapacak CSS sınıfı
+    likeIcon.classList.remove("liked");     // Like ikonunu sıfırla
+    console.log("Cevap beğenilmedi:", answerText);
   });
 
-  feedbackDiv.appendChild(likeBtn);
-  feedbackDiv.appendChild(dislikeBtn);
-  feedbackDiv.appendChild(copyBtn);
-  feedbackDiv.appendChild(regenBtn);
-  bubble.appendChild(feedbackDiv);
+
+/* ────────────── KOPYALA BUTONU ────────────── */
+const copyBtn  = document.createElement("button");
+copyBtn.classList.add("copy-btn");               // CSS için
+const copyIcon = document.createElement("span"); // <img> yerine <span>
+copyIcon.className = "copy-icon";                // icons/copy_btn.png  → CSS’te
+copyIcon.setAttribute("aria-label", "Kopyala");
+copyIcon.setAttribute("role", "img");
+copyIcon.draggable        = false;               // Sürükleme engeli
+copyIcon.style.userSelect = "none";              // Seçim engeli
+["contextmenu", "copy"].forEach(evt =>           // Sağ tık / Ctrl+C engeli
+  copyIcon.addEventListener(evt, e => e.preventDefault())
+);
+
+
+copyBtn.appendChild(copyIcon);
+copyBtn.dataset.tooltip = "Kopyala";
+
+copyBtn.addEventListener("click", async () => {
+  try {
+    /* Markdown → HTML */
+    const htmlContent = marked.parse(answerText);
+
+    /* Plain-text (Markdown işaretlerini temizle) */
+    const plainText = answerText
+      .replace(/\*\*/g, '')
+      .replace(/\*/g, '')
+      .replace(/_/g, '')
+      .replace(/~~/g, '');
+
+    /* Clipboard’a ikili formatta yaz */
+    const data = [new ClipboardItem({
+      'text/html':  new Blob([htmlContent], { type: 'text/html' }),
+      'text/plain': new Blob([plainText], { type: 'text/plain' })
+    })];
+    await navigator.clipboard.write(data);
+
+    copyBtn.classList.add("copied");     // Animasyon için
+    copyIcon.classList.add("copied");    // icons/copied_btn.png → CSS’te
+  } catch (err) {
+    console.error("Kopyalama hatası:", err);
+    /* Fallback: düz metin */
+    await navigator.clipboard.writeText(answerText);
+    copyBtn.classList.add("copied");
+    copyIcon.classList.add("copied");
+  }
+
+  setTimeout(() => {
+    copyBtn.classList.remove("copied");
+    copyIcon.classList.remove("copied");
+  }, 2000);
+});
+
+/* ────────────── YENİDEN ÜRET BUTONU ────────────── */
+const regenBtn  = document.createElement("button");
+regenBtn.classList.add("regen-btn");             // CSS için
+const regenIcon = document.createElement("span");
+regenIcon.className = "regen-icon";              // icons/regenerate_btn.png → CSS
+regenIcon.setAttribute("aria-label", "Yeniden Üret");
+regenIcon.setAttribute("role", "img");
+regenIcon.draggable        = false;
+regenIcon.style.userSelect = "none";
+["contextmenu", "copy"].forEach(evt =>
+  regenIcon.addEventListener(evt, e => e.preventDefault())
+);
+
+regenBtn.appendChild(regenIcon);
+regenBtn.dataset.tooltip = "Tekrar Dene";
+
+regenBtn.addEventListener("click", () => {
+  console.log("Cevap yeniden üretiliyor...");
+  regenerateAnswer(bubble);
+});
+
+/* ────────────── FEEDBACK DIV’ine EKLE ────────────── */
+feedbackDiv.appendChild(likeBtn);
+feedbackDiv.appendChild(dislikeBtn);
+feedbackDiv.appendChild(copyBtn);
+feedbackDiv.appendChild(regenBtn);
+bubble.appendChild(feedbackDiv);
 }
 
 function regenerateAnswer(bubble) {
@@ -6809,7 +7617,7 @@ function regenerateAnswer(bubble) {
       history: currentConversation.messages.slice(0, -1),
       enable_web_search: enableWebSearch,
       model: selectedModel,
-      static_prompt: botSettings.staticPrompt
+      static_prompt: botSettings.staticPrompt,
     }),
     signal: currentFetchAbortController.signal
   })
@@ -6865,6 +7673,8 @@ async function sendMessage() {
   if (!userMessage) return;
 
   let fileContent = "";
+  let imagesB64   = [];
+
   if (uploadedFiles.length > 0) {
     const formData = new FormData();
     uploadedFiles.forEach(file => formData.append("files", file));
@@ -6876,6 +7686,7 @@ async function sendMessage() {
       if (response.ok) {
         const data = await response.json();
         fileContent = data.content;
+        imagesB64   = data.images || [];
       } else {
         console.error("File upload error:", response.statusText);
       }
@@ -6895,14 +7706,18 @@ async function sendMessage() {
     await startNewConversation();
   }
 
-  const userMessageId = Date.now().toString() + "_user";
+// ➊ messages dizisine Base64 imajları da ekle
+const userMessageId = Date.now().toString() + "_user";
 currentConversation.messages.push({
   id: userMessageId,
   sender: "user",
-  text: combinedMessage
+  text: combinedMessage,
+  images: imagesB64      // ← burada ekledik
 });
 
-  appendMessageBubble("user", displayedMessage, userMessageId);
+// ➋ appendMessageBubble çağrısına imagesB64 parametresini ilet
+appendMessageBubble("user", displayedMessage, userMessageId, imagesB64);
+
 
   // Check for URL and notify user
   const urlRegex = /https?:\/\/(?:[-\w.]|(?:%[\da-fA-F]{2}))+[^\s]*/;
@@ -6961,7 +7776,8 @@ goToChat(currentConversation.id);
         history: currentConversation.messages,
         enable_web_search: enableWebSearch,
         model: selectedModel,
-        static_prompt: botSettings.staticPrompt
+        static_prompt: botSettings.staticPrompt,
+        images: imagesB64
       }),
       signal: currentFetchAbortController.signal
     });
@@ -7059,11 +7875,16 @@ function styleCodeBlocks() {
 
       const copyBtn = document.createElement("button");
       copyBtn.className = "copy-btn";
+      copyBtn.draggable = false;
+      copyBtn.style.userSelect = "none";
+      copyBtn.addEventListener("dragstart", e => e.preventDefault());
+      copyBtn.addEventListener("copy",      e => e.preventDefault());
+      copyBtn.addEventListener("contextmenu", e => e.preventDefault());
       const copyIcon = document.createElement("img");
       copyIcon.src = "icons/copy_btn.png";
       copyIcon.alt = "Kopyala";
-      copyIcon.style.width = "20px";
-      copyIcon.style.height = "20px";
+      copyIcon.style.width = "16px";
+      copyIcon.style.height = "16px";
       copyBtn.appendChild(copyIcon);
 
       copyBtn.addEventListener("click", () => {
@@ -7074,7 +7895,7 @@ function styleCodeBlocks() {
           setTimeout(() => {
             copyIcon.src = "icons/copy_btn.png";
             copyBtn.classList.remove("copied");
-          }, 3000);
+          }, 2000);
         }).catch(err => console.error("Error copying code:", err));
       });
 
@@ -7214,26 +8035,26 @@ document.addEventListener("keydown", (e) => {
   const settingsModal  = document.getElementById("settings-modal");
   const chatSearchModal= document.getElementById("chat-search-modal");
 
-  /* 1 | BOŞKEN ENTER → HİÇBİR ŞEY YAPMA, NEWLINE EKLEME */
+  /* 1 | Boşken Enter → engelle */
   if (
-    e.key === "Enter"            &&          // sadece Enter
-    !e.shiftKey                  &&          // Shift+Enter hariç
-    document.activeElement === chatInput    &&  // odak textarea'da
-    chatInput.value.trim() === ""           // içerik boş
+    e.key === "Enter" && !e.shiftKey &&
+    document.activeElement === chatInput &&
+    chatInput.value.trim() === ""
   ) {
-    e.preventDefault();                      // newline / submit engellendi
-    return;                                  // diğer kodları çalıştırma
+    e.preventDefault();
+    return;
   }
 
   /* 2 | Ctrl / Cmd kısayolları → dokunma */
   if (e.ctrlKey || e.metaKey) return;
-  
-  /* ESC tuşuna basıldığında hiçbir şey yapma */
-  if (e.key === "Escape") {
-    return;
-  }
 
-  /* 3 | Ayarlar veya arama modalı açıksa ya da başka input odaklıysa → dokunma */
+  /* 2.5 | Backspace tuşu → odaklama yapma */
+  if (e.key === "Backspace") return;
+
+  /* ESC → dokunma */
+  if (e.key === "Escape") return;
+
+  /* 3 | Modal açık ya da başka input odakta → dokunma */
   if (
     (settingsModal.style.display === "block" || chatSearchModal.style.display === "block") ||
     document.activeElement.tagName === "INPUT" ||
@@ -7242,15 +8063,14 @@ document.addEventListener("keydown", (e) => {
     return;
   }
 
-  /* 4 | Chat-input odakta değilse odakla, ama Enter tuşuna basılırsa preventDefault yap */
+  /* 4 | Odak chat-input’ta değilse odakla */
   if (document.activeElement !== chatInput) {
-    if (e.key === "Enter") {
-      e.preventDefault(); // Enter'a basıldığında varsayılan davranışı engelle
-    }
+    if (e.key === "Enter") e.preventDefault();
     chatInput.focus();
     console.log("Chat-input otomatik olarak odaklandı.");
   }
 });
+
 
 
   // Bildirim Ayarları
@@ -7694,14 +8514,19 @@ document.addEventListener('keydown', function (e) {
 const fileUploadBtn = document.getElementById("file-upload-btn");
 const fileInput = document.createElement("input");
 fileInput.type = "file";
-fileInput.accept = ".pdf,.doc,.docx,.txt"; // İzin verilen dosya türleri
+fileInput.accept = ".pdf,.doc,.docx,.txt,.png,.jpg,.jpeg,.gif,.webp";
+
 fileInput.multiple = true; // Çoklu dosya seçimi
 fileInput.style.display = "none"; // Girdi alanını gizle
 document.body.appendChild(fileInput);
 
 const fileContainer = document.getElementById("file-container");
 let uploadedFiles = []; // Yüklenen dosyaları tutacak dizi
-const allowedExtensions = [".pdf", ".doc", ".docx", ".txt"]; // İzin verilen uzantılar
+const allowedExtensions = [
+  ".pdf", ".doc", ".docx", ".txt",
+  ".png", ".jpg", ".jpeg", ".gif", ".webp"
+];
+
 
 
 // Dosyalar yüklendikten sonra, backend'e gönderim için örnek API çağrısı
@@ -7738,6 +8563,12 @@ function getFileIcon(ext) {
       return 'icons/pdf_icon.png';
     case '.txt':
       return 'icons/txt_icon.png';
+    case '.png':
+    case '.jpg':
+    case '.jpeg':
+    case '.gif':
+    case '.webp':
+      return 'icons/image_icon.png';   // Küçük bir resim ikonu ekle
     default:
       return 'icons/default_icon.png'; // Bilinmeyen dosya türleri için varsayılan ikon
   }
@@ -8547,6 +9378,13 @@ function escapeRegExp(string) {
 document.addEventListener("DOMContentLoaded", () => {
   const chatInput = document.getElementById("chat-input-textarea");
 
+  /*  Ctrl+A ile tüm metin seçildiyse, input’tan çıkarken seçimi temizle  */
+  chatInput.addEventListener('blur', () => {
+  const len = chatInput.value.length;
+  chatInput.setSelectionRange(len, len);   // imleç en sona
+});
+
+
   // Chat input alanı için otomatik emoji değiştirme listener'ı (sadece bir kere eklenir)
   chatInput.addEventListener("input", function() {
     for (const key in emojiMap) {
@@ -8735,9 +9573,11 @@ saveLastConversationId(conv.id);
   });
 }
 
+
 chatSearchInput.addEventListener("input", function () {
   renderSearchResults(this.value);
 });
+
 
 // Kategori sekmeleri için tıklama dinleyicisi
 const emojiTabs = document.querySelectorAll('.emoji-tab');
@@ -8768,6 +9608,7 @@ emojiTabs.forEach(tab => {
   });
 });
 
+
 // Emoji arama dinleyicisi
 document.getElementById("emoji-search-input").addEventListener("input", function() {
   const query = this.value.trim().toLowerCase();
@@ -8788,10 +9629,12 @@ document.getElementById("emoji-search-input").addEventListener("input", function
   }
 });
 
+
 function isMainPage() {
   const welcomeMessage = document.getElementById("welcome-message");
   return welcomeMessage && welcomeMessage.style.display !== "none";
 }
+
 
 function updateTopBarTitle() {
   const titleElem = document.getElementById("chat-title");
@@ -8812,6 +9655,7 @@ function updateTopBarTitle() {
     }
   }
 }
+
 
 document.addEventListener('DOMContentLoaded', () => {
   const chatTitleEl   = document.querySelector('.top-bar-title');
@@ -9579,53 +10423,388 @@ window.addEventListener('DOMContentLoaded', () => {
   goToHome();
 });
 
-// Butonu seç
-const pageDownBtn = document.getElementById('page-down-btn');
-
-// Scroll kontrolü: 
-// — Altta < 20px kalınca gizle, yoksa göster
-window.addEventListener('scroll', () => {
-  const fromBottom = document.documentElement.scrollHeight 
-                   - (window.scrollY + window.innerHeight);
-  if (fromBottom > 20) {
-    pageDownBtn.classList.add('visible');
-  } else {
-    pageDownBtn.classList.remove('visible');
-  }
-});
-
-// Tıklayınca smooth scroll ile en alta in
-pageDownBtn.addEventListener('click', () => {
-  window.scrollTo({ top: document.documentElement.scrollHeight, behavior: 'smooth' });
-});
-
 document.addEventListener("DOMContentLoaded", () => {
   const pageDownBtn = document.getElementById("page-down-btn");
-  const scrollWrapper = document.querySelector(".scroll-wrapper"); // Mesajları kaydıran container :contentReference[oaicite:0]{index=0}
+  const scrollWrapper = document.querySelector(".scroll-wrapper");
+  
+  // Eğer gerekli elementler yoksa çık
+  if (!pageDownBtn || !scrollWrapper) {
+    console.warn("Page down button veya scroll wrapper bulunamadı");
+    return;
+  }
 
-  // 1) scrollWrapper’a scroll listener ekle
-  scrollWrapper.addEventListener("scroll", () => {
-    // Ne kadar yukarıdayız?
-    const fromBottom = scrollWrapper.scrollHeight
-                     - (scrollWrapper.scrollTop + scrollWrapper.clientHeight);
-    // Eğer en alta < 20px kalmadıysa butonu göster
-    if (fromBottom > 20) {
+  let isScrollable = false;
+  let ticking = false;
+
+  // Scroll edilebilirlik kontrolü
+  function checkScrollability() {
+    const hasOverflow = scrollWrapper.scrollHeight > scrollWrapper.clientHeight;
+    const computedStyle = window.getComputedStyle(scrollWrapper);
+    const overflowY = computedStyle.overflowY;
+    
+    isScrollable = hasOverflow && (overflowY === 'scroll' || overflowY === 'auto');
+    
+    // Eğer scroll edilemiyorsa butonu kesinlikle gizle
+    if (!isScrollable) {
+      pageDownBtn.classList.remove("visible");
+      return false;
+    }
+    return true;
+  }
+
+  // Scroll pozisyonu kontrolü
+  function checkScrollPosition() {
+    if (!isScrollable) return;
+    
+    const scrollTop = Math.ceil(scrollWrapper.scrollTop);
+    const scrollHeight = scrollWrapper.scrollHeight;
+    const clientHeight = scrollWrapper.clientHeight;
+    const maxScrollTop = scrollHeight - clientHeight;
+    
+    // Alt kısımdan ne kadar uzaktayız (tolerance ile)
+    const fromBottom = maxScrollTop - scrollTop;
+    const threshold = 20;
+    
+    // Debug için (geliştirme sırasında kullanabilirsin)
+    // console.log({ scrollTop, scrollHeight, clientHeight, maxScrollTop, fromBottom });
+    
+    if (fromBottom > threshold && maxScrollTop > 0) {
       pageDownBtn.classList.add("visible");
     } else {
       pageDownBtn.classList.remove("visible");
     }
+  }
+
+  // Throttled scroll handler
+  function handleScroll() {
+    if (!ticking) {
+      requestAnimationFrame(() => {
+        if (checkScrollability()) {
+          checkScrollPosition();
+        }
+        ticking = false;
+      });
+      ticking = true;
+    }
+  }
+
+  // Resize handler - içerik boyutu değişebilir
+  function handleResize() {
+    setTimeout(() => {
+      if (checkScrollability()) {
+        checkScrollPosition();
+      }
+    }, 100);
+  }
+
+  // Content change observer - dinamik içerik için
+  const observer = new MutationObserver(() => {
+    setTimeout(() => {
+      if (checkScrollability()) {
+        checkScrollPosition();
+      }
+    }, 50);
   });
 
-  // 2) Butona tıklandığında yine scrollWrapper’ın en altına in
+  // Scroll listener
+  scrollWrapper.addEventListener("scroll", handleScroll, { passive: true });
+  
+  // Resize listener
+  window.addEventListener("resize", handleResize);
+  
+  // İçerik değişikliklerini izle
+  observer.observe(scrollWrapper, {
+    childList: true,
+    subtree: true,
+    attributes: false
+  });
+
+  // Button click handler
   pageDownBtn.addEventListener("click", () => {
+    if (!isScrollable) return;
+    
     scrollWrapper.scrollTo({ 
       top: scrollWrapper.scrollHeight, 
       behavior: "smooth" 
     });
+    
+    // Scroll tamamlandıktan sonra butonu gizle
+    setTimeout(() => {
+      pageDownBtn.classList.remove("visible");
+    }, 300);
+  });
+
+  // İlk kontrol
+  setTimeout(() => {
+    if (checkScrollability()) {
+      checkScrollPosition();
+    }
+  }, 100);
+
+  // Cleanup function (gerekirse kullan)
+  window.pageDownCleanup = () => {
+    scrollWrapper.removeEventListener("scroll", handleScroll);
+    window.removeEventListener("resize", handleResize);
+    observer.disconnect();
+  };
+});
+
+// Modalleri açan event listener’lar
+document.getElementById('terms-btn').addEventListener('click', () => {
+  document.getElementById('terms-modal').style.display = 'block';
+});
+document.getElementById('privacy-btn').addEventListener('click', () => {
+  document.getElementById('privacy-modal').style.display = 'block';
+});
+
+// Kapatma butonları
+document.querySelectorAll('#terms-modal .settings-close, #privacy-modal .settings-close')
+  .forEach(btn => {
+    btn.addEventListener('click', () => {
+      btn.closest('.modal').style.display = 'none';
+    });
+  });
+
+// Modal dışına tıklayınca kapatma
+['terms-modal', 'privacy-modal'].forEach(id => {
+  const modal = document.getElementById(id);
+  let isDown = false;
+  modal.addEventListener('mousedown', e => {
+    isDown = (e.target === modal);
+  });
+  modal.addEventListener('mouseup', e => {
+    if (isDown && e.target === modal) {
+      modal.style.display = 'none';
+    }
+    isDown = false;
+  });
+});
+
+// Blur ve modal kontrolünde kullanılacak elementlerin ID’leri
+const blurTargets = [
+  'settings-btn',      // Ayarlar ikonu
+  'sidebar-search-toggle', // Sohbet ara ikonu
+  'toggle-sidebar-btn',    // Sidebar toggle
+  'help-btn',          // Yardım ikonu
+  'new-chat-btn'       // Yeni sohbet ikonu
+];
+
+// Modal açma fonksiyonu
+function openModal(modalId) {
+  // 1) Açılır menüyü kapat
+  const helpDropdown = document.getElementById('help-dropdown');
+  if (helpDropdown) {
+    // Eğer toggle’la display kontrol ediyorsan:
+    helpDropdown.style.display = 'none';
+    // Veya classTabanlıysa:
+    // helpDropdown.classList.remove('open');
+  }
+
+  // 2) Modal’ı göster ve arkayı blur’la
+  const modal = document.getElementById(modalId);
+  modal.style.display = 'block';
+  blurTargets.forEach(id => {
+    const el = document.getElementById(id);
+    if (el) el.classList.add('blurred');
+  });
+  document.querySelector('.chat-input').classList.add('blurred');
+
+  // 3) Textarea’yı disable et
+  chatInput.disabled = true;
+  chatInput.blur();
+}
+
+
+// Modal kapama fonksiyonu
+function closeModal(modalId) {
+  const modal = document.getElementById(modalId);
+  modal.style.display = 'none';
+  blurTargets.forEach(id => {
+    const el = document.getElementById(id);
+    if (el) el.classList.remove('blurred');
+  });
+  document.querySelector('.chat-input').classList.remove('blurred');
+
+  // 3) Textarea’yı tekrar enable et
+  chatInput.disabled = false;
+}
+
+// Butonlara tıklama olaylarını bağla
+document.getElementById('terms-btn').addEventListener('click', () => openModal('terms-modal'));
+document.getElementById('privacy-btn').addEventListener('click', () => openModal('privacy-modal'));
+
+// Her modal’ın kendi “×” kapatma butonuna tıklayınca kapat
+document.querySelectorAll('#terms-modal .settings-close, #privacy-modal .settings-close')
+  .forEach(btn => {
+    btn.addEventListener('click', () => {
+      const modal = btn.closest('.modal');
+      closeModal(modal.id);
+    });
+  });
+
+// Backdrop’a tıklayınca kapat (mousedown→mouseup kontrolü)
+['terms-modal','privacy-modal'].forEach(id => {
+  const mdl = document.getElementById(id);
+  let downOnBackdrop = false;
+  mdl.addEventListener('mousedown', e => { downOnBackdrop = (e.target === mdl); });
+  mdl.addEventListener('mouseup', e => {
+    if (downOnBackdrop && e.target === mdl) closeModal(id);
+    downOnBackdrop = false;
+  });
+});
+
+// ESC ile kapatma ve yazı girişini engelleme
+window.addEventListener('keydown', e => {
+  if (e.key === 'Escape') {
+    ['terms-modal','privacy-modal'].forEach(id => {
+      const m = document.getElementById(id);
+      if (m.style.display === 'block') {
+        closeModal(id);
+        e.preventDefault();
+        e.stopPropagation();
+      }
+    });
+  }
+});
+
+// Chat-input’a yazmayı engellemek için, modal açıkken input’un default davranışını iptal edelim
+chatInput.addEventListener('keydown', e => {
+  if (document.querySelector('.modal[style*="display: block"]')) {
+    e.preventDefault();
+    e.stopPropagation();
+  }
+});
+
+chatInput.addEventListener('focus', e => {
+  if (chatInput.disabled) e.target.blur();
+});
+
+
+
+document.addEventListener('DOMContentLoaded', () => {
+  const helpBtn = document.getElementById('excusive-help-btn');
+  const dropdown = document.getElementById('help-dropdown');
+
+  if (!helpBtn) {
+    console.error('Yardım butonu bulunamadı: excusive-help-btn');
+    return;
+  }
+  if (!dropdown) {
+    console.error('Dropdown bulunamadı: help-dropdown');
+    return;
+  }
+
+  helpBtn.addEventListener('click', () => {
+    // 1) Dropdown’ı kapat
+    dropdown.style.display = 'none';
+
+    // 2) Yeni sekmeyi aç
+    const basePath = window.location.origin + window.location.pathname.replace(/\/[^\/]*$/, '');
+    const msg = document.getElementById('chat-input-textarea')?.value || '';
+    const encodedMsg = encodeURIComponent(msg);
+    window.open(`${basePath}/Quik_Help.html?msg=${encodedMsg}`, '_blank');
   });
 });
 
 
+
+document.addEventListener("keydown",(e)=>{
+  if(e.ctrlKey && e.key.toLowerCase()==="a"){
+    /* Odak herhangi bir INPUT / TEXTAREA / contentEditable alandaysa
+       varsayılan seçimin (Ctrl+A) çalışmasına izin ver. */
+    if(
+      e.target.tagName==="INPUT" ||
+      e.target.tagName==="TEXTAREA" ||
+      e.target.isContentEditable
+    ){ return; }
+
+    /* Odak başka yerdeyse sohbeti seç */
+    e.preventDefault();
+    const chat=document.getElementById("chat-container");
+    const sel = window.getSelection();
+    sel.removeAllRanges();
+    const range=document.createRange();
+    range.selectNodeContents(chat);
+    sel.addRange(range);
+  }
+});
+
+document.addEventListener('copy', (e) => {
+  const chat = document.getElementById('chat-container');
+  const sel  = window.getSelection();
+  // Sadece sohbet bölgesindeyse müdahale et
+  if (!sel.isCollapsed && chat.contains(sel.anchorNode)) {
+    e.preventDefault();
+    // Seçili içeriğin klonunu çıkar
+    const container = document.createElement('div');
+    for (let i = 0; i < sel.rangeCount; i++) {
+      container.appendChild(sel.getRangeAt(i).cloneContents());
+    }
+    // .copy-btn ve içindekileri çıkar
+    container.querySelectorAll('.copy-btn, .copy-btn, .code-header *').forEach(el => el.remove());
+    // Düzeltilmiş içeriği clipboard’a koy
+    e.clipboardData.setData('text/html',  container.innerHTML);
+    e.clipboardData.setData('text/plain', container.textContent);
+  }
+});
+
+// --- Modal setup: DOM hazır olduktan sonra başlat ---
+document.addEventListener("DOMContentLoaded", () => {
+  const modal      = document.getElementById("image-modal");
+  const modalImg   = document.getElementById("modal-img");
+  const modalClose = document.querySelector(".modal-close");
+
+  // Kapatma ikonu
+  modalClose.addEventListener("click", () => modal.style.display = "none");
+
+  // Modal dışına tıklayınca da kapansın
+  modal.addEventListener("click", e => {
+    if (e.target === modal) modal.style.display = "none";
+  });
+
+  // Lightbox dinleyicilerini ekleyen fonksiyon
+  function enableImageModal() {
+    document.querySelectorAll(".attachment-img").forEach(img => {
+      // Önce eskisini temizle
+      if (img._modalHandler) img.removeEventListener("click", img._modalHandler);
+
+      // Yeni handler
+      img._modalHandler = function() {
+        modalImg.src = this.src;
+        modal.style.display = "block";
+      };
+      img.addEventListener("click", img._modalHandler);
+    });
+  }
+
+  // İlk yüklenen geçmiş ve yeni balonlar için çağır
+  enableImageModal();
+
+  // Global olarak erişilebilir olsun ki appendMessageBubble’dan da çağırabilelim
+  window.enableImageModal = enableImageModal;
+
+ // --- ESC ile de modal’ı kapat ---
+ document.addEventListener("keydown", e => {
+   if (e.key === "Escape" && modal.style.display !== "none") {
+     modal.style.display = "none";
+   }
+});
+});
+
+
+document.body.addEventListener("click", (e) => {
+  if (e.target.classList.contains("modal-close")) {
+    console.log("Modal kapatıldı!");
+    const modal = document.getElementById("image-modal");
+    modal.style.display = "none";
+  }
+});
+
+
+
+
+// Hatayı görmezden gelelim (For now)
+hljs.configure({ ignoreUnescapedHTML: true });
 
   </script>
 </body>
