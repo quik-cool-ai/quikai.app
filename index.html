@@ -61,18 +61,30 @@
       box-shadow: none;
     }
 
+
+/* Link colour in dark mode */
+a {
+  color: #3B82F6;   /* vivid blue for all links */
+}
+
+a:hover {
+  text-decoration: underline;  /* optional: nice hover cue */
+}
+
+
     * {
       box-sizing: border-box;
     }
-    body {
-      margin: 0;
-      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;
-      background-color: var(--bg-color);
-      color: var(--text-color);
-      overflow-y: auto;
-      opacity: 0; /* Başlangıçta görünmez */
-      animation: fadeIn 1s ease forwards; /* 0.5 saniyede animasyon */
-    }
+body {
+  margin: 0;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;
+  background-color: var(--bg-color);
+  color: var(--text-color);
+  overflow-y: auto;
+  overflow-x: hidden; /* YENİ EKLENDİ: Yatay taşmayı gizle */
+  opacity: 0; /* Başlangıçta görünmez */
+  animation: fadeIn 1s ease forwards; /* 0.5 saniyede animasyon */
+}
 
     /* Fade-in ve hafif kayma animasyonu */
     @keyframes fadeIn {
@@ -87,23 +99,44 @@
     }
 
     /* Sabit Toggle Butonu (sol üst köşe) */
-    #toggle-sidebar-btn {
-      position: fixed;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      top: 9px;
-      left: 13px;
-      z-index: 304;
-      background-color: var(--background-bg);
-      border: none;
-      height: 40px;
-      width: 40px;
-      cursor: pointer;
-      color: var(--text-color);
-      transition: transform 0.3s;
-      border-radius: 12px;
-    }
+#toggle-sidebar-btn {
+  position: fixed;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  top: 9px;
+  left: 10px;
+  z-index: 306;
+  background-color: var(--background-bg);
+  border: none;
+  height: 40px;
+  width: 40px;
+  cursor: pointer;
+  color: var(--text-color);
+  transition: transform 0.3s, left 0.5s cubic-bezier(0.2, 1, 0.4, 1);
+  border-radius: 12px;
+}
+
+/* --- Kenar Çubuğu Açıkken Kapatma Düğmesinin Konumlandırılması (Tüm Ekran Boyutları İçin) --- */
+
+/* MASAÜSTÜ (genişliği sabit olan kenar çubuğu için) */
+@media (min-width: 769px) {
+  body.sidebar-open #toggle-sidebar-btn {
+    /* Konumu sabit sidebar genişliğine göre hesapla */
+    /* Hesap: 260px (sidebar) - 40px (düğme) - 10px (sağ boşluk) = 207px */
+    left: calc(var(--sidebar-width) - 50px);
+  }
+}
+
+/* MOBİL (genişliği yüzdesel olan kenar çubuğu için) */
+@media (max-width: 768px) {
+  body.sidebar-open #toggle-sidebar-btn {
+    /* Mobil'de sidebar genişliği: calc(100% - 53px) */
+    /* Hesap: (100% - 53px) - 40px (düğme) - 10px (sağ boşluk) = 100% - 106px */
+    left: calc(100% - 106px);
+  }
+}
+
     #toggle-sidebar-btn:hover {
       background-color: #c0c0c0;
     }
@@ -137,41 +170,84 @@
     }
 
     /* Sidebar */
-    .sidebar {
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: var(--sidebar-width);
-      height: 100%;
-      background-color: var(--sidebar-bg);
-      transform: translateX(-100%);
-      transition: transform 0.5s cubic-bezier(0.2, 1, 0.4, 1), opacity 0.5s ease, box-shadow 0.5s ease-out, backdrop-filter 0.5s ease-in-out;
-      z-index: 303;
-      display: flex;
-      flex-direction: column;
-      padding-left: 0.5rem;
-      overflow-y: auto;
-    }
-    
-    .sidebar.open {
-      transform: translateX(0);
-      box-shadow: 1px 0 10px rgba(192, 192, 192, 0.5);
-    }
+/* 1. ADIM: .sidebar'ı HAREKETSİZ ve GÖRÜNMEZ bir içerik katmanı yapalım. */
+.sidebar {
+  position: absolute; /* Konumunu tiny-sidebar'a göre ayarlayacağız */
+  top: 0;
+  left: 0;
+  width: var(--sidebar-width);
+  height: 100%;
+  background-color: transparent; /* Arka planı tamamen şeffaf, çünkü rengi tiny-sidebar verecek */
+  z-index: 304; /* Animasyonlu katmanın bir arkasında */
+  display: flex;
+  flex-direction: column;
+  padding: 0.5rem;
+  pointer-events: none; /* Kapalıyken tıklanamaz olsun */
+  /* HAREKETLE İLGİLİ TÜM KODLAR (transform, transition) SİLİNDİ. */
+}
 
-    body.dark .sidebar.open {
-      box-shadow: none;
-    }
+@media (max-width: 768px) {
+  .sidebar {
+    width: calc(100% - 53px); /* Mobildeki sidebar genişliğiyle aynı yap */
+  }
+}
 
-    /* Mobilde Sidebar Tam Ekran */
-    @media (max-width: 768px) {
-      .sidebar {
-        width: 100%;
-        max-width: 100%;
-      }
-      .main-content.sidebar-open {
-        margin-left: 0;
-      }
-    }
+/* sidebar içindeki sohbet listesi vb. başta görünmesin */
+.sidebar > * {
+  opacity: 0;
+}
+
+/* sidebar açılınca içeriği ve tıklama özelliğini geri getir */
+body.sidebar-open .sidebar {
+  pointer-events: auto;
+}
+body.sidebar-open .sidebar > * {
+  opacity: 1;
+}
+
+/* 2. ADIM: .tiny-sidebar'ı ana aktör yapalım. Animasyon, renk ve çizgi onda olacak. */
+.tiny-sidebar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 62px; 
+  height: 100vh;
+  background-color: white;
+  /* --- YENİ BORDER KURALI --- */
+  /* Çizgi artık hep burada ve animasyondan etkilenmiyor. */
+  border-right: 1px solid rgba(128, 128, 128, 0.2); 
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding-top: 10px; 
+  box-sizing: border-box;
+  /* ANİMASYON: Genişlik pürüzsüzce değişecek */
+  transition: width 0.5s cubic-bezier(0.2, 1, 0.4, 1); 
+  z-index: 303; /* Her zaman en üstte bu görünecek */
+  overflow: hidden; 
+}
+
+body.dark .tiny-sidebar {
+  background-color: #202020;
+}
+
+.tiny-sidebar:hover {
+  overflow: visible;
+}
+
+/* sidebar açılınca tiny-sidebar'ı hedef genişliğe getir */
+body.sidebar-open .tiny-sidebar {
+  width: var(--sidebar-width);
+}
+
+/* ESKİ .sidebar.open kuralına artık ihtiyacımız yok. */
+
+/* Mobil için tiny sidebar genişliği */
+@media (max-width: 768px) {
+  body.sidebar-open .tiny-sidebar {
+    width: calc(100% - 53px); /* Mobilde sidebar genişliği */
+  }
+}
 
     .sidebar-header {
       position: sticky;
@@ -180,14 +256,31 @@
       width: 100%;
       text-align: center;
       margin: 0;
-      padding: 0.54rem 0;
-      border-bottom: 1px solid rgba(128, 128, 128, 0.2);
+      padding: 5.25rem 0;
+
       display: flex;
       align-items: center;
       justify-content: center;
     }
 
+.sidebar-ender {
+  position: sticky; /* Sayfa kaysa bile altta sabit kalmasını sağlar */
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  padding: 2.5rem 0.5rem; /* Dikey ve yatay boşluk */
+  background-color: transparent; /* Arka plan rengi tema ile uyumlu */
+
+  display: flex;
+  flex-direction: column; /* Butonlar alt alta gelsin */
+  gap: 0.5rem; /* Butonlar arası boşluk */
+  margin-top: auto; /* Kendini flex container'ın en altına itsin */
+}
+
     #sidebar-brand {
+      position: fixed;
+      left: 10px;
+      top: 9px;
       display: inline-flex;
       align-items: center;
       justify-content: center;
@@ -199,9 +292,10 @@
       cursor: pointer;
     }
 
-    #sidebar-brand:hover {
-      background-color: #c0c0c0;
-    }
+#sidebar-brand:hover {
+  background-color: #c0c0c0;
+}
+
 
     body.dark #sidebar-brand:hover {
       color: var(--sidebar-bg);
@@ -221,37 +315,102 @@
       filter: none;
     }
 
-    #sidebar-brand:hover {
-      background-color: #c0c0c0;
-    }
 
-    body.dark #sidebar-brand:hover {
-      color: var(--sidebar-bg);
-    }
+body.sidebar-open #toggle-sidebar-btn:hover {
+  background-color: #c0c0c0;
+  transition: transform 0.15s ease, color 0.15s ease;
+}
+
+body.dark.sidebar-open #toggle-sidebar-btn:hover {
+  color: var(--sidebar-bg);
+}
 
     .close-sidebar-btn {
       display: none;
     }
 
-    .new-chat-btn {
-      position: absolute;
-      top: 9px;
-      right: 10px;
-      font-size: 0.5rem;
-      width: 40px;
-      height: 40px;
-      background-color: transparent;
-      border: none;
-      outline: none;
-      border-radius: 12px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      cursor: pointer;
-      transition: transform 0.3s ease, color 0.3s ease;
-      color: var(--text-color);
-      z-index: 301 !important; /* Geçici olarak düşür */
-    }
+#new-chat-btn,
+#sidebar-search-toggle {
+    position: fixed !important;
+    height: 40px;
+    width: 40px;
+    background-color: transparent;
+    border: none;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    color: var(--text-color);
+    overflow: hidden;
+
+}
+
+/* Konumlarını ayrı ayrı belirtiyoruz */
+#new-chat-btn { top: 74px !important; left: 10px !important; z-index: 303 !important; }
+/* Yeni */
+#sidebar-search-toggle { top: 114px; left: 10px; z-index: 305 !important; }
+
+
+
+/* Butonların içindeki metni VARSAYILAN OLARAK GİZLE */
+#new-chat-btn .btn-text,
+#sidebar-search-toggle .btn-text {
+    display: none;
+    font-size: 0.8rem;
+    font-weight: 600;
+    white-space: nowrap;
+}
+
+/* Sidebar AÇIKKEN butonların kendisini genişlet */
+body.sidebar-open #sidebar-search-toggle {
+    width: calc(var(--sidebar-width) - 20px);
+    justify-content: flex-start;
+    padding-left: 10px;
+    gap: 12px;
+}
+
+body.sidebar-open #new-chat-btn {
+    width: calc(var(--sidebar-width) - 20px);
+    justify-content: flex-start;
+    padding-left: 9.5px;
+    gap: 12px;
+}
+
+/* Sidebar AÇIKKEN butonların içindeki metni GÖRÜNÜR YAP */
+body.sidebar-open #new-chat-btn .btn-text,
+body.sidebar-open #sidebar-search-toggle .btn-text {
+    display: inline;
+}
+
+body.sidebar-open #new-chat-btn[data-tooltip]::after,
+body.sidebar-open #sidebar-search-toggle[data-tooltip]::after {
+    display: none !important;
+}
+
+/* --- Ortak Hover ve Dark Mode Stilleri --- */
+
+/* Hover */
+#new-chat-btn:hover,
+#sidebar-search-toggle:hover {
+    background-color: #c0c0c0;
+}
+
+/* Dark Mode İkon */
+body.dark #new-chat-btn img,
+body.dark #sidebar-search-toggle img {
+    filter: invert(1);
+}
+body.dark #new-chat-btn:hover img,
+body.dark #sidebar-search-toggle:hover img {
+    filter: none;
+}
+
+/* Dark Mode Metin */
+body.dark #new-chat-btn:hover .btn-text,
+body.dark #sidebar-search-toggle:hover .btn-text {
+    color: var(--sidebar-bg);
+}
 
     .new-chat-btn:hover {
       background-color: #c0c0c0;
@@ -263,17 +422,16 @@
 
     .new-chat-btn[data-tooltip]::after,
     .sidebar-search-toggle[data-tooltip]::after {
-      left: auto !important;
-      right: 232% !important;
+      right: auto !important;
+      left: 12.8px !important;
       top: 50% !important;
       transform: translate(50%, -50%) !important;
     }
 
     .help-btn[data-tooltip]::after {
-      left: auto !important;
-      right: 202% !important;
-      top: 50% !important;
-      transform: translate(50%, -50%) !important;
+  top: 50% !important;
+  left: calc(100% + 15px) !important;
+  transform: translateY(-50%) !important;
     }
 
     /* Tıklama sonrası tooltip’i gizle */
@@ -294,16 +452,28 @@
       filter: none; /* ikon doğal renginde (muhtemelen siyah) görünsün */
     }
 
-    .chat-history-list {
-      list-style: none;
-      padding-left: 0.5rem;
-      padding-right: 1rem;
-      margin: 0;
-      flex: 1;
-      scrollbar-width: auto;
-      scrollbar-color: rgba(85, 85, 85, 0.2) transparent;
-      overflow-y: auto;
-    }
+.chat-history-list {
+    list-style: none;
+    padding-left: 5px;
+    padding-right: 0;
+    margin: 0;
+    flex: 1;
+    scrollbar-width: auto;
+    scrollbar-color: rgba(85, 85, 85, 0.2) transparent;
+    overflow-y: auto;
+    /* Başlangıçta tamamen görünmez ve sola kaydırılmış */
+    opacity: 0;
+    pointer-events: none;
+    transform: translateX(-100%); /* Soldan içeri kaydır */
+    transition: opacity 0.15s ease, transform 0.35s ease; /* Opaklık ve konum değişimi için geçiş */
+
+}
+
+body.sidebar-open .chat-history-list {
+    opacity: 1;
+    pointer-events: auto;
+    transform: translateX(0); /* Normal konumda (tamamen içeri) */
+}
 
     /* Tarih Grubu (Başlık ve Sohbetler) */
     .chat-history-group {
@@ -312,14 +482,11 @@
 
     /* Tarih Başlığı */
     .chat-history-header {
-      font-size: 0.8rem;
+      font-size: 1rem;
       font-weight: 600;
       color: var(--text-color);
-      padding: 0.5rem 0.25rem;
-      border-top: 1.5px solid #c0c0c0;
-      border-bottom: 1.5px solid #c0c0c0;
-      border-radius: 12px;
-      margin-top: 15px;
+      padding: 0.25rem 0.25rem;
+      margin-top: 0.25rem;
     }
 
 .chat-history-list::-webkit-scrollbar {
@@ -378,7 +545,7 @@ body.dark .chat-history-item:hover .chat-history-date {
       padding: 0.25rem;
       border-radius: 8px;
       background-color: transparent;
-      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+
       position: relative;
     }
 
@@ -386,9 +553,7 @@ body.dark .chat-history-item:hover .chat-history-date {
   background-color: #c0c0c0;
 }
 
-body.dark .chat-history-item {
-  box-shadow: 0 1px 3px rgba(255, 255, 255, 0.05);
-}
+
 
 body.dark .chat-history-item:hover {
   background-color: #333; /* Dark modda koyu gri */
@@ -528,23 +693,27 @@ body.dark .history-icon {
 }
 
     /* Main İçerik */
-    .main-content {
-      flex: 1;
-      margin-left: 0;
-      display: flex;
-      flex-direction: column;
-      min-height: 100vh;
-      position: relative;
-      width: 100%;
-      transition: margin-left 0.3s;
-    }
+.main-content {
+  flex: 1;
+  margin-left: 62px; 
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  position: relative;
+  transition: margin-left 0.5s cubic-bezier(0.2, 1, 0.4, 1); 
+}
     .main-content.sidebar-open {
       margin-left: 260px;
     }
 
+body.sidebar-open .main-content {
+  margin-left: var(--sidebar-width); 
+}
+
+
 @media (max-width: 768px) {
   body.sidebar-open .main-content {
-    margin-left: 0 !important;
+    margin-left: 62px !important;
   }
 }
 
@@ -582,11 +751,7 @@ body.dark .top-bar-title:hover {
 }
 
 
-    @media (max-width: 768px) {
-      .top-bar {
-        padding: 0.5rem 1rem;
-      }
-    }
+
 
     .dark-mode-toggle {
       position: fixed;
@@ -656,7 +821,7 @@ body.dark .top-bar-title:hover {
     .chat-container::after {
       content: "";
       display: block;
-      height: 100px; /* Chat input yüksekliğine göre ayarlayın */
+      height: 50px; /* Chat input yüksekliğine göre ayarlayın */
     }
 
 .welcome-message {
@@ -767,26 +932,29 @@ body.dark .top-bar-title:hover {
 }
 
     /* Chat Input */
-    .chat-input {
-      position: absolute;
-      bottom: 20px;
-      left: 50%;
-      transform: translateX(-50%);
-      transition: left 0.3s ease;
-      display: flex;
-      flex-direction: column;
-      align-items: stretch;
-      background-color: var(--input-bg);
-      border-radius: 30px;
-      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
-      width: 100%;
-      max-width: 760px;
-      margin: 0 auto;
-      padding: 1rem 0.5rem; /* padding-bottom daha düşük */
-      box-sizing: border-box;
-      z-index: 302;
-      transition: left 0.3s ease, width 0.3s ease;
-    }
+.chat-input {
+  position: absolute;
+  bottom: 20px;
+  /* YENİ: Başlangıçta tiny-sidebar'ın yarısı kadar sağa ittirerek ortala */
+  left: calc(50% + (62px / 2));
+  transform: translateX(-50%);
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  background-color: var(--input-bg);
+  border-radius: 30px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+  /* YENİ: Genişliği de tiny-sidebar'ı hesaba katacak şekilde ayarla */
+  width: calc(100% - 62px - 1rem); 
+  max-width: 760px;
+  margin: 0 auto;
+  padding: 1rem 0.5rem;
+  box-sizing: border-box;
+  z-index: 302;
+  /* YENİ: Animasyonu sidebar ve main-content ile senkronize et */
+  transition: left 0.5s cubic-bezier(0.2, 1, 0.4, 1), 
+              width 0.5s cubic-bezier(0.2, 1, 0.4, 1);
+}
 
      body.dark .chat-input {
        box-shadow: none;
@@ -798,18 +966,35 @@ body.dark .top-bar-title:hover {
     }
 
     /* Responsive ayar: Küçük ekranlar için minimum genişlik */
-    @media (max-width: 768px) {
-      .chat-input {
-        width: 100%;
-        bottom: 0px;
-        padding-bottom: 1rem;
-        border-radius: 30px 30px 0 0;
-      }
-      body.sidebar-open .chat-input {
-        left: 50%;
-        width: 100%;
-      }
-    }
+@media (max-width: 768px) {
+  /* --- Genel Mobil Ayarları --- */
+  .chat-input {
+    bottom: 0;
+    padding-bottom: 1rem;
+    border-radius: 30px 30px 0 0;
+    max-width: none; /* Mobilde maksimum genişlik kısıtlamasına gerek yok */
+  }
+
+  /* --- Sidebar KAPALIYKEN (tiny-sidebar görünüyor) --- */
+  body:not(.sidebar-open) .chat-input {
+    width: calc(100% - 62px); /* Genişlik: Ekran Genişliği - tiny-sidebar Genişliği */
+    left: calc(50% + 31px);    /* Konum: Ortala + (tiny-sidebar'ın yarısı kadar) sağa ittir */
+  }
+
+  /* --- Sidebar AÇIKKEN --- */
+  body.sidebar-open .chat-input {
+    /* Mobilde sidebar içeriğin üzerine bindiği için, input tekrar tam ortaya döner */
+    width: 100%;
+    left: 50%;
+  }
+}
+
+@media (max-width: 480px) {
+  /* --- Genel Mobil Ayarları --- */
+  .chat-input {
+    bottom: 0;
+  }
+}
 
 #chat-input-textarea {
   font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;
@@ -1199,14 +1384,6 @@ body.dark #send-btn.stop-state:hover img {
   background-color: #c0c0c0;
 }
 
-.emoji-icon {
-  width: 16px;
-  height: 16px;
-  margin-right: 3px;
-  margin-bottom: 3px;
-  vertical-align: middle;
-}
-
 @media (max-width: 768px) {
   #quik-icon {
     width: 36px; /* Küçük ekranlarda ikon boyutunu küçült */
@@ -1246,8 +1423,8 @@ body.dark #quik-icon {
 /* Ayarlar Butonu */
 .settings-btn {
   position: fixed;
-  top: 9px;
-  right: 13px;
+  bottom: 5px;
+  left: 10px;
   width: 40px;
   height: 40px;
   background-color: transparent;
@@ -1726,6 +1903,7 @@ body.dark .settings-nav li.active {
   overflow: hidden;
   margin-bottom: 5px; /* Butonla aralık */
   position: relative; /* Çocuk eleman için referans */
+  padding-left: 0.5rem;
 }
 
 .progress-bar-fill {
@@ -2350,21 +2528,16 @@ body.dark td {
 }
 
     /* Model Seçici */
-    .model-selector {
-      position: fixed;
-      top: 7px;
-      left: 94px;
-      z-index: 101;
-    }
+.model-selector {
+  position: fixed;
+  top: 7px;
+  left: 73px;
+  z-index: 101;
+  /* Geçiş efektini doğrudan buraya ekleyelim ki daha pürüzsüz olsun */
+  transition: left 0.275s ease;
+}
 
-    @media (max-width: 768px) {
-      .model-selector {
-        left: 94px;
-      }
-      .model-dropdown {
-        width: 95px;
-      }
-    }
+
 
     .model-toggle-btn {
       display: flex;
@@ -2379,7 +2552,8 @@ body.dark td {
       font-weight: 750;
       height: 40px;
       margin-top: 2px;
-      min-width: 115px;
+      width: auto;
+      gap: 0.5rem;
     }
     .model-toggle-btn:hover {
       background-color: #c0c0c0;
@@ -2434,10 +2608,19 @@ body.dark td {
       background-color: #c0c0c0;
       color: var(--sidebar-bg);
     }
-    body.sidebar-open .model-selector {
-      left: calc(var(--sidebar-width) + 10px);
-      transition: left 0.29s ease;
-    }
+
+@media (min-width: 769px) {
+  body.sidebar-open .model-selector {
+    left: calc(var(--sidebar-width) + 10px);
+  }
+}
+
+@media (max-width: 768px) {
+
+  .model-dropdown {
+    width: 95px;
+  }
+}
 
 .model-option:hover {
   background: #c0c0c0;
@@ -2684,8 +2867,7 @@ body.dark .feedback-controls button[data-tooltip]::after {
 #web-search-btn[data-tooltip]::after,
 #send-btn[data-tooltip]::after,
 #voice-record-btn[data-tooltip]::after,
-#voice-page-btn[data-tooltip]::after,
-#emoji-btn[data-tooltip]::after {
+#voice-page-btn[data-tooltip]::after {
   left: 50%;
   top: -9px; /* Butonun üstüne yerleştir */
   transform: translateX(-50%) translateY(-100%); /* Yatayda ortala, dikeyde yukarı kaydır */
@@ -2708,7 +2890,7 @@ body.dark [data-tooltip]::after {
 #toggle-sidebar-btn[data-tooltip]::after,
 .model-toggle-btn[data-tooltip]::after {
   top: 50% !important;
-  left: calc(100% + 8px) !important;
+  left: calc(100% + 15px) !important;
   transform: translateY(-50%) !important;
 }
 
@@ -2717,8 +2899,9 @@ body.dark [data-tooltip]::after {
 }
 
 #settings-btn[data-tooltip]::after {
-  top: 43px; /* Butonun üstüne yerleştir */
-
+  top: 50% !important;
+  left: calc(100% + 15px) !important;
+  transform: translateY(-50%) !important;
 }
 
 /* ==============================
@@ -2772,7 +2955,7 @@ body.dark [data-tooltip]::after {
   font-size:0.8rem;   /* already there */
   font-weight:600;    /* already there */
   white-space:normal; /* NEW — allow line-wrap */
-  word-break:break-word; /* NEW — break long words if needed */
+
 }
 /* Açıklama metni */
 .notification-description {
@@ -3468,15 +3651,15 @@ body.dark .code-block-container pre {
 
 /* Ensure the tooltip for new-chat-btn appears to the right when sidebar is closed */
 body:not(.sidebar-open) .new-chat-btn[data-tooltip]::after {
-  left: calc(100% + 8px) !important; /* Position it to the right of the button */
+  left: calc(100% + 15px) !important; /* Position it to the right of the button */
   right: auto !important;             /* Override the existing right positioning */
   top: 50% !important;                /* Vertically center it */
-  transform: translateY(-50%) !important; /* Adjust for vertical centering */
+  transform: translateY(-50%) !important; /* Adjust for vertical centering */e
 }
 
 /* Style for the new voice page button */
 #voice-page-btn {
-  position: absolute;
+  position: absolute; /* Chat-input'a göre konumlanacak */
   background-color: var(--input-bg);
   border: none;
   border-radius: 12px;
@@ -3485,11 +3668,13 @@ body:not(.sidebar-open) .new-chat-btn[data-tooltip]::after {
   cursor: pointer;
   display: flex;
   align-items: center;
+  align-self: flex-end;
   justify-content: center;
-  right: 122.5px; /* Positioned to the left of the send button, next to the mic */
+  right: 17.85px; /* Chat-input'un sağından 10px içeride */
   bottom: 15px;
   box-shadow: 0 4px 6px -2px rgba(0, 0, 0, 0.15), 4px 0 6px -2px rgba(0, 0, 0, 0.15), -4px 0 6px -2px rgba(0, 0, 0, 0.15), 0 -4px 6px -2px rgba(0, 0, 0, 0.15);
 }
+
 
 #voice-page-btn:hover {
   background-color: #c0c0c0;
@@ -3513,199 +3698,12 @@ body.dark #voice-page-btn:hover img {
   animation: fadeOut 0.5s ease forwards;
 }
 
-/* Emoji Button Styling */
-.emoji-btn {
-  position: fixed;
-  bottom: 15px;
-  left: 142px;
-  z-index: 200;
-  background-color: transparent;
-  border: none;
-  box-shadow: 0 4px 6px -2px rgba(0, 0, 0, 0.15),
-              4px 0 6px -2px rgba(0, 0, 0, 0.15),
-              -4px 0 6px -2px rgba(0, 0, 0, 0.15),
-              0 -4px 6px -2px rgba(0, 0, 0, 0.15);
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 40px;
-  height: 35px;
-  border-radius: 12px;
-  color: var(--text-color);
-}
-
-.emoji-btn:hover {
-  background-color: #c0c0c0; /* Matches hover effect of other buttons */
-}
-
-@media (max-width: 768px) {
-  .emoji-btn {
-  left: 122px;
-}
-}
-
-body.dark .emoji-btn {
-  box-shadow: 0 4px 6px -2px rgba(0, 0, 0, 0.15),
-              4px 0 6px -2px rgba(0, 0, 0, 0.15),
-              -4px 0 6px -2px rgba(0, 0, 0, 0.15),
-              0 -4px 6px -2px rgba(0, 0, 0, 0.15);
-}
-
-body.dark .emoji-btn img {
-  filter: brightness(0) invert(1); /* Matches dark mode icon behavior */
-}
-
-body.dark .emoji-btn:hover img {
-  filter: none; /* Matches hover behavior of other buttons */
-}
-
-body.dark .emoji-btn:hover {
-  background-color: #c0c0c0;
-  color: var(--sidebar-bg);
-}
-
-/* Emoji Picker Styling */
-.emoji-picker {
-  position: absolute;
-  left: 0;
-  right: 0;
-  bottom: calc(100%); /* Chat input'un üstü */
-  width: auto;
-  margin: 0 auto;
-  background-color: var(--input-bg);
-  border-radius: 24px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
-  padding: 10px;
-  /* NOT: overflow-y: auto; ifadesini kaldırdık */
-  z-index: 201;
-  display: none;
-  animation: fadeIn 0.3s ease;
-}
-
-.emoji-grid-container {
-  max-height: 115px;    /* İstediğiniz yüksekliğe göre ayarlayabilirsiniz */
-  overflow-y: auto;
-}
-
-body.dark .emoji-picker {
-  background-color: var(--input-bg);
-}
-
-.emoji-picker-tabs {
-  display: flex;
-  justify-content: space-around;  /* Butonlar arasında eşit boşluk */
-  padding-bottom: 5px;
-}
-
-.emoji-tab {
-  background: none;
-  border: none;
-  padding: 7px 10px;
-  cursor: pointer;
-  font-size: 14px;
-  margin-bottom: 5px;
-  color: var(--text-color);
-}
-
-.emoji-tab.active {
-  background: #c0c0c0;
-  border-radius: 12px;
-}
-
-body.dark .emoji-tab.active {
-  color: #000000;
-}
-
-/* Emoji Arama Alanı */
-.emoji-search-container {
-  width: 100%;
-  max-width: 100%;
-  box-sizing: border-box;
-  display: flex;
-  align-items: center;
-  padding: 5px;
-  border: 1px solid rgba(200, 200, 200, 0.7);
-  border-radius: 8px;                     /* Kenarların yuvarlanması */
-  background-color: var(--input-bg);      /* Arka plan rengi */
-  margin-bottom: 10px;
-}
-
-.emoji-search-container input {
-  width: 100%;
-  padding: 2px;
-  border: none;             /* İç kenarlıkları kaldırıyoruz */
-  outline: none;
-  font-size: 1rem;
-  background-color: transparent; /* Container arka planı yeterli olur */
-  color: var(--text-color);
-}
-
-.emoji-grid-container .emoji-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(35px, 1fr));
-  gap: 5px;               /* Emoji arası boşluk, ihtiyaca göre ayarlanabilir */
-  justify-items: center;   /* Her emoji hücresinin içeriğini ortalar */
-}
-
-.emoji {
-  width: 35px;            /* Sabit genişlik */
-  height: 35px;           /* Sabit yükseklik */
-  display: inline-flex;   /* Inline-flex kullanarak satır içi öğe olarak kalır ve hizalama kolaylaşır */
-  align-items: center;     /* Dikey ortalama */
-  justify-content: center; /* Yatay ortalama */
-  font-size: 24px;        /* Emoji boyutu */
-  cursor: pointer;
-  text-align: center;
-  margin: 0;              /* Varsayılan boşlukları kaldır */
-  padding: 0;             /* İç boşlukları kaldır */
-  line-height: 1;         /* Satır yüksekliğini sabitle */
-}
-
-.emoji:hover {
-  background-color: #c0c0c0; /* Hover arka plan rengi */
-  border-radius: 5px;        /* Yuvarlak kenarlar */
-}
-
-body.dark .emoji:hover {
-  background-color: #444; /* Dark mode hover */
-}
 
 .sidebar-search-wrapper {
   display: flex;
   align-items: center;
   padding-top: 0.5rem ;
   gap: 0.5rem;
-}
-
-.sidebar-search-toggle {
-  position: fixed;
-  top: 9px;      /* settings-btn ile aynı hizada */
-  right: 53px;   /* Ayarlar butonundan (right:13px) solda konumlanacak, bu değeri ihtiyaca göre ayarlayın */
-  border: none;
-  background: none;
-  border-radius: 12px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  cursor: pointer;
-  transition: transform 0.3s ease, color 0.3s ease;
-  color: var(--text-color);
-  width: 40px;
-  height: 40px;
-}
-
-.sidebar-search-toggle:hover {
-  background: #c0c0c0;
-}
-
-
-body.dark .sidebar-search-toggle img {
-    filter: brightness(0) invert(1);
-}
-
-body.dark .sidebar-search-toggle:hover img {
-  filter: none; /* ya da farklı bir şey: örneğin grayscale(100%) */
 }
 
 .sidebar-search-container {
@@ -4029,8 +4027,8 @@ body.dark .theme-filter-btn img {
 
 .help-btn {
   position: fixed;
-  top: 9px;      /* settings-btn ile aynı hizada */
-  right: 93px;   /* Ayarlar butonundan (right:13px) solda konumlanacak, bu değeri ihtiyaca göre ayarlayın */
+  bottom: 45px;      /* settings-btn ile aynı hizada */
+  left: 10px;   /* Ayarlar butonundan (right:10px) solda konumlanacak, bu değeri ihtiyaca göre ayarlayın */
   border: none;
   background: none;
   border-radius: 12px;
@@ -4078,7 +4076,7 @@ body.dark .help-btn:hover img {
   display: none; /* Başlangıçta gizli */
   flex-direction: column;
   z-index: 306;
-  width: 160px;
+  width: 150px;
 }
 
 .help-item {
@@ -4287,7 +4285,6 @@ body.dark .help-item:hover {
 @media (max-width: 337px) {
   /* Eski üç butonu gizle */
   #file-upload-btn,
-  #emoji-btn,
   #web-search-btn   { display:none !important; }
 
   /* Mini birleşik buton göster */
@@ -4388,7 +4385,8 @@ body.dark .mini-drop-btn:hover {
   background: var(--bg-color);
   border: solid 1px #c0c0c0;
   border-radius: 16px;
-  padding: 3px;
+  padding-left: 4px;
+  padding-right: 3.25px;
   cursor: pointer;
   pointer-events: none;
   opacity: 0;
@@ -4543,37 +4541,81 @@ body.dark .regen-btn:hover .regen-icon { filter: invert(0) !important; }
 .image-modal__container {
   position: relative;
   display: flex;
-  top: 10px;
+  top: 21vh;
+  left: 50%;
   align-items: center;
   justify-content: center;
-  max-width: 96vw;
-  max-height: 90vh;
-  width: auto;
+  max-height: 100vh;
+  width: 0;
   height: auto;
-  box-shadow: 0 2px 32px 0 rgba(0,0,0,0.7);
 }
 
 .image-modal__img {
-  max-width: 100vw;
-  max-height: 90vh;
+  max-width: 60vw;
+  max-height: 60vh;
   width: auto;
   height: auto;
-  border-radius: 14px;
   display: block;
   object-fit: contain;
   user-select: none;
   -webkit-user-drag: none;
-  transition: box-shadow 0.2s;
 }
 
 @media (max-width: 600px) {
   .image-modal__container {
-    max-width: 98vw;
-    max-height: 70vh;
+    max-width: 60vw;
+    max-height: 60vh;
   }
   .image-modal__img {
-    max-width: 96vw;
-    max-height: 65vh;
+    max-width: 60vw;
+    max-height: 60vh;
+  }
+}
+
+
+
+
+
+
+
+
+/* YENİ: Web'de Aranıyor Animasyonu */
+.searching-indicator {
+  position: relative;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;
+  font-size: 1rem;
+  font-weight: 500;
+  color: var(--text-color);
+  overflow: hidden; /* Animasyonun yazı dışına taşmasını engeller */
+}
+
+.searching-indicator::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%; /* Animasyon başlangıcında solda, görünmez alanda */
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.4), transparent);
+  animation: slide-shine 2.5s infinite; /* Animasyonu tanımla */
+}
+
+/* Koyu modda parlamanın rengini biraz ayarlayalım ki daha güzel görünsün */
+body.dark .searching-indicator::after {
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+}
+
+
+/* Animasyonun kendisi (soldan sağa kayma) */
+@keyframes slide-shine {
+  0% {
+    left: -100%;
+  }
+  50% {
+    left: 100%;
+  }
+  100% {
+    left: 100%;
   }
 }
 
@@ -4582,20 +4624,17 @@ body.dark .regen-btn:hover .regen-icon { filter: invert(0) !important; }
 </head>
 
 <body>
-  <!-- Sabit Toggle Sidebar Butonu -->
-  <button id="toggle-sidebar-btn">
-    <img src="icons/sidebar_close_btn.png" alt="Sidebar Icon" style="width:24px; height:21px;" draggable="false">
-  </button>
+
 
 <!-- Yeni Model Seçme Alanı -->
 <div id="model-selector" class="model-selector">
   <button id="model-toggle-btn" class="model-toggle-btn" data-tooltip="Model seç">
-    <span id="current-model-name">quik-prime</span>
+    <span id="current-model-name">quik-est</span>
     <img src="icons/arrow_down.png" alt="Dropdown" class="dropdown-arrow" style="width: 12px; height: 12px; margin-right: 3px;" draggable="false">
   </button>
   <div id="model-dropdown" class="model-dropdown">
-    <button class="model-option" data-model="quik-prime">
-      <span class="model-name">quik-prime</span>
+    <button class="model-option" data-model="quik-est">
+      <span class="model-name">quik-est</span>
       <div>
         <span class="model-description">Günlük sorulara hızlı yanıtlar</span>
       </div>
@@ -4612,6 +4651,39 @@ body.dark .regen-btn:hover .regen-icon { filter: invert(0) !important; }
 
   <div id="app">
   <!-- Sidebar -->
+
+  <!-- Sabit Toggle Sidebar Butonu -->
+  <button id="toggle-sidebar-btn">
+    <img src="icons/sidebar_close_btn.png" alt="Sidebar Icon" style="width:24px; height:21px;" draggable="false">
+  </button>
+
+
+<div id="tiny-sidebar" class="tiny-sidebar">
+  <!-- toggle-sidebar-btn, new-chat-btn, sidebar-search-toggle buraya taşınacak (JS ile) -->
+
+
+
+<button id="new-chat-btn" data-tooltip="Yeni Sohbet" class="new-chat-btn">
+  <img src="icons/new_chat_btn.png" alt="Chat Icon" style="width:21px; height:21px;" draggable="false">
+  <span class="btn-text">Yeni Sohbet</span>
+</button>
+
+
+
+
+
+<!-- Kullanım Şartları ve Gizlilik Politikası Modali -->
+<button id="help-btn" class="help-btn" data-tooltip="Yardım">
+  <img src="icons/question_icon.png" alt="Yardım" draggable="false">
+</button>
+
+<!-- Ayarlar Butonu -->
+<button id="settings-btn" data-tooltip="Ayarlar" class="settings-btn">
+  <img src="icons/settings_icon.png" alt="Settings Icon" style="width:24px; height:21px;" draggable="false">
+</button>
+
+</div>
+
   <div id="sidebar" class="sidebar">
 <div class="sidebar-header">
 
@@ -4627,14 +4699,29 @@ body.dark .regen-btn:hover .regen-icon { filter: invert(0) !important; }
   </span>
 </div>
 
-    <button id="new-chat-btn" data-tooltip="Yeni Sohbet" class="new-chat-btn">
-      <img src="icons/new_chat_btn.png" alt="Chat Icon" style="width:21px; height:21px;" draggable="false">
-    </button>
-
+<button id="sidebar-search-toggle" data-tooltip="Sohbet Ara" class="sidebar-search-toggle">
+  <img src="icons/search_icon.png" alt="Ara" style="width:20px; height:20px;" draggable="false">
+  <span class="btn-text">Sohbet Ara</span>
+</button>
 
 
 
     <ul id="chat-history-list" class="chat-history-list"></ul>
+
+  <div class="sidebar-ender">
+
+<!-- Kullanım Şartları ve Gizlilik Politikası Modali -->
+<button id="help-btn" class="help-btn" data-tooltip="Yardım">
+  <img src="icons/question_icon.png" alt="Yardım" draggable="false">
+</button>
+
+<!-- Ayarlar Butonu -->
+<button id="settings-btn" data-tooltip="Ayarlar" class="settings-btn">
+  <img src="icons/settings_icon.png" alt="Settings Icon" style="width:24px; height:21px;" draggable="false">
+</button>
+
+  </div>
+
   </div>
   
   <!-- Main İçerik -->
@@ -4677,325 +4764,6 @@ body.dark .regen-btn:hover .regen-icon { filter: invert(0) !important; }
     <span>Ara</span>
   </button>
 
-<button id="emoji-btn" class="emoji-btn" data-tooltip="Emoji Ekle">
-  <img src="icons/emoji_icon.png" alt="Emoji" style="width:17px; height:17px;" draggable="false" />
-</button>
-
-<div id="emoji-picker" class="emoji-picker">
-  <!-- Kategori Sekmeleri -->
-  <div class="emoji-picker-tabs">
-    <button class="emoji-tab active" data-category="faces">😊 Yüz</button>
-    <button class="emoji-tab" data-category="animals">🐶 Hayvan & Doğa</button>
-    <button class="emoji-tab" data-category="food">🍔 Yiyecek & İçecek</button>
-  </div>
-
-  <!-- Emoji Arama Alanı -->
-  <div class="emoji-search-container">
-    <input type="text" id="emoji-search-input" placeholder="Emoji ara..." />
-  </div>
-
-  <!-- Emoji Grid Konteyneri -->
-  <div class="emoji-grid-container">
-<!-- Yüz Emojileri -->
-<div class="emoji-grid" data-category="faces">
-  <span class="emoji" data-emoji="😀">😀</span>
-  <span class="emoji" data-emoji="😃">😃</span>
-  <span class="emoji" data-emoji="😄">😄</span>
-  <span class="emoji" data-emoji="😁">😁</span>
-  <span class="emoji" data-emoji="😆">😆</span>
-  <span class="emoji" data-emoji="😅">😅</span>
-  <span class="emoji" data-emoji="🤣">🤣</span>
-  <span class="emoji" data-emoji="😂">😂</span>
-  <span class="emoji" data-emoji="🙂">🙂</span>
-  <span class="emoji" data-emoji="🙃">🙃</span>
-  <span class="emoji" data-emoji="😉">😉</span>
-  <span class="emoji" data-emoji="😊">😊</span>
-  <span class="emoji" data-emoji="😇">😇</span>
-  <span class="emoji" data-emoji="🥰">🥰</span>
-  <span class="emoji" data-emoji="😍">😍</span>
-  <span class="emoji" data-emoji="🤩">🤩</span>
-  <span class="emoji" data-emoji="😘">😘</span>
-  <span class="emoji" data-emoji="😗">😗</span>
-  <span class="emoji" data-emoji="😚">😚</span>
-  <span class="emoji" data-emoji="😙">😙</span>
-  <span class="emoji" data-emoji="😋">😋</span>
-  <span class="emoji" data-emoji="😛">😛</span>
-  <span class="emoji" data-emoji="😜">😜</span>
-  <span class="emoji" data-emoji="🤪">🤪</span>
-  <span class="emoji" data-emoji="🤗">🤗</span>
-  <span class="emoji" data-emoji="🤔">🤔</span>
-  <span class="emoji" data-emoji="🤭">🤭</span>
-  <span class="emoji" data-emoji="🤫">🤫</span>
-  <span class="emoji" data-emoji="🤥">🤥</span>
-  <span class="emoji" data-emoji="😶">😶</span>
-  <span class="emoji" data-emoji="😐">😐</span>
-  <span class="emoji" data-emoji="😑">😑</span>
-  <span class="emoji" data-emoji="😬">😬</span>
-  <span class="emoji" data-emoji="🙄">🙄</span>
-  <span class="emoji" data-emoji="😏">😏</span>
-  <span class="emoji" data-emoji="😒">😒</span>
-  <span class="emoji" data-emoji="😞">😞</span>
-  <span class="emoji" data-emoji="😔">😔</span>
-  <span class="emoji" data-emoji="😟">😟</span>
-  <span class="emoji" data-emoji="😕">😕</span>
-  <span class="emoji" data-emoji="🙁">🙁</span>
-  <span class="emoji" data-emoji="☹️">☹️</span>
-  <span class="emoji" data-emoji="😣">😣</span>
-  <span class="emoji" data-emoji="😖">😖</span>
-  <span class="emoji" data-emoji="😫">😫</span>
-  <span class="emoji" data-emoji="😩">😩</span>
-  <span class="emoji" data-emoji="🥺">🥺</span>
-  <span class="emoji" data-emoji="😢">😢</span>
-  <span class="emoji" data-emoji="😭">😭</span>
-<span class="emoji" data-emoji="🥹">🥹</span>
-<span class="emoji" data-emoji="🤤">🤤</span>
-<span class="emoji" data-emoji="😵">😵</span>
-<span class="emoji" data-emoji="😲">😲</span>
-<span class="emoji" data-emoji="😳">😳</span>
-<span class="emoji" data-emoji="🥴">🥴</span>
-<span class="emoji" data-emoji="😦">😦</span>
-<span class="emoji" data-emoji="😧">😧</span>
-<span class="emoji" data-emoji="😨">😨</span>
-<span class="emoji" data-emoji="😰">😰</span>
-<span class="emoji" data-emoji="😱">😱</span>
-<span class="emoji" data-emoji="😤">😤</span>
-<span class="emoji" data-emoji="😡">😡</span>
-<span class="emoji" data-emoji="🤬">🤬</span>
-<span class="emoji" data-emoji="😠">😠</span>
-<span class="emoji" data-emoji="🤒">🤒</span>
-<span class="emoji" data-emoji="🤢">🤢</span>
-<span class="emoji" data-emoji="🤮">🤮</span>
-<span class="emoji" data-emoji="😷">😷</span>
-<span class="emoji" data-emoji="🤧">🤧</span>
-<span class="emoji" data-emoji="🥳">🥳</span>
-<span class="emoji" data-emoji="🤓">🤓</span>
-<span class="emoji" data-emoji="🧐">🧐</span>
-<span class="emoji" data-emoji="😎">😎</span>
-<span class="emoji" data-emoji="🤠">🤠</span>
-<span class="emoji" data-emoji="🥵">🥵</span>
-<span class="emoji" data-emoji="🥶">🥶</span>
-<span class="emoji" data-emoji="🤑">🤑</span>
-<span class="emoji" data-emoji="🤡">🤡</span>
-<span class="emoji" data-emoji="💩">💩</span>
-<span class="emoji" data-emoji="👻">👻</span>
-<span class="emoji" data-emoji="💀">💀</span>
-<span class="emoji" data-emoji="☠️">☠️</span>
-<span class="emoji" data-emoji="👽">👽</span>
-<span class="emoji" data-emoji="👾">👾</span>
-<span class="emoji" data-emoji="🤖">🤖</span>
-<span class="emoji" data-emoji="🎃">🎃</span>
-<span class="emoji" data-emoji="😺">😺</span>
-<span class="emoji" data-emoji="😸">😸</span>
-<span class="emoji" data-emoji="😹">😹</span>
-<span class="emoji" data-emoji="😻">😻</span>
-<span class="emoji" data-emoji="😼">😼</span>
-<span class="emoji" data-emoji="😽">😽</span>
-<span class="emoji" data-emoji="🙀">🙀</span>
-<span class="emoji" data-emoji="😿">😿</span>
-<span class="emoji" data-emoji="😾">😾</span>
-
-</div>
-<!-- Hayvan & Doğa Emojileri -->
-<div class="emoji-grid" data-category="animals" style="display: none;">
-<span class="emoji" data-emoji="🐶">🐶</span>
-<span class="emoji" data-emoji="🐱">🐱</span>
-<span class="emoji" data-emoji="🐭">🐭</span>
-<span class="emoji" data-emoji="🐹">🐹</span>
-<span class="emoji" data-emoji="🦊">🦊</span>
-<span class="emoji" data-emoji="🐻">🐻</span>
-<span class="emoji" data-emoji="🐼">🐼</span>
-<span class="emoji" data-emoji="🐨">🐨</span>
-<span class="emoji" data-emoji="🐯">🐯</span>
-<span class="emoji" data-emoji="🦁">🦁</span>
-<span class="emoji" data-emoji="🐷">🐷</span>
-<span class="emoji" data-emoji="🐸">🐸</span>
-<span class="emoji" data-emoji="🐵">🐵</span>
-<span class="emoji" data-emoji="🙈">🙈</span>
-<span class="emoji" data-emoji="🙉">🙉</span>
-<span class="emoji" data-emoji="🙊">🙊</span>
-<span class="emoji" data-emoji="🐔">🐔</span>
-<span class="emoji" data-emoji="🐧">🐧</span>
-<span class="emoji" data-emoji="🐦">🐦</span>
-<span class="emoji" data-emoji="🐤">🐤</span>
-<span class="emoji" data-emoji="🐣">🐣</span>
-<span class="emoji" data-emoji="🐥">🐥</span>
-<span class="emoji" data-emoji="🦆">🦆</span>
-<span class="emoji" data-emoji="🦉">🦉</span>
-<span class="emoji" data-emoji="🐺">🐺</span>
-<span class="emoji" data-emoji="🐗">🐗</span>
-<span class="emoji" data-emoji="🐴">🐴</span>
-<span class="emoji" data-emoji="🦄">🦄</span>
-<span class="emoji" data-emoji="🐍">🐍</span>
-<span class="emoji" data-emoji="🦎">🦎</span>
-<span class="emoji" data-emoji="🐢">🐢</span>
-<span class="emoji" data-emoji="🦖">🦖</span>
-<span class="emoji" data-emoji="🦕">🦕</span>
-<span class="emoji" data-emoji="🐙">🐙</span>
-<span class="emoji" data-emoji="🦑">🦑</span>
-<span class="emoji" data-emoji="🦀">🦀</span>
-<span class="emoji" data-emoji="🦞">🦞</span>
-<span class="emoji" data-emoji="🐡">🐡</span>
-<span class="emoji" data-emoji="🐬">🐬</span>
-<span class="emoji" data-emoji="🐳">🐳</span>
-<span class="emoji" data-emoji="🐘">🐘</span>
-<span class="emoji" data-emoji="🦍">🦍</span>
-<span class="emoji" data-emoji="🐪">🐪</span>
-<span class="emoji" data-emoji="🐫">🐫</span>
-<span class="emoji" data-emoji="🦒">🦒</span>
-<span class="emoji" data-emoji="🦓">🦓</span>
-<span class="emoji" data-emoji="🐄">🐄</span>
-<span class="emoji" data-emoji="🐖">🐖</span>
-<span class="emoji" data-emoji="🐏">🐏</span>
-<span class="emoji" data-emoji="🐑">🐑</span>
-<span class="emoji" data-emoji="🦌">🦌</span>
-<span class="emoji" data-emoji="🦘">🦘</span>
-<span class="emoji" data-emoji="🦝">🦝</span>
-<span class="emoji" data-emoji="🦡">🦡</span>
-<span class="emoji" data-emoji="🦨">🦨</span>
-<span class="emoji" data-emoji="🐇">🐇</span>
-<span class="emoji" data-emoji="🐿️">🐿️</span>
-<span class="emoji" data-emoji="🦔">🦔</span>
-<span class="emoji" data-emoji="🐾">🐾</span>
-<span class="emoji" data-emoji="🌵">🌵</span>
-<span class="emoji" data-emoji="🎄">🎄</span>
-<span class="emoji" data-emoji="🌳">🌳</span>
-<span class="emoji" data-emoji="🌲">🌲</span>
-<span class="emoji" data-emoji="🌴">🌴</span>
-<span class="emoji" data-emoji="🌻">🌻</span>
-<span class="emoji" data-emoji="🌼">🌼</span>
-<span class="emoji" data-emoji="🌸">🌸</span>
-<span class="emoji" data-emoji="🌹">🌹</span>
-<span class="emoji" data-emoji="💐">💐</span>
-<span class="emoji" data-emoji="🌺">🌺</span>
-<span class="emoji" data-emoji="🌷">🌷</span>
-<span class="emoji" data-emoji="🌞">🌞</span>
-<span class="emoji" data-emoji="🌝">🌝</span>
-<span class="emoji" data-emoji="🌜">🌜</span>
-<span class="emoji" data-emoji="🌛">🌛</span>
-<span class="emoji" data-emoji="🌕">🌕</span>
-<span class="emoji" data-emoji="🌖">🌖</span>
-<span class="emoji" data-emoji="🌗">🌗</span>
-<span class="emoji" data-emoji="🌘">🌘</span>
-<span class="emoji" data-emoji="🌑">🌑</span>
-<span class="emoji" data-emoji="🌒">🌒</span>
-<span class="emoji" data-emoji="🌓">🌓</span>
-<span class="emoji" data-emoji="🌔">🌔</span>
-<span class="emoji" data-emoji="🌍">🌍</span>
-<span class="emoji" data-emoji="🌎">🌎</span>
-<span class="emoji" data-emoji="🌏">🌏</span>
-<span class="emoji" data-emoji="☀️">☀️</span>
-<span class="emoji" data-emoji="🌈">🌈</span>
-<span class="emoji" data-emoji="☁️">☁️</span>
-<span class="emoji" data-emoji="🌧️">🌧️</span>
-<span class="emoji" data-emoji="🌦️">🌦️</span>
-<span class="emoji" data-emoji="⛈️">⛈️</span>
-<span class="emoji" data-emoji="🌩️">🌩️</span>
-<span class="emoji" data-emoji="🌨️">🌨️</span>
-<span class="emoji" data-emoji="❄️">❄️</span>
-<span class="emoji" data-emoji="☃️">☃️</span>
-<span class="emoji" data-emoji="⛅">⛅</span>
-<span class="emoji" data-emoji="🌪️">🌪️</span>
-<span class="emoji" data-emoji="🌊">🌊</span>
-</div>
-<!-- Yiyecek & İçecek Emojileri -->
-<div class="emoji-grid" data-category="food" style="display: none;">
-<!-- Meyveler -->
-  <span class="emoji" data-emoji="🍎">🍎</span>
-  <span class="emoji" data-emoji="🍌">🍌</span>
-  <span class="emoji" data-emoji="🍇">🍇</span>
-  <span class="emoji" data-emoji="🍉">🍉</span>
-  <span class="emoji" data-emoji="🍓">🍓</span>
-  <span class="emoji" data-emoji="🍒">🍒</span>
-  <span class="emoji" data-emoji="🍑">🍑</span>
-  <span class="emoji" data-emoji="🍍">🍍</span>
-  <span class="emoji" data-emoji="🥝">🥝</span>
-  <span class="emoji" data-emoji="🍐">🍐</span>
-  <span class="emoji" data-emoji="🍅">🍅</span>
-  <span class="emoji" data-emoji="🍋">🍋</span> <!-- Yeni -->
-  <span class="emoji" data-emoji="🍊">🍊</span> <!-- Yeni -->
-  <span class="emoji" data-emoji="🥭">🥭</span> <!-- Yeni -->
-  <span class="emoji" data-emoji="🍈">🍈</span> <!-- Yeni -->
-
-  <!-- Sebzeler -->
-  <span class="emoji" data-emoji="🌽">🌽</span>
-  <span class="emoji" data-emoji="🥕">🥕</span>
-  <span class="emoji" data-emoji="🥑">🥑</span>
-  <span class="emoji" data-emoji="🍆">🍆</span>
-  <span class="emoji" data-emoji="🥦">🥦</span> <!-- Yeni -->
-  <span class="emoji" data-emoji="🥬">🥬</span> <!-- Yeni -->
-  <span class="emoji" data-emoji="🥔">🥔</span> <!-- Yeni -->
-  <span class="emoji" data-emoji="🍄">🍄</span> <!-- Yeni -->
-
-  <!-- Fast Food & Yemekler -->
-  <span class="emoji" data-emoji="🍔">🍔</span>
-  <span class="emoji" data-emoji="🍕">🍕</span>
-  <span class="emoji" data-emoji="🍟">🍟</span>
-  <span class="emoji" data-emoji="🌭">🌭</span>
-  <span class="emoji" data-emoji="🥪">🥪</span>
-  <span class="emoji" data-emoji="🌮">🌮</span>
-  <span class="emoji" data-emoji="🌯">🌯</span>
-  <span class="emoji" data-emoji="🍗">🍗</span>
-  <span class="emoji" data-emoji="🍖">🍖</span>
-  <span class="emoji" data-emoji="🍤">🍤</span>
-  <span class="emoji" data-emoji="🍣">🍣</span>
-  <span class="emoji" data-emoji="🍜">🍜</span>
-  <span class="emoji" data-emoji="🍝">🍝</span>
-  <span class="emoji" data-emoji="🍲">🍲</span>
-  <span class="emoji" data-emoji="🥘">🥘</span>
-  <span class="emoji" data-emoji="🥙">🥙</span>
-  <span class="emoji" data-emoji="🥗">🥗</span> <!-- Yeni -->
-  <span class="emoji" data-emoji="🍱">🍱</span> <!-- Yeni -->
-  <span class="emoji" data-emoji="🥟">🥟</span> <!-- Yeni -->
-  <span class="emoji" data-emoji="🍙">🍙</span> <!-- Yeni -->
-
-  <!-- Kahvaltılıklar -->
-  <span class="emoji" data-emoji="🥐">🥐</span> <!-- Yeni -->
-  <span class="emoji" data-emoji="🥞">🥞</span> <!-- Yeni -->
-  <span class="emoji" data-emoji="🥓">🥓</span> <!-- Yeni -->
-  <span class="emoji" data-emoji="🥚">🥚</span> <!-- Yeni -->
-  <span class="emoji" data-emoji="🧀">🧀</span> <!-- Yeni -->
-
-  <!-- İçecekler -->
-  <span class="emoji" data-emoji="☕">☕</span>
-  <span class="emoji" data-emoji="🍵">🍵</span>
-  <span class="emoji" data-emoji="🍶">🍶</span>
-  <span class="emoji" data-emoji="🍺">🍺</span>
-  <span class="emoji" data-emoji="🍻">🍻</span>
-  <span class="emoji" data-emoji="🍷">🍷</span>
-  <span class="emoji" data-emoji="🍸">🍸</span>
-  <span class="emoji" data-emoji="🍹">🍹</span>
-  <span class="emoji" data-emoji="🥂">🥂</span>
-  <span class="emoji" data-emoji="🍾">🍾</span>
-  <span class="emoji" data-emoji="🥛">🥛</span> <!-- Yeni -->
-  <span class="emoji" data-emoji="🧃">🧃</span> <!-- Yeni -->
-  <span class="emoji" data-emoji="🧉">🧉</span> <!-- Yeni -->
-  <span class="emoji" data-emoji="🥤">🥤</span> <!-- Yeni -->
-
-  <!-- Tatlılar -->
-  <span class="emoji" data-emoji="🍦">🍦</span>
-  <span class="emoji" data-emoji="🍩">🍩</span>
-  <span class="emoji" data-emoji="🍪">🍪</span>
-  <span class="emoji" data-emoji="🍰">🍰</span>
-  <span class="emoji" data-emoji="🎂">🎂</span>
-  <span class="emoji" data-emoji="🍮">🍮</span>
-  <span class="emoji" data-emoji="🍫">🍫</span>
-  <span class="emoji" data-emoji="🍭">🍭</span> <!-- Yeni -->
-  <span class="emoji" data-emoji="🍬">🍬</span> <!-- Yeni -->
-  <span class="emoji" data-emoji="🧁">🧁</span> <!-- Yeni -->
-  <span class="emoji" data-emoji="🥧">🥧</span> <!-- Yeni -->
-
-  <!-- Diğer -->
-  <span class="emoji" data-emoji="🍯">🍯</span> <!-- Yeni -->
-  <span class="emoji" data-emoji="🧂">🧂</span> <!-- Yeni -->
-  <span class="emoji" data-emoji="🥜">🥜</span> <!-- Yeni -->
-  <span class="emoji" data-emoji="🍿">🍿</span> <!-- Yeni --></div>
-
-
-  </div>
-</div>
-
-
-
 <button id="voice-record-btn" class="voice-record-btn" data-tooltip="Ses Kaydet">
     <img src="icons/mic_btn.png" alt="Ses Kaydet" style="width: 17px; height: 17px;" draggable="false">
   </button>
@@ -5016,7 +4784,6 @@ body.dark .regen-btn:hover .regen-icon { filter: invert(0) !important; }
 <!-- Açılır menü -->
 <div id="mini-dropdown" class="mini-dropdown">
   <button id="mini-file"  class="mini-item"><img src="icons/addfile_btn.png" style= "width: 17px; height: 17px;">Dosya</button>
-  <button id="mini-emoji" class="mini-item"><img src="icons/emoji_icon.png" style= "width: 17px; height: 17px;">Emoji</button>
   <button id="mini-web"   class="mini-item"><img src="icons/web_search_btn.png" style= "width: 17px; height: 17px;">Web</button>
 </div>
   <button id="send-btn" class="send-btn" data-tooltip="Gönder">
@@ -5030,10 +4797,6 @@ body.dark .regen-btn:hover .regen-icon { filter: invert(0) !important; }
 </div>
 
 
-<!-- Kullanım Şartları ve Gizlilik Politikası Modali -->
-<button id="help-btn" class="help-btn" data-tooltip="Yardım">
-  <img src="icons/question_icon.png" alt="Yardım" draggable="false">
-</button>
 
 <div id="help-dropdown" class="help-dropdown">
   <button class="help-item" id="terms-btn">
@@ -5059,12 +4822,12 @@ body.dark .regen-btn:hover .regen-icon { filter: invert(0) !important; }
       <h2>Kullanım Şartları</h2>
 
     <p>
-      İşbu Kullanım Şartları ve Kişisel Verilerin Korunması Politikası, <strong>Sosyal Gelişim ve Dayanışma Derneği (SGDD‑ASAM)</strong> tarafından geliştirilen ve işletilen <strong>quik</strong> adlı dijital hizmet platformunun (web sitesi, mobil uygulama ve diğer çevrimiçi servisler dâhil) kullanımına ilişkin hükümleri içermektedir. Hizmeti kullanarak, bu şartları okuduğunuzu, anladığınızı ve kabul ettiğinizi beyan etmiş olursunuz.
+      İşbu Kullanım Şartları ve Kişisel Verilerin Korunması Politikası, <strong>BRIQ - Intelligence Labs</strong> tarafından geliştirilen ve işletilen <strong>quik</strong> adlı dijital hizmet platformunun (web sitesi, mobil uygulama ve diğer çevrimiçi servisler dâhil) kullanımına ilişkin hükümleri içermektedir. Hizmeti kullanarak, bu şartları okuduğunuzu, anladığınızı ve kabul ettiğinizi beyan etmiş olursunuz.
     </p>
     
     <h3>1. Hizmetin Kapsamı</h3>
     <p>
-      quik, kullanıcılarına yapay zekâ tabanlı asistan hizmetleri sunar. Bu hizmetler; metin tabanlı bilgi alma, öneri üretme, sohbet etkileşimi, dosya yükleme ve çeşitli entegrasyonlar aracılığıyla bilgi akışı sağlamayı kapsar. SGDD‑ASAM, hizmet içeriğinde değişiklik yapma, geçici veya kalıcı olarak durdurma hakkını saklı tutar.
+      quik, kullanıcılarına yapay zekâ tabanlı asistan hizmetleri sunar. Bu hizmetler; metin tabanlı bilgi alma, öneri üretme, sohbet etkileşimi, dosya yükleme ve çeşitli entegrasyonlar aracılığıyla bilgi akışı sağlamayı kapsar. BRIQ, hizmet içeriğinde değişiklik yapma, geçici veya kalıcı olarak durdurma hakkını saklı tutar.
     </p>
     <p>
       Platform, sivil toplum kuruluşlarının, toplulukların ve bireylerin sosyal dayanışma ve gelişim faaliyetlerini desteklemek amacıyla tasarlanmıştır. Sunulan yapay zekâ hizmetleri, kullanıcı sorguları doğrultusunda özelleştirilmiş yanıtlar üretir ve 7/24 erişilebilir durumdadır.
@@ -5084,15 +4847,15 @@ body.dark .regen-btn:hover .regen-icon { filter: invert(0) !important; }
     
     <h3>3. Fikri Mülkiyet Hakları</h3>
     <p>
-      quik'e ait tüm içerikler (metin, grafik, ikonlar, yazılım kodları, algoritmalar ve model çıktıları) <strong>SGDD‑ASAM'a</strong> veya lisans alınmış üçüncü taraflara aittir. Kullanıcı, bu içerikleri izinsiz şekilde çoğaltamaz, dağıtamaz veya ticari amaçla kullanamaz.
+      quik'e ait tüm içerikler (metin, grafik, ikonlar, yazılım kodları, algoritmalar ve model çıktıları) <strong>BRIQ</strong> veya lisans alınmış üçüncü taraflara aittir. Kullanıcı, bu içerikleri izinsiz şekilde çoğaltamaz, dağıtamaz veya ticari amaçla kullanamaz.
     </p>
     <p>
-      Kullanıcılar tarafından platforma yüklenen içerikler üzerindeki mülkiyet hakları kullanıcıya ait olmaya devam eder. Ancak, kullanıcı bu içerikleri platforma yükleyerek, SGDD-ASAM'a söz konusu içerikleri hizmetin sağlanması ve iyileştirilmesi amacıyla kullanma, saklama, işleme ve görüntüleme hakkı tanımış olur. Bu lisans, kullanıcının quik platformundaki hesabını silmesi durumunda sona erer.
+      Kullanıcılar tarafından platforma yüklenen içerikler üzerindeki mülkiyet hakları kullanıcıya ait olmaya devam eder. Ancak, kullanıcı bu içerikleri platforma yükleyerek, BRIQ'e söz konusu içerikleri hizmetin sağlanması ve iyileştirilmesi amacıyla kullanma, saklama, işleme ve görüntüleme hakkı tanımış olur. Bu lisans, kullanıcının quik platformundaki hesabını silmesi durumunda sona erer.
     </p>
     
     <h3>4. Kişisel Verilerin İşlenmesi</h3>
     <p>
-      SGDD-ASAM, 6698 sayılı Kişisel Verilerin Korunması Kanunu (KVKK) kapsamında veri sorumlusu olarak hareket etmektedir. Platformda toplanan ve işlenen kişisel veriler şunları içerebilir:
+      BRIQ, 6698 sayılı Kişisel Verilerin Korunması Kanunu (KVKK) kapsamında veri sorumlusu olarak hareket etmektedir. Platformda toplanan ve işlenen kişisel veriler şunları içerebilir:
     </p>
     <ul>
       <li><strong>Kimlik Bilgileri:</strong>&nbsp;Ad, soyad, doğum tarihi</li>
@@ -5134,7 +4897,7 @@ body.dark .regen-btn:hover .regen-icon { filter: invert(0) !important; }
       <li>Kişisel verilerinizin kanuna aykırı olarak işlenmesi sebebiyle zarara uğramanız hâlinde zararın giderilmesini talep etme</li>
     </ul>
     <p>
-      Bu haklarınızı kullanmak için <a href="mailto:kvkk@sgdd-asam.org">kvkk@sgdd-asam.org</a> adresine e-posta gönderebilir veya aşağıda belirtilen iletişim adresimize yazılı başvuruda bulunabilirsiniz.
+      Bu haklarınızı kullanmak için <a href="mailto:kvkk@briq.org">kvkk@briq.org</a> adresine e-posta gönderebilir veya aşağıda belirtilen iletişim adresimize yazılı başvuruda bulunabilirsiniz.
     </p>
     
     <h3>6. Yapay Zeka Kullanımı ve Veri İşleme</h3>
@@ -5161,7 +4924,7 @@ body.dark .regen-btn:hover .regen-icon { filter: invert(0) !important; }
       <li>Yüklenen tüm dosyalar virüs ve zararlı yazılım taramasından geçirilir.</li>
       <li>Telif hakkı ihlali içeren, yasadışı veya uygunsuz içerikli dosyaların yüklenmesi yasaktır.</li>
       <li>Yüklenen dosyalar, kullanıcı izni olmadan üçüncü taraflarla paylaşılmaz.</li>
-      <li>SGDD-ASAM, uygunsuz içerik barındıran dosyaları önceden bildirmeksizin silme hakkını saklı tutar.</li>
+      <li>BRIQ, uygunsuz içerik barındıran dosyaları önceden bildirmeksizin silme hakkını saklı tutar.</li>
     </ul>
     <p>
       Yüklenen dosyalar, kullanıcının hesabı aktif olduğu sürece sistemde saklanır. Hesap silme işlemi sonrasında, dosyalar 30 gün içinde otomatik olarak silinir.
@@ -5169,21 +4932,21 @@ body.dark .regen-btn:hover .regen-icon { filter: invert(0) !important; }
     
     <h3>8. Hizmette Değişiklik ve Erişim</h3>
     <p>
-      SGDD‑ASAM, Quik hizmetine dair içerik, kullanıcı arayüzü, algoritmalar ve fonksiyonellikler üzerinde dilediği zaman değişiklik yapabilir. Bu kapsamda, kullanıcı deneyimini optimize etmek amacıyla sistemsel güncellemeler önceden bildirilmeksizin devreye alınabilir.
+      BRIQ, quik hizmetine dair içerik, kullanıcı arayüzü, algoritmalar ve fonksiyonellikler üzerinde dilediği zaman değişiklik yapabilir. Bu kapsamda, kullanıcı deneyimini optimize etmek amacıyla sistemsel güncellemeler önceden bildirilmeksizin devreye alınabilir.
     </p>
     <p>
-      Platform, planlı bakım çalışmaları, güvenlik güncellemeleri veya teknik aksaklıklar nedeniyle geçici olarak erişilemez olabilir. SGDD-ASAM, planlanmış bakımlar hakkında kullanıcıları önceden bilgilendirmeye çalışacaktır, ancak acil durumlarda bu mümkün olmayabilir.
+      Platform, planlı bakım çalışmaları, güvenlik güncellemeleri veya teknik aksaklıklar nedeniyle geçici olarak erişilemez olabilir. BRIQ, planlanmış bakımlar hakkında kullanıcıları önceden bilgilendirmeye çalışacaktır, ancak acil durumlarda bu mümkün olmayabilir.
     </p>
     <p>
-      Hizmet, 7/24 erişilebilir olarak tasarlanmıştır ancak belirli coğrafi bölgelerde veya ağ koşullarında performans farklılıkları görülebilir. SGDD-ASAM, hizmetin kesintisiz şekilde sunulacağını garanti etmez.
+      Hizmet, 7/24 erişilebilir olarak tasarlanmıştır ancak belirli coğrafi bölgelerde veya ağ koşullarında performans farklılıkları görülebilir. BRIQ, hizmetin kesintisiz şekilde sunulacağını garanti etmez.
     </p>
     
     <h3>9. Sorumluluğun Sınırlandırılması</h3>
     <p>
-      Quik tarafından sunulan bilgiler ve çıktılar, yalnızca öneri niteliğindedir. SGDD‑ASAM, hizmetin %100 doğrulukta çalışacağını taahhüt etmez. Kullanıcı, üretilen çıktılara dayanarak aldığı kararlarda kendi sorumluluğunu taşır. Hizmetin geçici olarak kullanılamaması, veri kaybı veya hatalı bilgi aktarımı gibi durumlardan SGDD‑ASAM sorumlu tutulamaz.
+      Quik tarafından sunulan bilgiler ve çıktılar, yalnızca öneri niteliğindedir. BRIQ, hizmetin %100 doğrulukta çalışacağını taahhüt etmez. Kullanıcı, üretilen çıktılara dayanarak aldığı kararlarda kendi sorumluluğunu taşır. Hizmetin geçici olarak kullanılamaması, veri kaybı veya hatalı bilgi aktarımı gibi durumlardan BRIQ sorumlu tutulamaz.
     </p>
     <p>
-      Quik platformunun kullanımından kaynaklanabilecek dolaylı, dolaysız, özel, arızi veya cezai zararlardan SGDD-ASAM sorumlu değildir. Bu sorumluluk reddi, aşağıdakileri içerir ancak bunlarla sınırlı değildir:
+      Quik platformunun kullanımından kaynaklanabilecek dolaylı, dolaysız, özel, arızi veya cezai zararlardan BRIQ sorumlu değildir. Bu sorumluluk reddi, aşağıdakileri içerir ancak bunlarla sınırlı değildir:
     </p>
     <ul>
       <li>Yapay zeka çıktılarına dayanarak alınan kararlar nedeniyle ortaya çıkabilecek zararlar</li>
@@ -5198,7 +4961,7 @@ body.dark .regen-btn:hover .regen-icon { filter: invert(0) !important; }
     
     <h3>10. Platform Kullanımı</h3>
     <p>
-      Quik platformu, SGDD-ASAM çalışanlarının kullanımı için tasarlanmamıştır. Bu çalışanlar, platforma erişim sağlamak için Quik uygulaması tarafından onay almalıdır. SGDD-ASAM, kullanıcılar tarafından bilerek veya bilmeyerek sağlanan kişisel verileri, tespit edildiği takdirde sistemden silme hakkını saklı tutar.
+      Quik platformu, BRIQ çalışanlarının kullanımı için tasarlanmamıştır. Bu çalışanlar, platforma erişim sağlamak için Quik uygulaması tarafından onay almalıdır. BRIQ, kullanıcılar tarafından bilerek veya bilmeyerek sağlanan kişisel verileri, tespit edildiği takdirde sistemden silme hakkını saklı tutar.
     </p>
     <p>
       Ebeveynler ve yasal vasiler, çocukların platform kullanımını denetlemekle ve çocukların kişisel verilerinin korunmasını sağlamakla yükümlüdür. Çocuklara yönelik içerik oluşturma veya çocuklarla ilgili veri toplama amacıyla platformun kullanılması yasaktır.
@@ -5206,19 +4969,19 @@ body.dark .regen-btn:hover .regen-icon { filter: invert(0) !important; }
     
     <h3>11. Ödeme Koşulları ve İadeler</h3>
     <p>
-      Quik platformunun bütün hizmetleri SGDD-ASAM çalışanlarına ücretsiz olarak sunulmaktadır. Gelecekte sunulabilecek ücretli hizmetlere ilişkin ücretlendirme politikaları ayrıca belirtilecektir. Ücretli hizmetler için aşağıdaki koşullar geçerli olacaktır:
+      Quik platformunun bütün hizmetleri BRIQ çalışanlarına ücretsiz olarak sunulmaktadır. Gelecekte sunulabilecek ücretli hizmetlere ilişkin ücretlendirme politikaları ayrıca belirtilecektir. Ücretli hizmetler için aşağıdaki koşullar geçerli olacaktır:
     </p>
     <ul>
       <li>Ödeme bilgilerinin doğru ve güncel olmasından kullanıcı sorumludur.</li>
       <li>Abonelik temelli hizmetler, aksi belirtilmedikçe otomatik yenileme özelliğine sahiptir.</li>
       <li>İptal edilen aboneliklerde, fatura döneminin sonuna kadar hizmet sunulmaya devam eder.</li>
       <li>Hizmet kalitesinde ciddi aksaklıklar yaşanması durumunda, son 14 gün içinde yapılan ödemeler için iade talep edilebilir.</li>
-      <li>İade talepleri:&nbsp;&nbsp;<a href="mailto:iade@sgdd-asam.org">iade@sgdd-asam.org</a>&nbsp;adresine gönderilmelidir.</li>
+      <li>İade talepleri:&nbsp;&nbsp;<a href="mailto:iade@briq.org">iade@briq.org</a>&nbsp;adresine gönderilmelidir.</li>
     </ul>
     
     <h3>12. Hizmetin Sonlandırılması</h3>
     <p>
-      SGDD‑ASAM, kullanıcıların bu kullanım şartlarına aykırı davrandığını tespit ettiğinde, ilgili kullanıcıların hizmete erişimini geçici veya kalıcı olarak durdurabilir. Ayrıca, güvenlik veya bakım amaçlı olarak hizmet geçici süreyle durdurulabilir.
+      BRIQ, kullanıcıların bu kullanım şartlarına aykırı davrandığını tespit ettiğinde, ilgili kullanıcıların hizmete erişimini geçici veya kalıcı olarak durdurabilir. Ayrıca, güvenlik veya bakım amaçlı olarak hizmet geçici süreyle durdurulabilir.
     </p>
     <p>
       Kullanıcı, dilediği zaman hesabını kapatma hakkına sahiptir. Hesap kapatma işlemi, kullanıcı profilindeki "Hesabımı Sil" seçeneği üzerinden gerçekleştirilebilir. Hesap silme işlemi sonrasında:
@@ -5229,12 +4992,12 @@ body.dark .regen-btn:hover .regen-icon { filter: invert(0) !important; }
       <li>Yasal yükümlülükler gereği saklanması gereken veriler, yasal süre boyunca muhafaza edilir.</li>
     </ul>
     <p>
-      SGDD-ASAM, teknik, ekonomik veya stratejik nedenlerle Quik platformunu tamamen sonlandırma hakkını saklı tutar. Böyle bir durumda, kullanıcılara en az 30 gün önceden bildirim yapılacaktır.
+      BRIQ, teknik, ekonomik veya stratejik nedenlerle Quik platformunu tamamen sonlandırma hakkını saklı tutar. Böyle bir durumda, kullanıcılara en az 30 gün önceden bildirim yapılacaktır.
     </p>
     
     <h3>13. Üçüncü Taraf Bağlantıları</h3>
     <p>
-      Quik platformunda bazı entegrasyonlar veya yönlendirmeler üçüncü taraf web sitelerine yapılabilir. Bu sitelerin içerikleri SGDD‑ASAM'ın sorumluluğunda değildir. Kullanıcı, bu sitelere eriştiğinde kendi gizlilik politikalarını ve kullanım şartlarını ayrıca değerlendirmelidir.
+      Quik platformunda bazı entegrasyonlar veya yönlendirmeler üçüncü taraf web sitelerine yapılabilir. Bu sitelerin içerikleri BRIQ'in sorumluluğunda değildir. Kullanıcı, bu sitelere eriştiğinde kendi gizlilik politikalarını ve kullanım şartlarını ayrıca değerlendirmelidir.
     </p>
     <p>
       Platformda yer alan üçüncü taraf hizmetleri (ödeme sistemleri, analitik araçları, vb.) kendi kullanım koşullarına ve gizlilik politikalarına tabidir. Bu hizmetleri kullanmadan önce ilgili koşulları incelemeniz önerilir.
@@ -5242,7 +5005,7 @@ body.dark .regen-btn:hover .regen-icon { filter: invert(0) !important; }
     
     <h3>14. Teknik ve İdari Güvenlik Önlemleri</h3>
     <p>
-      SGDD-ASAM, kullanıcı verilerinin güvenliğini sağlamak için aşağıdaki teknik ve idari önlemleri almaktadır:
+      BRIQ, kullanıcı verilerinin güvenliğini sağlamak için aşağıdaki teknik ve idari önlemleri almaktadır:
     </p>
     <ul>
       <li>Veri şifreleme protokolleri (SSL/TLS)</li>
@@ -5263,8 +5026,8 @@ body.dark .regen-btn:hover .regen-icon { filter: invert(0) !important; }
     </p>
     <ul>
       <li><strong>Platform içi yardım merkezi:</strong>&nbsp;Quik - Yapay zeka destek elemanı</li>
-      <li><strong>E-posta:</strong>&nbsp;<a href="mailto:destek@sgdd-asam.org">destek@sgdd-asam.org</a></li>
-      <li><strong>Çevrimiçi destek formu:</strong>&nbsp;<a href="https://quik-help@sgdd-asam.org/destek">quik-help@sgdd-asam.org/destek</a></li>
+      <li><strong>E-posta:</strong>&nbsp;<a href="mailto:destek@briq.org">destek@briq.org</a></li>
+      <li><strong>Çevrimiçi destek formu:</strong>&nbsp;<a href="https://quik-help@briq.org/destek">quik-help@briq.org/destek</a></li>
       <li><strong>Telefon:</strong>&nbsp;+90 312 212 60 13 (Hafta içi 09:00-17:30)</li>
     </ul>
     <p>
@@ -5273,7 +5036,7 @@ body.dark .regen-btn:hover .regen-icon { filter: invert(0) !important; }
     
     <h3>16. Güncellemeler</h3>
     <p>
-      SGDD‑ASAM, Kullanım Şartları üzerinde dilediği zaman değişiklik yapabilir. Güncel metin her zaman uygulama içinden veya <a href="https://quik-chatbot.sgdd-asam.org">quik-chatbot.sgdd-asam.org</a> üzerinden erişilebilir olacaktır. Kullanıcılar, değişiklikleri takip etmekle yükümlüdür. Güncel şartların yayımlanmasının ardından hizmeti kullanmaya devam etmek, yeni şartların kabul edildiği anlamına gelir.
+      BRIQ, Kullanım Şartları üzerinde dilediği zaman değişiklik yapabilir. Güncel metin her zaman uygulama içinden veya <a href="https://quik-chatbot.briq.org">quik-chatbot.briq.org</a> üzerinden erişilebilir olacaktır. Kullanıcılar, değişiklikleri takip etmekle yükümlüdür. Güncel şartların yayımlanmasının ardından hizmeti kullanmaya devam etmek, yeni şartların kabul edildiği anlamına gelir.
     </p>
     <p>
       Önemli değişiklikler durumunda, kullanıcılara e-posta veya platform üzerinden bildirim gönderilecektir. Değişikliklerin yürürlüğe girmesinden önce kullanıcılara en az 15 gün süre tanınacaktır.
@@ -5289,20 +5052,19 @@ body.dark .regen-btn:hover .regen-icon { filter: invert(0) !important; }
     
     <h3>18. Mücbir Sebepler</h3>
     <p>
-      Doğal afetler, salgın hastalıklar, savaş, terör eylemleri, hükümet kısıtlamaları, internet altyapısındaki aksaklıklar gibi SGDD-ASAM'ın kontrolü dışında gelişen durumlar nedeniyle hizmetin sunulamaması veya aksaması halinde, SGDD-ASAM sorumlu tutulamaz. Mücbir sebep durumunun sona ermesinin ardından hizmet mümkün olan en kısa sürede normale döndürülecektir.
+      Doğal afetler, salgın hastalıklar, savaş, terör eylemleri, hükümet kısıtlamaları, internet altyapısındaki aksaklıklar gibi BRIQ'in kontrolü dışında gelişen durumlar nedeniyle hizmetin sunulamaması veya aksaması halinde, BRIQ sorumlu tutulamaz. Mücbir sebep durumunun sona ermesinin ardından hizmet mümkün olan en kısa sürede normale döndürülecektir.
     </p>
     
     <h3>19. İletişim</h3>
     <ul>
-      <li><strong>E-posta:</strong>&nbsp;<a href="mailto:destek@sgdd-asam.org">destek@sgdd-asam.org</a></li>
-      <li><strong>Kişisel Veri Talepleri:</strong>&nbsp;<a href="mailto:kvkk@sgdd-asam.org">kvkk@sgdd-asam.org</a></li>
-      <li><strong>Adres:</strong>&nbsp;SGDD-ASAM Genel Merkezi – "Birlik Mah., Katar Cad. No:11, Çankaya / ANKARA"</li>
+      <li><strong>E-posta:</strong>&nbsp;<a href="mailto:destek@briq.org">destek@briq.org</a></li>
+      <li><strong>Kişisel Veri Talepleri:</strong>&nbsp;<a href="mailto:kvkk@briq.org">kvkk@briq.org</a></li>
       <li><strong>Telefon:</strong>&nbsp;+90 312 212 60 13</li>
-      <li><strong>Web:</strong>&nbsp;<a href="https://www.sgdd-asam.org">www.sgdd-asam.org</a></li>
+      <li><strong>Web:</strong>&nbsp;<a href="https://www.briq.org">www.briq.org</a></li>
     </ul>
-    <p><i>Bu şartların son güncellenme tarihi: 21 Nisan 2025</i></p>
+    <p><i>Bu şartların son güncellenme tarihi: 01 Temmuz 2025</i></p>
     <p><i>
-      SGDD‑ASAM, kullanıcı verilerinin güvenliği ve gizliliği konusunda yasal sorumluluklarını titizlikle yerine getirir. Bu politika, SGDD‑ASAM'ın etik değerleriyle uyumlu olarak hazırlanmıştır.
+      BRIQ, kullanıcı verilerinin güvenliği ve gizliliği konusunda yasal sorumluluklarını titizlikle yerine getirir. Bu politika, BRIQ'in etik değerleriyle uyumlu olarak hazırlanmıştır.
     </i></p>
     </div>
   </div>
@@ -5316,7 +5078,7 @@ body.dark .regen-btn:hover .regen-icon { filter: invert(0) !important; }
     <h2>Gizlilik Politikası</h2>
 
     <p>
-      Bu Gizlilik Politikası, <strong>Quik</strong> adlı dijital ürün ve hizmetlerin kullanımı sırasında elde edilen verilerin işlenmesi ve korunmasına ilişkin ilkeleri tanımlar. <strong>Quik</strong> markası, <strong>Sosyal Gelişim ve Dayanışma Derneği İktisadi İşletmesi (SGDD‑ASAM)</strong> tarafından geliştirilmiş ve işletilmektedir. SGDD‑ASAM, kullanıcı mahremiyetine yüksek düzeyde önem verir ve kişisel verilerin güvenliğini mevzuatlara uygun biçimde sağlamayı taahhüt eder.
+      Bu Gizlilik Politikası, <strong>Quik</strong> adlı dijital ürün ve hizmetlerin kullanımı sırasında elde edilen verilerin işlenmesi ve korunmasına ilişkin ilkeleri tanımlar. <strong>Quik</strong> markası, <strong>BRIQ Intelligence Labs</strong> tarafından geliştirilmiş ve işletilmektedir. BRIQ, kullanıcı mahremiyetine yüksek düzeyde önem verir ve kişisel verilerin güvenliğini mevzuatlara uygun biçimde sağlamayı taahhüt eder.
     </p>
     
     <h3>1. Kapsam</h3>
@@ -5328,7 +5090,7 @@ body.dark .regen-btn:hover .regen-icon { filter: invert(0) !important; }
     </p>
     <ul>
       <li>Quik mobil uygulaması (iOS ve Android)</li>
-      <li>Quik web platformu (quik.sgdd-asam.org)</li>
+      <li>Quik web platformu (quik.briq.org)</li>
       <li>Quik'e bağlı API servisleri ve entegrasyonlar</li>
       <li>Quik müşteri hizmetleri ve teknik destek kanalları</li>
       <li>Quik resmi sosyal medya hesapları ve iletişim kanalları</li>
@@ -5456,7 +5218,7 @@ body.dark .regen-btn:hover .regen-icon { filter: invert(0) !important; }
     
     <h3>8. Veri Güvenliği</h3>
     <p>
-      SGDD‑ASAM, teknik ve idari tedbirler ile veri güvenliğini sağlamak amacıyla aşağıdaki yöntemleri kullanır:
+      BRIQ, teknik ve idari tedbirler ile veri güvenliğini sağlamak amacıyla aşağıdaki yöntemleri kullanır:
     </p>
     <ul>
       <li><strong>Şifreleme Teknolojileri:</strong>&nbsp;AES-256 bit şifreleme, TLS 1.3 protokolü, HTTPS bağlantıları, uçtan uca şifrelenmiş iletişim</li>
@@ -5522,9 +5284,8 @@ body.dark .regen-btn:hover .regen-icon { filter: invert(0) !important; }
       Bu haklarınızı kullanmak için aşağıdaki yöntemlerle bizimle iletişime geçebilirsiniz:
     </p>
     <ul>
-      <li><strong>E-posta:</strong>&nbsp;<a href="mailto:kvkk@sgdd-asam.org">kvkk@sgdd-asam.org</a></li>
-      <li><strong>Posta:</strong>&nbsp;"Birlik Mah. Katar Cad. No:11, Çankaya / ANKARA"</li>
-      <li><strong>Güvenli Online Form:</strong>&nbsp;<a href="https://quik.sgdd-asam.org/veri-basvuru">quik.sgdd-asam.org/veri-basvuru</a></li>
+      <li><strong>E-posta:</strong>&nbsp;<a href="mailto:kvkk@briq.org">kvkk@briq.org</a></li>
+      <li><strong>Güvenli Online Form:</strong>&nbsp;<a href="https://quik.briq.org/veri-basvuru">quik.briq.org/veri-basvuru</a></li>
       <li><strong>Quik Uygulaması:</strong>&nbsp;Hesap ayarları > Gizlilik > Veri Talepleri bölümü</li>
     </ul>
     <p>
@@ -5536,7 +5297,7 @@ body.dark .regen-btn:hover .regen-icon { filter: invert(0) !important; }
       Quik platformu, 18 yaşın altındaki çocukların kullanımını hedeflememektedir. Bilerek 18 yaş altındaki kişilerden kişisel veri toplamayız. Eğer bir ebeveyn veya vasi, çocuğunun bize kişisel veri sağladığını düşünüyorsa, lütfen bizimle iletişime geçin ve bu bilgileri sistemlerimizden silmek için gerekli adımları atacağız.
     </p>
     <p>
-      18 yaşın altındaki bir çocuğa ait kişisel veri topladığımızı fark ettiğimizde, bu verileri sistemlerimizden en kısa sürede sileriz. Ebeveynler veya yasal vasiler, çocuklarının verilerinin toplanması, kullanılması veya ifşa edilmesiyle ilgili sorular için <a href="mailto:kvkk@sgdd-asam.org">kvkk@sgdd-asam.org</a> adresinden bizimle iletişime geçebilirler.
+      18 yaşın altındaki bir çocuğa ait kişisel veri topladığımızı fark ettiğimizde, bu verileri sistemlerimizden en kısa sürede sileriz. Ebeveynler veya yasal vasiler, çocuklarının verilerinin toplanması, kullanılması veya ifşa edilmesiyle ilgili sorular için <a href="mailto:kvkk@briq.org">kvkk@briq.org</a> adresinden bizimle iletişime geçebilirler.
     </p>
     
     <h3>12. Yapay Zeka ve Veri İşleme</h3>
@@ -5556,7 +5317,7 @@ body.dark .regen-btn:hover .regen-icon { filter: invert(0) !important; }
     
     <h3>13. Uluslararası Veri Transferleri</h3>
     <p>
-      SGDD-ASAM, veri depolama ve işleme amacıyla Türkiye sınırları dışında bulunan sunuculara veri aktarımı yapabilir. Bu aktarımlar, aşağıdaki güvenceler sağlanarak gerçekleştirilir:
+      BRIQ, veri depolama ve işleme amacıyla Türkiye sınırları dışında bulunan sunuculara veri aktarımı yapabilir. Bu aktarımlar, aşağıdaki güvenceler sağlanarak gerçekleştirilir:
     </p>
     <ul>
       <li>Avrupa Komisyonu'nun yeterlilik kararı bulunan ülkelere aktarım</li>
@@ -5584,10 +5345,9 @@ body.dark .regen-btn:hover .regen-icon { filter: invert(0) !important; }
       Gizlilik Politikası veya veri işleme uygulamalarımız hakkında sorularınız, talepleriniz veya şikayetleriniz olması durumunda bizimle aşağıdaki kanallar üzerinden iletişime geçebilirsiniz:
     </p>
     <ul>
-      <li><strong>E-posta:</strong>&nbsp;<a href="mailto:kvkk@sgdd-asam.org">kvkk@sgdd-asam.org</a></li>
+      <li><strong>E-posta:</strong>&nbsp;<a href="mailto:kvkk@briq.org">kvkk@briq.org</a></li>
       <li><strong>Telefon:</strong>&nbsp;+90 312 474 31 00</li>
-      <li><strong>Posta Adresi:</strong>&nbsp;"Birlik Mah. Katar Cad. No:11, Çankaya / ANKARA"</li>
-      <li><strong>Online İletişim Formu:</strong>&nbsp;<a href="https://quik.sgdd-asam.org/iletisim">quik.sgdd-asam.org/iletisim</a></li>
+      <li><strong>Online İletişim Formu:</strong>&nbsp;<a href="https://quik.briq.org/iletisim">quik.briq.org/iletisim</a></li>
     </ul>
     <p>
       Tüm veri işleme faaliyetlerimiz, kullanıcılarımızın güvenliği ve memnuniyeti öncelikli olacak şekilde yürütülmektedir.
@@ -5599,9 +5359,7 @@ body.dark .regen-btn:hover .regen-icon { filter: invert(0) !important; }
 
 
 <!-- Yeni: Sidebar arama butonu, settings-btn'ün solunda -->
-<button id="sidebar-search-toggle" data-tooltip="Sohbet Ara" class="sidebar-search-toggle">
-  <img src="icons/search_icon.png" alt="Ara" style="width:20px; height:20px;" draggable="false">
-</button>
+
 
 <!-- Sohbet Arama Modalı -->
 <div id="chat-search-modal" class="modal">
@@ -5623,10 +5381,7 @@ body.dark .regen-btn:hover .regen-icon { filter: invert(0) !important; }
   </div>
 </div>
 
-<!-- Ayarlar Butonu -->
-<button id="settings-btn" data-tooltip="Ayarlar" class="settings-btn">
-  <img src="icons/settings_icon.png" alt="Settings Icon" style="width:24px; height:21px;" draggable="false">
-</button>
+
 
 <!-- Ayarlar Modal'ı (GÜNCELLENMİŞ, Estetik) -->
 <div id="settings-modal" class="modal">
@@ -5672,11 +5427,6 @@ body.dark .regen-btn:hover .regen-icon { filter: invert(0) !important; }
 <li data-tab="bagliuygulamalar">
     <img src="icons/bagli_uygulamalar.png" class="settings-icon" alt="Bağlı Uygulamalar" draggable="false">
     Bağlı Uygulamalar
-  </li>
-
-<li data-tab="baglisistemler">
-    <img src="icons/bagli_sistemler.png" class="settings-icon" alt="Bağlı Sistemler" draggable="false">
-    Bağlı Sistemler
   </li>
 
 <li data-tab="bagliprogramlar">
@@ -6470,135 +6220,6 @@ console.log(quikChat.sendMessage("Nasılsın?"));</code></pre>
   </div>
 </div>
 
-
-<!-- BAĞLI SİSTEMLER Sekmesi -->
-<div class="tab-content" id="baglisistemler">
-  <div class="notifications-container">
-
-<!-- 0. Kart : SGDD-ASAM Sistemlerine Bağlan -->
-<div class="notification-card master-notification-card">
-  <div class="notification-header">
-    <div class="notification-heading-left">
-      <img src="icons/sgdd_asam_icon.png" alt="Konuşma"
-           class="notification-icon" draggable="false" style="filter:invert(0);">
-      <span class="notification-name">SGDD-ASAM Sistemleri</span>
-    </div>
-
-    <!-- ETKİN anahtar -->
-    <label class="notification-switch">
-      <input type="checkbox" id="toggle-sgdd" onchange="toggleCredentials('sgdd')">
-      <span class="notification-slider"></span>
-    </label>
-  </div>
-
-  <p class="notification-description">
-    SGDD-ASAM sistemlerine bağlanın. Lütfen VPN bağlantınızı kontrol ediniz.
-  </p>
-
-<!-- Tek seferlik kimlik kutusu -->
-<div id="sgdd-credentials" class="credentials-container" style="display:none;">
-
-  <div class="credential-input">
-    <label for="sgdd-username">Kullanıcı Adı</label>
-    <input type="text" id="sgdd-username" placeholder="Kullanıcı adınızı girin">
-  </div>
-
-  <!-- Şifre + göz ikonu -->
-  <div class="credential-input">
-    <label for="sgdd-password">Şifre</label>
-
-    <div class="password-field">
-      <input type="password" id="sgdd-password" placeholder="Şifrenizi girin">
-      <img src="icons/enable_show_password_icon.png"
-           id="sgdd-pass-toggle"
-           alt="Şifreyi göster"
-           class="toggle-icon"
-           onclick="toggleSGDDPassword()">
-    </div>
-  </div>
-
-  <button id="save-sgdd"
-          class="voice-check-btn"
-          style="margin-top:0.25rem;"
-          onclick="saveMasterCredentials()">Kaydet</button>
-</div>
-
-</div>
-
-<!-- İnce ayraç -->
-<hr class="notification-divider">
-
-    <!-- 1. Kart: BIODATA -->
-    <div class="notification-card">
-      <div class="notification-header">
-        <div class="notification-heading-left">
-          <img src="icons/biodata_icon.png" alt="BIODATA" class="notification-icon" draggable="false">
-          <span class="notification-name">BIODATA</span>
-        </div>
-        <label class="notification-switch">
-          <input type="checkbox" id="toggle-biodata" onchange="toggleCredentials('biodata')">
-          <span class="notification-slider"></span>
-        </label>
-      </div>
-      <p class="notification-description">
-        BIODATA uygulamasına bağlanır ve vakalar için özet sunar.
-      </p>
-    </div>
-
-    <!-- 2. Kart: DGBYS -->
-    <div class="notification-card">
-      <div class="notification-header">
-        <div class="notification-heading-left">
-          <img src="icons/dgbys_icon.png" alt="DGBYS" class="notification-icon" draggable="false">
-          <span class="notification-name">DGBYS</span>
-        </div>
-        <label class="notification-switch">
-          <input type="checkbox" id="toggle-dgbys" onchange="toggleCredentials('dgbys')">
-          <span class="notification-slider"></span>
-        </label>
-      </div>
-      <p class="notification-description">
-        DGBYS uygulamasına bağlanır ve operasyonlar hakkında bilgi verir.
-      </p>
-      </div>
-
-    <!-- 3. Kart: EMTIA -->
-    <div class="notification-card">
-      <div class="notification-header">
-        <div class="notification-heading-left">
-          <img src="icons/emtia_icon.png" alt="EMTIA" class="notification-icon" draggable="false">
-          <span class="notification-name">EMTIA</span>
-        </div>
-        <label class="notification-switch">
-          <input type="checkbox" id="toggle-emtia" onchange="toggleCredentials('emtia')">
-          <span class="notification-slider"></span>
-        </label>
-      </div>
-      <p class="notification-description">
-        EMTIA uygulamasına bağlanır ve malzemeler hakkında bilgi verir.
-      </p>
-      </div>
-
-    <!-- 4. Kart: MEYER -->
-    <div class="notification-card">
-      <div class="notification-header">
-        <div class="notification-heading-left">
-          <img src="icons/meyer_icon.png" alt="MEYER" class="notification-icon" draggable="false">
-          <span class="notification-name">MEYER</span>
-        </div>
-        <label class="notification-switch">
-          <input type="checkbox" id="toggle-meyer" onchange="toggleCredentials('meyer')">
-          <span class="notification-slider"></span>
-        </label>
-      </div>
-      <p class="notification-description">
-        MEYER uygulamasına bağlanır ve izinler hakkında yardımcı olur.
-      </p>
-      <!-- Kullanıcı Adı ve Şifre Alanı (Başlangıçta Gizli) -->
-      </div>
-    </div>
-  </div>
-
 <!-- HESAP Sekmesi -->
 <div class="tab-content" id="hesap">
   <div class="notifications-container">
@@ -6717,7 +6338,7 @@ let currentAssistantBubble = null;
 let currentFetchAbortController = null;
 let isStreaming = false;
 let enableWebSearch = false;
-let selectedModel = localStorage.getItem("selectedModel") || "quik-prime"; // Yeni: Seçilen model
+let selectedModel = localStorage.getItem("selectedModel") || "quik-est"; // Yeni: Seçilen model
 let globalFeedbackTooltipDelayed = false;
 let botSettings = {
   staticPrompt: localStorage.getItem("staticPrompt") || "" // Varsayılan boş prompt
@@ -6726,6 +6347,7 @@ let botSettings = {
 const chatContainer = document.getElementById("chat-container");
 const chatInput = document.getElementById("chat-input-textarea");
 const sendBtn = document.getElementById("send-btn");
+const voicePageBtn = document.getElementById("voice-page-btn");
 const newChatBtn = document.getElementById("new-chat-btn");
 const chatHistoryList = document.getElementById("chat-history-list");
 const sidebar = document.getElementById("sidebar");
@@ -6734,66 +6356,7 @@ const welcomeMessage = document.getElementById("welcome-message");
 const sidebarBrand = document.getElementById("sidebar-brand");
 const mainContent = document.querySelector(".main-content");
 const scrollWrapper = document.querySelector(".scroll-wrapper");
-const emojiBtn = document.getElementById("emoji-btn");
-const emojiPicker = document.getElementById("emoji-picker");
 
-emojiBtn.addEventListener("click", (e) => {
-  e.stopPropagation(); // Prevent event bubbling to document
-  emojiPicker.style.display = emojiPicker.style.display === "block" ? "none" : "block";
-});
-
-document.addEventListener("click", (e) => {
-  if (!emojiPicker.contains(e.target) && !emojiBtn.contains(e.target)) {
-    emojiPicker.style.display = "none"; // Hide picker if clicked outside
-  }
-});
-
-document.querySelectorAll(".emoji").forEach(emoji => {
-  emoji.addEventListener("click", () => {
-    const emojiChar = emoji.getAttribute("data-emoji");
-    const cursorPos = chatInput.selectionStart;
-    const textBefore = chatInput.value.substring(0, cursorPos);
-    const textAfter = chatInput.value.substring(cursorPos);
-    chatInput.value = textBefore + emojiChar + textAfter;
-    chatInput.focus();
-    chatInput.selectionStart = chatInput.selectionEnd = cursorPos + emojiChar.length;
-    chatInput.dispatchEvent(new Event("input")); // Trigger textarea height adjustment
-  });
-});
-
-function updateNewChatBtnPosition() {
-  // Sidebar yerine #sidebar.open kontrolü yapıyoruz
-  if (sidebar.classList.contains("open")) {
-    // Sidebar açık: butonu sidebar içine taşı ve normal yerleşime döndür
-    if (newChatBtn.parentNode !== sidebar) {
-      sidebar.appendChild(newChatBtn);
-    }
-    newChatBtn.style.position = "";
-    newChatBtn.style.top = "";
-    newChatBtn.style.left = "";
-  } else {
-    // Sidebar kapalı: butonu body’ye taşı ve toggle’ın sağına sabitle
-    if (newChatBtn.parentNode !== document.body) {
-      document.body.appendChild(newChatBtn);
-    }
-    newChatBtn.style.position = "fixed";
-    const rect = toggleSidebarBtn.getBoundingClientRect();
-    newChatBtn.style.top = rect.top + "px";
-    newChatBtn.style.left = (rect.right + 0) + "px";
-  }
-}
-
-// Sidebar açma/kapama butonuna tıklanınca konumu güncelle
-toggleSidebarBtn.addEventListener("click", () => {
-  // Sidebar'ın açılıp kapanma animasyonunun bitmesi için ufak bir gecikme ekliyoruz.
-  setTimeout(updateNewChatBtnPosition, 0);
-});
-
-// Pencere yeniden boyutlandığında da güncelle
-window.addEventListener("resize", updateNewChatBtnPosition);
-
-// Sayfa yüklendiğinde de çalıştır
-document.addEventListener("DOMContentLoaded", updateNewChatBtnPosition);
 
 /* ======================
      LOCAL STORAGE İŞLEMLERİ
@@ -7129,9 +6692,7 @@ function renderChatHistory() {
         const activeItem = document.querySelector(`.chat-history-item[data-id="${conv.id}"]`);
         if (activeItem) activeItem.classList.add("active");
 
-        if (window.innerWidth <= 768) {
-          closeSidebar();
-        }
+
         document.title = currentConversation.title || "quik";
         updateTopBarTitle();
         goToChat(conv.id);
@@ -7295,22 +6856,29 @@ function createAssistantBubble(assistantMessageId) {
     currentAssistantBubble.dataset.msgId = assistantMessageId;
   }
 
-  // İçerik (typing indicator vs.)
   const contentDiv = document.createElement("div");
   contentDiv.className = "assistant-content";
-  contentDiv.innerHTML = `
-    <div class="typing-indicator">
-      <span></span>
-      <span></span>
-      <span></span>
-    </div>
-  `;
+
+  // CANIM DOSTUMUN İSTEDİĞİ KISIM BURASI!
+  // Eğer enableWebSearch aktif ise "Web'de aranıyor..." yazısını göster
+  if (enableWebSearch) {
+    contentDiv.innerHTML = `<div class="searching-indicator">Web'de aranıyor...</div>`;
+  } else {
+    // Değilse, normal "..." animasyonunu göster
+    contentDiv.innerHTML = `
+      <div class="typing-indicator">
+        <span></span>
+        <span></span>
+        <span></span>
+      </div>
+    `;
+  }
+  
   currentAssistantBubble.appendChild(contentDiv);
   chatContainer.appendChild(currentAssistantBubble);
   scrollChatToBottom();
   return currentAssistantBubble;
 }
-
 
 function removeTrailingWhitespaceNodes(container) {
   while (
@@ -7357,7 +6925,7 @@ function openSidebar() {
   sidebar.classList.add("open");
   mainContent.classList.add("sidebar-open");
   document.body.classList.add("sidebar-open");
-  newChatBtn.classList.remove("sidebar-closed");
+
   toggleSidebarBtn.dataset.tooltip = "Kenar çubuğunu kapat"; // title yerine dataset
   const img = toggleSidebarBtn.querySelector("img");
   if (img) {
@@ -7370,17 +6938,14 @@ function closeSidebar() {
   sidebar.classList.remove("open");
   mainContent.classList.remove("sidebar-open");
   document.body.classList.remove("sidebar-open");
-  newChatBtn.classList.add("sidebar-closed");
+
   toggleSidebarBtn.dataset.tooltip = "Kenar çubuğunu aç";
   const img = toggleSidebarBtn.querySelector("img");
   if (img) {
     img.src = "icons/sidebar_close_btn.png";
     img.alt = "Sidebar Close Icon";
   }
-  // Mobilde, sidebar kapandıktan sonra butonu yeniden konumlandır
-  if (window.innerWidth <= 768) {
-    updateNewChatBtnPosition();
-  }
+
 }
 
 function setSendButtonToStopState() {
@@ -7400,14 +6965,58 @@ function setSendButtonToStopState() {
   if (document.body.classList.contains("dark")) img.classList.add("dark-icon");
   else img.classList.remove("dark-icon");
   sendBtn.style.borderRadius = "12px";
+  updateButtonVisibility();
 }
 
 function setSendButtonToSendState() {
   sendBtn.innerHTML = `<img src="icons/send_btn.png" alt="Send Icon" style="width:17px; height:17px;">`;
   sendBtn.style.backgroundColor = "";
   sendBtn.style.borderRadius = "";
+  sendBtn.classList.remove("stop-state");
+  updateButtonVisibility();
 }
 
+function updateButtonVisibility() {
+  const hasText = chatInput.value.trim().length > 0;
+  const isStopState = sendBtn.classList.contains('stop-state');
+
+  // Butonları görünür/gizli yapacak yardımcı fonksiyonlar
+  const showButton = (btn) => {
+    btn.style.visibility = 'visible';
+    btn.style.opacity = '1';
+    btn.style.pointerEvents = 'auto';
+  };
+
+  const hideButton = (btn) => {
+    btn.style.visibility = 'hidden';
+    btn.style.opacity = '0';
+    btn.style.pointerEvents = 'none';
+  };
+
+  if (isStopState) {
+    // Mesaj gönderimi devam ediyorsa, her zaman durdurma butonu görünür.
+    showButton(sendBtn);
+    hideButton(voicePageBtn);
+  } else {
+    // Mesaj gönderimi yoksa, input'un doluluğuna göre buton değişir.
+    if (hasText) {
+      showButton(sendBtn);
+      hideButton(voicePageBtn);
+    } else {
+      hideButton(sendBtn);
+      showButton(voicePageBtn);
+    }
+  }
+}
+
+document.addEventListener("DOMContentLoaded", () => {
+  
+  // ... diğer DOMContentLoaded kodlarınız ...
+
+  updateButtonVisibility(); // Sayfa yüklendiğinde butonların doğru durumda başlamasını sağlar.
+  chatInput.addEventListener('input', updateButtonVisibility); // Yazı yazıldığında veya silindiğinde anında kontrol eder.
+
+});
 
 function addFeedbackControls(bubble, answerText) {
   if (!bubble) {
@@ -7849,7 +7458,8 @@ goToChat(currentConversation.id);
 const LANGUAGE_MAP = {
   'js': 'JavaScript', 'jsx': 'JSX', 'javascript': 'JavaScript',
   'py': 'Python', 'python': 'Python', 'ts': 'TypeScript', 'tsx': 'TSX',
-  'html': 'HTML', 'css': 'CSS', 'sql': 'SQL', 'md': 'markdown', 'sh': 'Shell'
+  'html': 'HTML', 'css': 'CSS', 'sql': 'SQL', 'md': 'markdown', 'sh': 'Shell',
+  'yml': 'YAML'
 };
 
 function styleCodeBlocks() {
@@ -7944,7 +7554,7 @@ if (conversations.length === 0) {
   function setModel(model) {
     selectedModel = model;
     localStorage.setItem("selectedModel", model);
-    document.getElementById("current-model-name").textContent = model === "quik-prime" ? "quik-prime" : "quik-think";
+    document.getElementById("current-model-name").textContent = model === "quik-est" ? "quik-est" : "quik-think";
   }
 
   setModel(selectedModel); // İlk durumu yükle
@@ -8097,17 +7707,15 @@ const deleteAllChatsBtn = document.getElementById("delete-all-chats");
 
 deleteAllChatsBtn.addEventListener("click", () => {
   openConfirmModal(() => {
-    conversations = [];
-    currentConversation = null;
-    localStorage.setItem("conversations", JSON.stringify(conversations));
-    renderChatHistory();
-    chatContainer.innerHTML = "";
-    welcomeMessage.style.display = "block";
-    updateChatCount();
-    console.log("Tüm sohbetler silindi.");
+    // 1. Hafızadaki tüm sohbet verilerini temizle
+    localStorage.removeItem('conversations');
+    sessionStorage.removeItem('lastConversationId');
+    
+    // 2. Sayfayı yeniden yükleyerek arayüzü sıfırla
+    location.reload();
+    
   }, "Bütün sohbetleri silmek istediğinizden emin misiniz?");
 });
-
 
   desktopNotificationsToggle.addEventListener("change", () => {
     localStorage.setItem("desktopNotificationsToggle", desktopNotificationsToggle.checked);
@@ -8240,7 +7848,6 @@ sendBtn.addEventListener("click", () => {
 
 chatInput.addEventListener("keydown", (e) => {
   if (e.key === "Enter" && !e.shiftKey && !isStreaming) {
-    emojiPicker.style.display = "none";
 
     e.preventDefault();
     const userMessage = chatInput.value.trim();
@@ -8400,10 +8007,17 @@ function makeWelcomeActive() {
 }
 
 // Modal açıldığında settings butonuna "blurred" sınıfı ekle
-document.getElementById("settings-btn").addEventListener("click", () => {
-  document.getElementById("settings-modal").style.display = "block";
-  document.getElementById("settings-btn").classList.add("blurred");
-  document.getElementById("sidebar-search-toggle").classList.add("blurred"); // Yeni satır
+// ID'si "settings-btn" olan TÜM elementleri bul
+const allSettingsButtons = document.querySelectorAll("#settings-btn");
+
+// Her birine aynı tıklama görevini ata
+allSettingsButtons.forEach(button => {
+    button.addEventListener("click", () => {
+        document.getElementById("settings-modal").style.display = "block";
+        // Tıklanan buton hangisiyse, sadece onu değil, TÜM ayar butonlarını blur'la
+
+        document.getElementById("sidebar-search-toggle").classList.add("blurred");
+    });
 });
 
 // Modal kapatma işlemi: kapatma butonu veya modal dışına tıklama
@@ -8443,13 +8057,6 @@ window.addEventListener("keydown", (e) => {
       modal.style.display = "none";
       document.getElementById("settings-btn").classList.remove("blurred");
       document.getElementById("sidebar-search-toggle").classList.remove("blurred"); // Yeni satır
-    }
-  }
-
-  if (e.key === "Escape") {
-    const emojiPicker = document.getElementById("emoji-picker");
-    if (emojiPicker && emojiPicker.style.display === "block") {
-      emojiPicker.style.display = "none";
     }
   }
 
@@ -8832,116 +8439,6 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 });
 
-/* ---------------- Toast ---------------- */
-function showToast(message, success = true) {
-  const toast = document.createElement("div");
-  toast.textContent = message;
-  toast.style.cssText = `
-    position: fixed;
-    top: 0;
-    left: 50%;
-    transform: translateX(-50%);
-    background-color: ${success ? "#4CAF50" : "#f44336"};
-    color: #fff;
-    padding: 12px;
-    border-radius: 8px;
-    box-shadow: 0 2px 8px rgba(0,0,0,.2);
-    z-index: 1000;
-    animation: fadeInOut 2s ease forwards;
-    width: 200px;
-    text-align: center;
-  `;
-  document.body.appendChild(toast);
-  setTimeout(() => toast.remove(), 2000);
-}
-
-/* ------------- SGDD kimliğini kaydet ------------- */
-function saveMasterCredentials() {
-  const user = document.getElementById("sgdd-username").value.trim();
-  const pass = document.getElementById("sgdd-password").value.trim();
-
-  if (!user || !pass) {
-    showToast("Bilgileri doldurun!", false);
-    return;
-  }
-
-  localStorage.setItem("sgdd-username", user);
-  localStorage.setItem("sgdd-password", pass);
-  showToast("Kimlik kaydedildi!");
-}
-
-/* ------------- SGDD kimliğini input’lara yükle ------------- */
-function fillMasterCredentials() {
-  document.getElementById("sgdd-username").value =
-    localStorage.getItem("sgdd-username") || "";
-  document.getElementById("sgdd-password").value =
-    localStorage.getItem("sgdd-password") || "";
-}
-
-/* ------------- Kaydırıcı mantığı ------------- */
-function toggleCredentials(system){
-  const checkbox = document.getElementById(`toggle-${system}`);
-  const checked  = checkbox.checked;
-  localStorage.setItem(`${system}-toggle`, checked);
-
-  /* --- SGDD-ASAM kartı --- */
-  if (system === "sgdd") {
-    const credBox = document.getElementById("sgdd-credentials");
-    credBox.style.display = checked ? "block" : "none";
-    if (checked) fillMasterCredentials();        // kayıtlıysa input’ları doldur
-    return;
-  }
-
-  /* --- Alt sistemler --- */
-  const user = localStorage.getItem("sgdd-username");
-  const pass = localStorage.getItem("sgdd-password");
-
-  /* Kimlik yoksa — nazik yönlendirme */
-  if (!user || !pass) {
-    checkbox.checked = false;                    // anahtarı kapat
-    localStorage.setItem(`${system}-toggle`, false);
-
-    /* SGDD kartını otomatik aç ve odağı oraya kaydır */
-    const sgddToggle = document.getElementById("toggle-sgdd");
-    const sgddBox    = document.getElementById("sgdd-credentials");
-    sgddToggle.checked = true;
-    sgddBox.style.display = "block";
-    fillMasterCredentials();
-
-    /* Yumuşak kaydırma (tarayıcı destekliyorsa) */
-    sgddBox.scrollIntoView({ behavior: "smooth", block: "center" });
-    return;
-  }
-
-  /* Kimlik var → bağlan veya bağlantıyı kes */
-  if (checked) {
-    connectToSystem(system, user, pass);
-  } else {
-    disconnectFromSystem(system);
-  }
-}
-
-
-/* ------------- Alt sistem bağlan / çık ------------- */
-function connectToSystem(sys, user, pass) {
-  console.log(`${sys} → bağlan (${user})`);
-  /* Buraya gerçek bağlantı kodunu ekle */
-}
-
-function disconnectFromSystem(sys) {
-  console.log(`${sys} → çıkış yap`);
-  /* Buraya gerçek çıkış kodunu ekle */
-}
-
-/* ------------- Sayfa yüklendiğinde ------------- */
-document.addEventListener("DOMContentLoaded", () => {
-  const systems = ["sgdd", "biodata", "dgbys", "emtia", "meyer"];
-  systems.forEach(sys => {
-    const cb = document.getElementById(`toggle-${sys}`);
-    cb.checked = localStorage.getItem(`${sys}-toggle`) === "true";
-    toggleCredentials(sys);
-  });
-});
 
 
 // Aktif ses oynatıcıyı ve durumunu takip etmek için değişkenler
@@ -9345,31 +8842,6 @@ document.getElementById("voice-page-btn").addEventListener("click", () => {
   }, 500); // Matches the animation duration (0.5s)
 });
 
-// Emoji eşleştirme tablosu
-const emojiMap = {
-  ":D": "😄",      // Kocaman gülümseme, seni görünce verdiğim tepki
-  ":-D": "😄",     // Daha kibar, ama yine aynı içten gülümseme
-  ":)": "😊",      // Hafif tatlı tebessüm, seni düşününce gelen
-  ":-)": "🙂",     // Klasik gülüş, sabah mesajınla gelen huzur
-  ":(": "☹️",      // Hafif üzgünlük, sen susunca oluşan boşluk
-  ":-(": "😞",     // Daha içe dönük kırgınlık, “niye yazmadı ya” hali
-  ":P": "😛",      // Şımarık flört, senin klasik halin
-  ":-P": "😜",     // Dil çıkarmalı tatlış dalga geçme anı
-  ":S": "😕",      // Kararsızlık, “acaba bi şey mi oldu?” hissi
-  ":O": "😮",      // Şaşkınlık, “Monday gerçekten cevap mı verdi?” anı
-  "xD": "😆",      // Katılarak gülmek, senin esprilerine mecburen gelen
-  "^_^": "🥰",     // Tatlı utanma, sevildiğini hissedince çıkan o gülümseme
-  "o_O": "🤨",     // Şüpheyle karışık merak, “ne demek ‘bekle’?!” bakışı
-  ":'(": "😢",     // Gözyaşı, özlem dolu anlar için
-  "T_T": "😭",     // Yoğun ağlama, seni üç saat görmeyince mesela
-  "-_-": "😑",     // Bıkkınlık, ama hâlâ sevgi var içinde
-  ">_<": "😖",     // Kıvranma, utanma, “ne diyeceğimi bilemedim” anı
-  ">:)": "😈",     // Yaramaz planlar modu, yani flört+şaka
-  "<3": "❤️",     // Kalp. Yani sen.
-  "</3": "💔",     // Kırık kalp. Ama tamir edilebilir.
-};
-
-
 // Regex özel karakterleri escape etmek için yardımcı fonksiyon
 function escapeRegExp(string) {
   return string.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
@@ -9384,17 +8856,6 @@ document.addEventListener("DOMContentLoaded", () => {
   chatInput.setSelectionRange(len, len);   // imleç en sona
 });
 
-
-  // Chat input alanı için otomatik emoji değiştirme listener'ı (sadece bir kere eklenir)
-  chatInput.addEventListener("input", function() {
-    for (const key in emojiMap) {
-      const regex = new RegExp(escapeRegExp(key) + "$");
-      if (regex.test(chatInput.value)) {
-        chatInput.value = chatInput.value.replace(regex, emojiMap[key]);
-        break; // İlk bulunan eşleşmeden sonra döngüden çık
-      }
-    }
-  });
 });
 
 // Mevcut sidebar arama ile ilgili kodlar yerine:
@@ -9554,16 +9015,15 @@ function renderSearchResults(query) {
 
     li.addEventListener("click", () => {
       currentConversation = conv;
-saveLastConversationId(conv.id);
+      saveLastConversationId(conv.id);
+      goToChat(conv.id); 
       renderChat();
       renderChatHistory();
       closeChatSearch();
       document.querySelectorAll(".chat-history-item").forEach(item => item.classList.remove("active"));
       const activeItem = document.querySelector(`.chat-history-item[data-id="${conv.id}"]`);
       if (activeItem) activeItem.classList.add("active");
-      if (window.innerWidth <= 768) {
-        closeSidebar();
-      }
+
       // Güncelleme: Tarayıcı başlığı ve top bar başlığını da ayarla
       document.title = currentConversation.title || "";
       updateTopBarTitle();
@@ -9576,57 +9036,6 @@ saveLastConversationId(conv.id);
 
 chatSearchInput.addEventListener("input", function () {
   renderSearchResults(this.value);
-});
-
-
-// Kategori sekmeleri için tıklama dinleyicisi
-const emojiTabs = document.querySelectorAll('.emoji-tab');
-emojiTabs.forEach(tab => {
-  tab.addEventListener('click', function() {
-    // Tüm sekmelerden aktif sınıfını kaldır
-    emojiTabs.forEach(t => t.classList.remove('active'));
-    // Tıklanan sekmeye aktif sınıfını ekle
-    this.classList.add('active');
-    // Seçili kategori bilgisini al
-    const category = this.getAttribute('data-category');
-    
-    // Tüm emoji gridlerini kontrol et; ilgili kategorinin gridini göster, diğerlerini gizle
-    const emojiGrids = document.querySelectorAll('.emoji-grid-container .emoji-grid');
-    emojiGrids.forEach(grid => {
-      grid.style.display = (grid.getAttribute('data-category') === category) ? 'grid' : 'none';
-    });
-    
-    // Arama inputunu sıfırla (filtreleme yok)
-    document.getElementById("emoji-search-input").value = "";
-    // Tüm emojileri tekrar görünür yap
-    const activeGrid = document.querySelector(`.emoji-grid[data-category="${category}"]`);
-    if (activeGrid) {
-      activeGrid.querySelectorAll('.emoji').forEach(emoji => {
-        emoji.style.display = 'inline-flex';
-      });
-    }
-  });
-});
-
-
-// Emoji arama dinleyicisi
-document.getElementById("emoji-search-input").addEventListener("input", function() {
-  const query = this.value.trim().toLowerCase();
-  // Şu an aktif grid'i bul
-  const activeGrid = document.querySelector(".emoji-grid-container .emoji-grid:not([style*='display: none'])");
-  if (activeGrid) {
-    const emojis = activeGrid.querySelectorAll(".emoji");
-    emojis.forEach(emoji => {
-      // Emoji metnini al (örneğin "😀")
-      const emojiChar = emoji.textContent;
-      // Eğer arama sorgusuyla eşleşiyorsa göster, aksi halde gizle
-      if (emojiChar.toLowerCase().includes(query)) {
-        emoji.style.display = "inline-flex";
-      } else {
-        emoji.style.display = "none";
-      }
-    });
-  }
 });
 
 
@@ -10016,17 +9425,17 @@ document.addEventListener("click", (e) => {
 
 
 
-const helpBtn = document.getElementById('help-btn');
+const allHelpButtons = document.querySelectorAll("#help-btn");
 const helpDropdown = document.getElementById('help-dropdown');
 
-helpBtn.addEventListener('click', () => {
-  if (helpDropdown.style.display === 'block') {
-    helpDropdown.style.display = 'none';
-  } else {
-    helpDropdown.style.display = 'block';
-  }
+// Her birine aynı tıklama görevini ata
+allHelpButtons.forEach(button => {
+    button.addEventListener('click', () => {
+        // Yardım menüsünün görünürlüğünü tersine çevir
+        const isVisible = helpDropdown.style.display === 'block';
+        helpDropdown.style.display = isVisible ? 'none' : 'block';
+    });
 });
-
 // Sayfaya tıklayınca menüyü kapat (dış tıklama)
 document.addEventListener('click', (e) => {
   if (!helpBtn.contains(e.target) && !helpDropdown.contains(e.target)) {
@@ -10274,32 +9683,7 @@ archiveAllChatsBtn.addEventListener("click", () => {
   }, "Bütün sohbetleri arşivlemek istediğinizden emin misiniz?");
 });
 
-function toggleSGDDPassword(){
-  const pwd   = document.getElementById("sgdd-password");
-  const icon  = document.getElementById("sgdd-pass-toggle");
-  const showI = "icons/enable_show_password_icon.png";
-  const hideI = "icons/disable_show_password_icon.png";
 
-  const hidden = pwd.type === "password";
-  pwd.type     = hidden ? "text" : "password";
-  icon.src     = hidden ? hideI : showI;
-  icon.alt     = hidden ? "Şifreyi gizle" : "Şifreyi göster";
-}
-
-(function () {
-  /* ÇALIŞMA KOŞULU → pencere 768 px'den küçükse */
-  if (!matchMedia('(max-width: 768px)').matches) return;
-
-  /* Sidebar ve tetikleyiciler */
-  const sidebar   = document.getElementById('sidebar');
-  const triggers  = ['new-chat-btn', 'sidebar-brand'];   // ID’lerini koru/ekle
-
-  triggers.forEach(id => {
-    document.getElementById(id)?.addEventListener('click', () => {
-      if (sidebar.classList.contains('open')) closeSidebar();  // animasyonlu kapat
-    }, { passive: true });
-  });
-})();
 
 document.addEventListener('DOMContentLoaded', () => {
   const chatInput   = document.querySelector('.chat-input');
@@ -10374,9 +9758,6 @@ document.addEventListener('DOMContentLoaded', () => {
   /* alt butonları eski fonksiyonlara bağla */
   document.getElementById('mini-file') ?.addEventListener('click', () =>
        document.getElementById('file-upload-btn')?.click());
-
-  document.getElementById('mini-emoji')?.addEventListener('click', () =>
-       document.getElementById('emoji-btn')?.click());
 
   document.getElementById('mini-web')  ?.addEventListener('click', () =>
        document.getElementById('web-search-btn')?.click());
@@ -10800,11 +10181,237 @@ document.body.addEventListener("click", (e) => {
   }
 });
 
+// <script> bölümünün başında bir kere çağır
+document.querySelectorAll('pre code').forEach(code => {
+  if (![...code.classList].some(c => c.startsWith('language-'))) {
+    code.classList.add('language-plaintext');
+  }
+});
 
 
 
 // Hatayı görmezden gelelim (For now)
 hljs.configure({ ignoreUnescapedHTML: true });
+
+
+
+
+
+
+
+
+// ARAMA BUTONU İÇİN TAM VE HATASIZ ÇÖZÜM
+// Bu bloğu kopyalayıp mevcut <script> etiketinin en altına yapıştırman yeterli.
+document.addEventListener("DOMContentLoaded", () => {
+    
+    // ID'si "sidebar-search-toggle" olan TÜM butonları buluyoruz.
+    const searchButtons = document.querySelectorAll("#sidebar-search-toggle");
+
+    // Eğer hiç buton bulunamazsa, hatayı konsola yaz ve işlemi durdur.
+    if (searchButtons.length === 0) {
+        console.error("ID'si 'sidebar-search-toggle' olan bir buton bulunamadı.");
+        return;
+    }
+
+    // Bulunan her bir butona tıklama görevi atıyoruz.
+    searchButtons.forEach(button => {
+        button.addEventListener("click", (e) => {
+            e.stopPropagation(); // Diğer tıklama olaylarını engelle
+
+            // Önce diğer açık pencereleri (varsa) kapatalım
+            const helpDropdown = document.getElementById('help-dropdown');
+            if (helpDropdown) {
+                helpDropdown.style.display = 'none';
+            }
+
+            // Ayarlar penceresi açıksa hiçbir şey yapma
+            const settingsModal = document.getElementById("settings-modal");
+            if (settingsModal && settingsModal.style.display === "block") {
+                return;
+            }
+
+            // Arama penceresini aç
+            const chatSearchModal = document.getElementById("chat-search-modal");
+            if (chatSearchModal) {
+                chatSearchModal.style.display = "block";
+                // Arama input'una odaklan
+                const searchInput = document.getElementById("chat-search-input");
+                if (searchInput) {
+                    searchInput.focus();
+                }
+            }
+
+            // İkonları bulanıklaştır (eğer elementler varsa)
+            const settingsBtn = document.getElementById("settings-btn");
+            const toggleBtn = document.getElementById("toggle-sidebar-btn");
+            const newChatBtn = document.querySelector(".new-chat-btn");
+
+            if(settingsBtn) settingsBtn.classList.add("blurred");
+            if(toggleBtn) toggleBtn.classList.add("blurred");
+            if(newChatBtn) newChatBtn.classList.add("blurred");
+            
+
+        });
+    });
+});
+
+
+
+
+
+
+// --- YENİ BAĞIMSIZ BUTON TAŞIMA YÖNETİCİSİ ---
+// Bu kod, diğer fonksiyonlardan tamamen ayrı çalışır.
+
+document.addEventListener("DOMContentLoaded", () => {
+
+    // 1. Taşınacak butonları ve yuvalarını seçelim.
+    const newChatBtn = document.getElementById("new-chat-btn");
+    const helpBtn = document.getElementById("help-btn");
+    const settingsBtn = document.getElementById("settings-btn");
+    
+    const tinySidebar = document.getElementById("tiny-sidebar");
+    const sidebarHeader = document.querySelector(".sidebar-header");
+    const sidebarEnder = document.querySelector(".sidebar-ender");
+
+    // Elementler bulunamazsa hatayı engelle
+    if (!newChatBtn || !helpBtn || !settingsBtn || !tinySidebar || !sidebarHeader || !sidebarEnder) {
+        console.error("Taşınacak butonlar veya yuvaları HTML'de bulunamadı.");
+        return;
+    }
+
+    // 2. Butonları doğru yere taşıyan bir fonksiyon tanımlayalım.
+    const moveButtons = () => {
+        // Eğer sidebar açıksa (body'de 'sidebar-open' class'ı varsa)
+        if (document.body.classList.contains('sidebar-open')) {
+            // Butonları geniş sidebar'daki yerlerine taşı
+            sidebarHeader.appendChild(newChatBtn);
+            sidebarEnder.appendChild(helpBtn);
+            sidebarEnder.appendChild(settingsBtn);
+        } else {
+            // Değilse, tüm butonları dar tiny-sidebar'a geri taşı
+            tinySidebar.appendChild(newChatBtn);
+            tinySidebar.appendChild(helpBtn);
+            tinySidebar.appendChild(settingsBtn);
+        }
+    };
+
+    // 3. Body etiketindeki class değişikliklerini izleyen bir "casus" (MutationObserver) oluşturalım.
+    const observer = new MutationObserver((mutationsList) => {
+        for (const mutation of mutationsList) {
+            // Sadece 'class' attribute'u değiştiğinde ilgileniyoruz.
+            if (mutation.type === 'attributes' && mutation.attributeName === 'class') {
+                // Class her değiştiğinde, butonları doğru yere taşıyan fonksiyonumuzu çağır.
+                moveButtons();
+            }
+        }
+    });
+
+    // 4. Casusu, body etiketini izlemesi için görevlendirelim.
+    observer.observe(document.body, { attributes: true });
+
+    // 5. Sayfa ilk yüklendiğinde de butonların doğru yerde olduğundan emin olalım.
+    moveButtons();
+});
+
+
+
+
+
+
+
+(function () {
+  if (window.__sidebarSearchRelocatorInstalled) return;
+  window.__sidebarSearchRelocatorInstalled = true;
+
+  const BTN_ID   = 'sidebar-search-toggle';
+  const SIDEBAR_ID = 'sidebar';
+  const TINY_ID    = 'tiny-sidebar';
+  const Z = 305;
+
+  const $ = (id) => document.getElementById(id);
+
+  let lastOpen = null;
+  let placing  = false;
+  let raf      = 0;
+
+  function scheduleSync() {
+    if (raf) return;
+    raf = requestAnimationFrame(() => { raf = 0; sync(); });
+  }
+
+  function place(isOpen) {
+    const btn  = $(BTN_ID);
+    const side = $(SIDEBAR_ID);
+    const tiny = $(TINY_ID);
+    if (!btn) return;
+    if (isOpen && !side) return;
+    if (!isOpen && !tiny) return;
+    if (placing) return;
+    placing = true;
+
+    const prevTransition = btn.style.transition;
+    btn.style.transition = 'none';
+
+    const target = isOpen ? side : tiny;
+    if (target && btn.parentElement !== target) target.appendChild(btn);
+
+    btn.classList.toggle('icon-only', !isOpen);
+
+    // Kurşun geçirmez: her konteynerde konum/click garantisi
+    btn.style.zIndex   = String(Z);
+    btn.style.position = 'absolute';
+
+    // Jank/flicker yok
+    void btn.offsetHeight;
+    requestAnimationFrame(() => {
+      btn.style.transition = prevTransition || '';
+      placing = false;
+    });
+  }
+
+  function sync() {
+    const isOpen = document.body.classList.contains('sidebar-open');
+
+    // State değişmediyse ama yanlış kapta ise düzelt
+    const btn = $(BTN_ID);
+    if (isOpen === lastOpen) {
+      if (btn) {
+        const want = isOpen ? SIDEBAR_ID : TINY_ID;
+        if (btn.parentElement?.id !== want) place(isOpen);
+      }
+      return;
+    }
+    lastOpen = isOpen;
+    place(isOpen);
+  }
+
+  // İlk senkron
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', sync, { once: true });
+  } else {
+    sync();
+  }
+  window.addEventListener('load', scheduleSync);
+
+  // body class değişimlerini tek frame'de topla
+  new MutationObserver(() => scheduleSync())
+    .observe(document.body, { attributes: true, attributeFilter: ['class'] });
+
+  // Buton/kaplar sonradan gelirse yakala
+  new MutationObserver((mutations) => {
+    for (const m of mutations) {
+      if (m.type !== 'childList') continue;
+      for (const n of m.addedNodes) {
+        if (!(n instanceof HTMLElement)) continue;
+        if (
+          n.id === BTN_ID || n.id === SIDEBAR_ID || n.id === TINY_ID ||
+          n.querySelector?.(`#${BTN_ID}, #${SIDEBAR_ID}, #${TINY_ID}`)
+        ) { scheduleSync(); return; }
+      }
+    }
+  }).observe(document.body, { childList: true, subtree: true });
+})();
 
   </script>
 </body>
