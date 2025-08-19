@@ -11,3 +11,4 @@ werkzeug
 uvicorn
 importlib
 threading
+pytest
